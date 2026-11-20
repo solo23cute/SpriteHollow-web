@@ -8595,6 +8595,23 @@ const SPECIES_FAMILY_GROUPS = [
     ],
   },
   {
+    id: "club-penguin",
+    label: "Club Penguin",
+    species: [
+      "cp_puffle",
+      "cp_penguin_blue",
+      "cp_penguin_green",
+      "cp_penguin_pink",
+      "cp_penguin_black",
+      "cp_penguin_red",
+      "cp_penguin_orange",
+      "cp_penguin_purple",
+      "cp_penguin_brown",
+      "cp_penguin_white",
+      "cp_penguin_yellow",
+    ],
+  },
+  {
     id: "zodiac",
     label: "Zodiac",
     species: [

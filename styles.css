@@ -3067,6 +3067,14 @@ body.reduce-motion .scene-transition .st-motif { display: none; }
 .ap-note { font-size: 9.5px; color: var(--muted); margin: 0 0 6px; line-height: 1.45; }
 .ap-effect { font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ap-aura); }
 @media (max-width: 520px) { .ap-grid { grid-template-columns: 1fr 1fr; } .ap-stage { font-size: 9.5px; } }
+/* In the two-column phone grid the 72px portrait leaves ~70px for the family
+   name, so long single words such as Marshmallow spill past the card. Give the
+   copy a little more room and let an unusually long name wrap instead. */
+@media (min-width: 361px) and (max-width: 520px) {
+  .ap-card-head { gap: 6px; }
+  .ap-portrait { width: 62px; height: 62px; }
+  .ap-family b { font-size: 11px; overflow-wrap: anywhere; }
+}
 /* At 320px the two-column phone grid leaves too little room for a guardian
    name beside the 72px portrait, and the clipped text widens the sheet body.
    One column keeps every name whole at the smallest gate size. */

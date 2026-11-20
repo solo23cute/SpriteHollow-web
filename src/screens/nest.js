@@ -569,7 +569,7 @@ function nestScreen(root) {
     const lavaBoost = !!st && st.active === 'lava' && typeof eggIsLavaType === 'function' && eggIsLavaType(e);
     const frostBoost = !!st && st.active === 'frostchill' && lavaFrozen;
     const shellNote = needsChill
-      ? `<div class="ec-chill" role="note" title="This egg only warms under a cooling incubator. Switch the Nest to the Chill Stone or Frost Chill to warm it.">${lavaFrozen ? '🧊 Lava-frozen' : '❄️ Frozen'} · cooling needed</div>`
+      ? `<div class="ec-chill" role="note" title="This egg only warms under a cooling incubator. Switch the Nest to the Chill Stone or Frost Chill to warm it.">${lavaFrozen ? '🧊 Lava-frozen · needs Frost Chill' : '❄️ Frozen · needs the Chill Stone'}</div>`
       : lavaFrozen
         ? `<div class="ec-chill" role="note" title="A lava-frozen egg: Ember heat inside a frozen shell. Frost Chill stabilizes it.">🧊 Lava-frozen${frostBoost ? ' · Frost Chill' : ''}</div>`
         : lavaBoost

@@ -1,0 +1,9 @@
+{
+  "id": "ghost_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "spooky_wail",
+    "phase_step"
+  ],
+  "wings": false
+}

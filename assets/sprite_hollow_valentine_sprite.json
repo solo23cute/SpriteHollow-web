@@ -1,0 +1,9 @@
+{
+  "id": "valentine_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "heart_aura",
+    "cupid_shot"
+  ],
+  "wings": false
+}

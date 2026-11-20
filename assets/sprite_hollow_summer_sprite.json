@@ -1,0 +1,9 @@
+{
+  "id": "summer_sprite",
+  "rarity": "rare",
+  "abilities": [
+    "sunbeam",
+    "wave_dash"
+  ],
+  "wings": true
+}

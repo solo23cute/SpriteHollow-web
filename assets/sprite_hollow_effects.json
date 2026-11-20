@@ -1,0 +1,12 @@
+{
+  "effects": {
+    "sparkles": true,
+    "wingGlow": true,
+    "trailEffect": true,
+    "shadowAura": true,
+    "lightningAura": true,
+    "snowAura": true,
+    "fireAura": true,
+    "rainbowAura": true
+  }
+}

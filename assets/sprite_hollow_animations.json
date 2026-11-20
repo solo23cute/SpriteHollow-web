@@ -1,0 +1,109 @@
+{
+  "version": "2.0",
+  "spriteFamily": "Sprite Hollow",
+  "frameSize": {
+    "width": 256,
+    "height": 256
+  },
+  "sources": "merged from the frame-index map and the earlier frame-count manifest; the map wins wherever both describe an animation, because its frames exist and were read straight from the sheet",
+  "frameBudget": 72,
+  "animations": {
+    "idle": {
+      "fps": 8,
+      "loop": true,
+      "frames": [0, 1, 2, 3, 4, 5],
+      "source": "map"
+    },
+    "blink": {
+      "fps": 10,
+      "loop": false,
+      "frames": [6, 7, 8, 7],
+      "source": "map"
+    },
+    "walk": {
+      "fps": 12,
+      "loop": true,
+      "frames": [9, 10, 11, 12, 13, 14, 15, 16],
+      "source": "map"
+    },
+    "run": {
+      "fps": 16,
+      "loop": true,
+      "frames": [17, 18, 19, 20, 21, 22, 23, 24],
+      "source": "map"
+    },
+    "jumpStart": {
+      "fps": 12,
+      "loop": false,
+      "frames": [25, 26, 27],
+      "source": "map",
+      "mergedFrom": "jump"
+    },
+    "jumpLoop": {
+      "fps": 8,
+      "loop": true,
+      "frames": [28, 29],
+      "source": "map",
+      "mergedFrom": "jump"
+    },
+    "fall": {
+      "fps": 8,
+      "loop": true,
+      "frames": [30, 31],
+      "source": "map"
+    },
+    "land": {
+      "fps": 12,
+      "loop": false,
+      "frames": [32, 33, 34],
+      "source": "map"
+    },
+    "float": {
+      "fps": 10,
+      "loop": true,
+      "frames": [35, 36, 37, 38, 39, 40],
+      "source": "map"
+    },
+    "fly": {
+      "fps": 15,
+      "loop": true,
+      "frames": [41, 42, 43, 44, 45, 46],
+      "source": "map"
+    },
+    "wave": {
+      "fps": 10,
+      "loop": false,
+      "frames": [47, 48, 49, 50, 51, 52],
+      "source": "map"
+    },
+    "dance": {
+      "fps": 14,
+      "loop": true,
+      "frames": [53, 54, 55, 56, 57, 58, 59, 60],
+      "source": "map"
+    },
+    "celebrate": {
+      "fps": 14,
+      "loop": false,
+      "frames": [61, 62, 63, 64, 65, 66, 67, 68],
+      "source": "map"
+    },
+    "victory": {
+      "fps": 14,
+      "loop": false,
+      "frames": [69, 70, 71],
+      "source": "map",
+      "truncated": true,
+      "expectedFrames": 16
+    }
+  },
+  "pending": {
+    "attack": { "frameCount": 10 },
+    "magicCast": { "frameCount": 12 },
+    "hurt": { "frameCount": 4 },
+    "sleep": { "frameCount": 8 },
+    "sit": { "frameCount": 4 },
+    "spin": { "frameCount": 12 },
+    "evolve": { "frameCount": 20 }
+  }
+}

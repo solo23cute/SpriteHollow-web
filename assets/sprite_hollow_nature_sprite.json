@@ -1,0 +1,9 @@
+{
+  "id": "nature_sprite",
+  "rarity": "rare",
+  "abilities": [
+    "vine_heal",
+    "leaf_storm"
+  ],
+  "wings": false
+}

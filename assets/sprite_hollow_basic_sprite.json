@@ -1,0 +1,10 @@
+{
+  "id": "basic_sprite",
+  "rarity": "common",
+  "color": "purple",
+  "abilities": [
+    "float",
+    "sparkle"
+  ],
+  "wings": true
+}

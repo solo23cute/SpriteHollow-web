@@ -1,0 +1,9 @@
+{
+  "id": "diamond_sprite",
+  "rarity": "mythic",
+  "abilities": [
+    "prism_cut",
+    "hard_shine"
+  ],
+  "wings": false
+}

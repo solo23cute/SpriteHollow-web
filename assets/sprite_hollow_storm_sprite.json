@@ -1,0 +1,9 @@
+{
+  "id": "storm_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "lightning_dash",
+    "thunder_wings"
+  ],
+  "wings": true
+}

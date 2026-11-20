@@ -1,0 +1,9 @@
+{
+  "id": "gold_sprite",
+  "rarity": "legendary",
+  "abilities": [
+    "gold_rush",
+    "gilded_aura"
+  ],
+  "wings": false
+}

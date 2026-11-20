@@ -1,0 +1,9 @@
+{
+  "id": "crystal_sprite",
+  "rarity": "rare",
+  "abilities": [
+    "crystal_shield",
+    "gem_burst"
+  ],
+  "wings": false
+}

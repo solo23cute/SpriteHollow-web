@@ -1,0 +1,9 @@
+{
+  "id": "rainbow_sprite",
+  "rarity": "mythic",
+  "abilities": [
+    "rainbow_beam",
+    "color_burst"
+  ],
+  "wings": true
+}

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eternal Harmony Turtle · Legendary Fusion Card</title>
+<style>
+  :root { color-scheme: dark; --gold:#ffd166; --cyan:#8fe8ff; --violet:#b18cff; --rose:#ff9ec7; --ink:#0a0915; --text:#eef3ff; --muted:#9fb0c9; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(900px 520px at 12% -10%, rgba(177,140,255,.24), transparent 65%),
+      radial-gradient(760px 460px at 92% 8%, rgba(143,232,255,.16), transparent 65%),
+      radial-gradient(900px 700px at 50% 110%, rgba(255,158,199,.1), transparent 70%),
+      #070611;
+  }
+  .hero { max-width: 1240px; margin: 0 auto; padding: 44px 20px 8px; text-align: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid rgba(255,209,102,.42); border-radius: 999px; color: var(--gold); background: rgba(255,209,102,.07); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
+  h1 { margin: 14px 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(32px, 5.5vw, 62px); line-height: .98; letter-spacing: -.02em; background: linear-gradient(100deg, #fff7df 12%, #ffd166 34%, #8fe8ff 62%, #ff9ec7 88%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { max-width: 720px; margin: 0 auto; color: var(--muted); font-size: 14px; line-height: 1.65; }
+  .hero .meta { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+  .chip { padding: 4px 9px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); color: #cfdcf0; background: rgba(255,255,255,.04); font-size: 9px; letter-spacing: .05em; text-transform: uppercase; }
+  .deck { max-width: 1280px; margin: 26px auto 56px; padding: 0 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(322px, 1fr)); gap: 20px; align-items: start; }
+
+  /* ---- Card face: banner, element ring, art window, identity, abilities, stars, collector strip ---- */
+  .ehc-card { --skin:#fff3dc; --face:#fffdf7; --rim:#ffd166; --ehc-ring:conic-gradient(from 210deg, #ffd166, #8fe8ff, #b18cff, #ff9ec7, #ffd166); position: relative; overflow: hidden; padding: 9px; border-radius: 24px; border: 2px solid transparent; background: linear-gradient(168deg, #241a40 0%, #100d20 55%, #090813 100%) padding-box, var(--ehc-ring) border-box; box-shadow: 0 20px 45px rgba(0,0,0,.45), 0 0 30px rgba(143,232,255,.1); }
+  .ehc-card::before { content:""; position:absolute; inset:0; z-index:3; pointer-events:none; background: linear-gradient(112deg, transparent 18%, rgba(255,255,255,.13) 40%, rgba(255,255,255,.02) 52%, transparent 62%); transform: translateX(-140%); animation: sheen 7s ease-in-out infinite; }
+  .ehc-banner { position: relative; overflow: hidden; display: grid; place-items: center; padding: 8px 10px; border-radius: 13px; border: 1px solid rgba(255,255,255,.3); background: linear-gradient(100deg, rgba(255,209,102,.34), rgba(143,232,255,.26) 38%, rgba(177,140,255,.3) 66%, rgba(255,158,199,.3)); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 0 16px rgba(255,209,102,.22); }
+  .ehc-banner::before { content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); transform: translateX(-120%); animation: foil 5.5s ease-in-out infinite; }
+  .ehc-banner b { position: relative; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #fff8e2; text-shadow: 0 1px 2px rgba(0,0,0,.55), 0 0 10px rgba(255,209,102,.6); }
+  .ehc-element-ring { display: flex; justify-content: space-between; align-items: center; gap: 2px; padding: 7px 5px 4px; }
+  .ehc-element-ring span { width: 21px; height: 21px; display: grid; place-items: center; border-radius: 50%; font-size: 10.5px; line-height: 1; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.34), color-mix(in srgb, var(--el) 52%, transparent)); border: 1px solid color-mix(in srgb, var(--el) 62%, transparent); box-shadow: 0 0 8px color-mix(in srgb, var(--el) 46%, transparent); }
+  .ehc-art-window { position: relative; margin: 3px 0 8px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.18); background: radial-gradient(circle at 50% 32%, #372a64, #0b0916 72%); }
+  .ehc-art-window svg { display: block; width: 100%; height: auto; }
+  .ehc-art-holo { position: absolute; inset: 0; pointer-events: none; opacity: .24; mix-blend-mode: color-dodge; background: linear-gradient(118deg, transparent 15%, rgba(255,255,255,.5) 34%, transparent 48%, rgba(143,232,255,.35) 64%, transparent 78%); }
+  .ehc-stats-corner { position: absolute; top: 8px; right: 8px; display: grid; gap: 2px; padding: 6px 7px; border-radius: 11px; border: 1px solid rgba(255,255,255,.2); background: rgba(9,8,20,.76); box-shadow: 0 4px 16px rgba(0,0,0,.45); }
+  .ehc-stats-corner div { display: flex; align-items: center; gap: 5px; font-size: 7.5px; letter-spacing: .06em; color: rgba(255,255,255,.68); }
+  .ehc-stats-corner i { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; background: var(--gem); box-shadow: 0 0 6px var(--gem); }
+  .ehc-stats-corner b { margin-left: auto; padding-left: 6px; font-size: 8.5px; color: #fff7df; }
+  .ehc-identity { padding: 0 5px; }
+  .ehc-identity h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(21px, 2.4vw, 27px); line-height: 1.04; color: #fff7df; }
+  .ehc-identity-chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 5px 0 6px; }
+  .ehc-identity-chips span { padding: 2px 7px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.03); font-size: 7.5px; letter-spacing: .05em; text-transform: uppercase; color: #cfdcf0; }
+  .ehc-vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .ehc-vitals div { display: flex; align-items: baseline; justify-content: space-between; gap: 4px; padding: 6px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); }
+  .ehc-vitals small { font-size: 7px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .ehc-vitals b { font-size: 12px; color: #fff7df; }
+  .ehc-ability-panel { margin-top: 7px; padding: 8px 9px; border-radius: 13px; border: 1px solid rgba(255,209,102,.22); background: linear-gradient(160deg, rgba(255,209,102,.07), rgba(143,232,255,.04)); }
+  .ehc-passive { display: grid; gap: 2px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,.14); }
+  .ehc-passive > span { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; font-size: 10px; font-weight: 700; color: #fff7df; }
+  .ehc-passive small { font-size: 7px; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+  .ehc-passive p { margin: 0; font-size: 8.5px; line-height: 1.42; color: var(--muted); }
+  .ehc-skill-list { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }
+  .ehc-skill-list li { display: flex; align-items: center; gap: 6px; }
+  .ehc-skill-list i { font-style: normal; font-size: 10px; line-height: 1; }
+  .ehc-skill-list b { flex: 1; min-width: 0; font-size: 9.5px; font-weight: 600; color: #fff7df; }
+  .ehc-skill-list em { font-style: normal; font-size: 8.5px; color: var(--cyan); }
+  .ehc-stars { display: flex; justify-content: center; gap: 1px; padding: 8px 0 4px; color: var(--gold); font-size: 13px; letter-spacing: .05em; }
+  .ehc-stars span { color: rgba(255,209,102,.26); }
+  .ehc-strip { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 3px 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,.12); font-size: 7px; letter-spacing: .07em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+  .ehc-strip b { color: var(--cyan); }
+  .ehc-edition { display: flex; justify-content: center; margin: 4px 0 0; font-size: 7.5px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.66); }
+  .ehc-ex-rating { display: flex; justify-content: center; gap: 6px; padding: 6px 0 0; font-size: 13px; letter-spacing: .2em; color: #ffe9a8; text-shadow: 0 0 12px rgba(255,209,102,.55); }
+  .ehc-ex-badge { display: flex; justify-content: center; margin-top: 5px; padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(255,209,102,.6); background: rgba(255,209,102,.1); font-size: 7px; letter-spacing: .16em; text-transform: uppercase; color: #fff3b0; }
+
+  /* Secret Rare: black chrome, rainbow crystal edges, purple galaxy highlights. */
+  .ehc-card.secret { background: linear-gradient(168deg, #171021 0%, #0a0710 60%, #050308 100%) padding-box, conic-gradient(from 20deg, #ff5f9e, #ffd166, #8fe8ff, #b18cff, #52ffb8, #ff5f9e) border-box; box-shadow: 0 20px 50px rgba(0,0,0,.55), 0 0 34px rgba(255,95,158,.16); }
+  .ehc-card.secret::after { content: "☾  ✧  ☀"; position: absolute; inset: 7px 9px auto; z-index: 1; text-align: center; font-size: 9px; letter-spacing: .55em; color: rgba(255,158,199,.6); pointer-events: none; }
+  .ehc-card.secret .ehc-banner { background: linear-gradient(100deg, rgba(255,95,158,.38), rgba(143,232,255,.26) 40%, rgba(177,140,255,.34) 70%, rgba(82,255,184,.26)); }
+  .ehc-card.secret .ehc-art-holo { opacity: .4; background: linear-gradient(118deg, transparent 8%, rgba(255,95,158,.55) 26%, transparent 42%, rgba(82,255,184,.4) 58%, rgba(143,232,255,.42) 72%, transparent 88%); }
+  .ehc-card.secret .ehc-art-window svg { filter: hue-rotate(-22deg) saturate(1.25) brightness(1.04); }
+
+  /* Omniverse Turtle EX: celestial artifact frame, miniature worlds in the shell. */
+  .ehc-card.chase { background: linear-gradient(168deg, #241d0c 0%, #0d0906 58%, #050403 100%) padding-box, conic-gradient(from 140deg, #ffd166, #7a5b1f, #fff3b0, #ffd166, #8f6a1c, #ffd166) border-box; box-shadow: 0 20px 52px rgba(0,0,0,.58), 0 0 34px rgba(255,209,102,.16); }
+  .ehc-card.chase::after { content:""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 12% 10%, rgba(255,243,176,.5), transparent 22%), radial-gradient(circle at 88% 14%, rgba(255,209,102,.42), transparent 24%), radial-gradient(circle at 50% 104%, rgba(255,209,102,.3), transparent 38%); }
+  .ehc-card.chase .ehc-banner { background: linear-gradient(100deg, rgba(255,209,102,.45), rgba(255,243,176,.3) 45%, rgba(143,232,255,.22) 74%, rgba(255,209,102,.4)); }
+  .ehc-card.chase .ehc-art-holo { opacity: .34; background: linear-gradient(118deg, transparent 12%, rgba(255,243,176,.62) 34%, transparent 50%, rgba(255,209,102,.4) 68%, transparent 84%); }
+  .ehc-card.chase .ehc-art-window svg { filter: hue-rotate(155deg) saturate(1.3) brightness(1.02); }
+  .ehc-worlds { position: absolute; inset: 0; pointer-events: none; background:
+      radial-gradient(circle at 30% 62%, rgba(143,224,122,.55) 0 3px, transparent 4px),
+      radial-gradient(circle at 62% 58%, rgba(143,232,255,.5) 0 2.5px, transparent 3.5px),
+      radial-gradient(circle at 46% 74%, rgba(255,158,199,.5) 0 2px, transparent 3px),
+      radial-gradient(circle at 68% 70%, rgba(255,209,102,.5) 0 2px, transparent 3px);
+    mix-blend-mode: screen; }
+  @keyframes sheen { 0%, 60% { transform: translateX(-140%); } 82%, 100% { transform: translateX(140%); } }
+  @keyframes foil { 0%, 55% { transform: translateX(-120%); } 80%, 100% { transform: translateX(120%); } }
+  @media (prefers-reduced-motion: reduce) { .ehc-card::before, .ehc-banner::before { animation: none; } }
+  @media (max-width: 520px) {
+    .ehc-stats-corner { position: relative; inset: auto; z-index: 1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; padding: 0; border: 0; border-top: 1px solid rgba(255,255,255,.16); border-radius: 0; background: rgba(9,8,20,.9); box-shadow: none; }
+    .ehc-stats-corner div { justify-content: center; gap: 2px; min-width: 0; padding: 5px 1px; border-left: 1px solid rgba(255,255,255,.1); font-size: 6.5px; letter-spacing: .04em; white-space: nowrap; }
+    .ehc-stats-corner div:first-child { border-left: 0; }
+    .ehc-stats-corner i { width: 5px; height: 5px; box-shadow: 0 0 5px var(--gem); }
+    .ehc-stats-corner b { margin-left: 0; padding-left: 0; font-size: 8px; font-variant-numeric: tabular-nums; }
+  }
+  /* The deck's 322px minimum was wider than a 320px phone: the page padded 10px
+     each side, leaving 300px, so every card spilled 22px past the viewport. One
+     minmax(0,1fr) column lets the card shrink with the screen instead. */
+  @media (max-width: 420px) { .deck { grid-template-columns: minmax(0, 1fr); padding: 0 10px; } .ehc-card { padding: 8px; border-radius: 19px; } .ehc-vitals { grid-template-columns: 1fr; } }
+  @media print { body { background:#fff; color:#111; } .hero p, .footer { color:#444; } .hero h1 { color:#5b3d00; -webkit-text-fill-color:#5b3d00; } .deck { grid-template-columns:1fr; max-width:520px; } .ehc-card { break-inside:avoid; box-shadow:none; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <span class="eyebrow">Sprite Hollow Origins · Legendary Fusion Archive</span>
+  <h1>Eternal Harmony Turtle</h1>
+  <p>One fluffy guardian. Eight elemental worlds. A single Core Crystal holding the whole shell in balance. The front card leads with the rarity banner, the eight-element ring and a full art window; the Secret Rare and Omniverse EX prints keep the same skeleton with their own frames.</p>
+  <div class="meta"><span class="chip">#001-LF</span><span class="chip">Omni Element</span><span class="chip">Guardian Titan</span><span class="chip">Power 4,950</span></div>
+</header>
+
+<main class="deck">
+  <article class="ehc-card legendary" aria-label="Legendary Eternal Harmony Turtle card">
+    <div class="ehc-banner"><b>✨ Legendary Fusion ✨</b></div>
+    <div class="ehc-element-ring" aria-hidden="true">
+      <span style="--el:#4b3370" title="Dark">🌑</span><span style="--el:#4f9b63" title="Nature">🌿</span><span style="--el:#d9562e" title="Fire">🔥</span><span style="--el:#6fc9e8" title="Ice">❄️</span><span style="--el:#2f86c9" title="Water">💧</span><span style="--el:#9c7a4c" title="Earth">🪨</span><span style="--el:#d8a72e" title="Lightning">⚡</span><span style="--el:#ffd166" title="Light">☀️</span>
+    </div>
+    <div class="ehc-art-window">
+      <svg viewBox="0 0 360 360" role="img" aria-label="Eternal Harmony Turtle with an eight-element world-shell"><use href="#ehc-turtle-art"></use></svg>
+      <span class="ehc-art-holo"></span>
+      <span class="ehc-stats-corner" aria-label="Card stats">
+        <div style="--gem:#6fe0a8"><i></i>HP<b>9,800</b></div><div style="--gem:#ff6b6b"><i></i>ATK<b>920</b></div><div style="--gem:#ffd166"><i></i>DEF<b>1,100</b></div><div style="--gem:#8fb6ff"><i></i>MAG<b>1,050</b></div><div style="--gem:#ffe58a"><i></i>SPD<b>680</b></div>
+      </span>
+    </div>
+    <div class="ehc-identity">
+      <h2>Eternal Harmony Turtle</h2>
+      <div class="ehc-identity-chips"><span>Element: Omni</span><span>Class: Guardian Titan</span></div>
+      <div class="ehc-vitals"><div><small>HP</small><b>9,800</b></div><div><small>Power</small><b>4,950</b></div></div>
+    </div>
+    <div class="ehc-ability-panel">
+      <div class="ehc-passive"><span>Harmony Core<small>Passive</small></span><p>Absorbs elemental energy and converts damage into healing.</p></div>
+      <ul class="ehc-skill-list">
+        <li><i>⚔️</i><b>Element Burst</b><em>250</em></li>
+        <li><i>✨</i><b>Harmony Nova</b><em>650</em></li>
+        <li><i>🌈</i><b>Worldshell Cataclysm</b><em>1,800</em></li>
+      </ul>
+    </div>
+    <div class="ehc-stars" aria-label="10 out of 10 stars">★★★★★★★★★★</div>
+    <div class="ehc-strip"><span>Legendary Fusion</span><span>Guardian Titan</span><b>#001-LF</b><span>First Guardian Print</span></div>
+  </article>
+
+  <article class="ehc-card secret" aria-label="Secret Rare Eternal Harmony Turtle card">
+    <div class="ehc-banner"><b>🌈 Secret Rare 🌈</b></div>
+    <div class="ehc-element-ring" aria-hidden="true">
+      <span style="--el:#4b3370" title="Dark">🌑</span><span style="--el:#4f9b63" title="Nature">🌿</span><span style="--el:#d9562e" title="Fire">🔥</span><span style="--el:#6fc9e8" title="Ice">❄️</span><span style="--el:#2f86c9" title="Water">💧</span><span style="--el:#9c7a4c" title="Earth">🪨</span><span style="--el:#d8a72e" title="Lightning">⚡</span><span style="--el:#ffd166" title="Light">☀️</span>
+    </div>
+    <div class="ehc-art-window">
+      <svg viewBox="0 0 360 360" role="img" aria-label="Secret Rare Eternal Harmony Turtle with a black rainbow frame"><use href="#ehc-turtle-art"></use></svg>
+      <span class="ehc-art-holo"></span>
+      <span class="ehc-stats-corner" aria-label="Card stats">
+        <div style="--gem:#6fe0a8"><i></i>HP<b>9,800</b></div><div style="--gem:#ff6b6b"><i></i>ATK<b>920</b></div><div style="--gem:#ffd166"><i></i>DEF<b>1,100</b></div><div style="--gem:#8fb6ff"><i></i>MAG<b>1,050</b></div><div style="--gem:#ffe58a"><i></i>SPD<b>680</b></div>
+      </span>
+    </div>
+    <div class="ehc-identity">
+      <h2>Eternal Harmony Turtle</h2>
+      <div class="ehc-identity-chips"><span>Element: Omni</span><span>Class: Guardian Titan</span></div>
+      <div class="ehc-vitals"><div><small>HP</small><b>9,800</b></div><div><small>Power</small><b>4,950</b></div></div>
+    </div>
+    <div class="ehc-ability-panel">
+      <div class="ehc-passive"><span>Harmony Core<small>Passive</small></span><p>Absorbs elemental energy and converts damage into healing.</p></div>
+      <ul class="ehc-skill-list">
+        <li><i>⚔️</i><b>Element Burst</b><em>250</em></li>
+        <li><i>✨</i><b>Harmony Nova</b><em>650</em></li>
+        <li><i>🌈</i><b>Worldshell Cataclysm</b><em>1,800</em></li>
+      </ul>
+    </div>
+    <div class="ehc-stars" aria-label="10 out of 10 stars">★★★★★★★★★★</div>
+    <div class="ehc-edition">Secret Rare · 1 / 5,000</div>
+    <div class="ehc-strip"><span>Secret Rare</span><span>Rainbow Eclipse</span><b>#001-LF-SR</b><span>Limited chase</span></div>
+  </article>
+
+  <article class="ehc-card chase" aria-label="Omniverse Turtle EX card">
+    <div class="ehc-banner"><b>👑 Galactic EX 👑</b></div>
+    <div class="ehc-element-ring" aria-hidden="true">
+      <span style="--el:#4b3370" title="Dark">🌑</span><span style="--el:#4f9b63" title="Nature">🌿</span><span style="--el:#d9562e" title="Fire">🔥</span><span style="--el:#6fc9e8" title="Ice">❄️</span><span style="--el:#2f86c9" title="Water">💧</span><span style="--el:#9c7a4c" title="Earth">🪨</span><span style="--el:#d8a72e" title="Lightning">⚡</span><span style="--el:#ffd166" title="Light">☀️</span>
+    </div>
+    <div class="ehc-art-window">
+      <svg viewBox="0 0 360 360" role="img" aria-label="Omniverse Turtle EX, its shell holding miniature worlds"><use href="#ehc-turtle-art"></use></svg>
+      <span class="ehc-worlds" aria-hidden="true"></span>
+      <span class="ehc-art-holo"></span>
+      <span class="ehc-stats-corner" aria-label="Card stats">
+        <div style="--gem:#6fe0a8"><i></i>HP<b>12,000</b></div><div style="--gem:#ff6b6b"><i></i>ATK<b>1,050</b></div><div style="--gem:#ffd166"><i></i>DEF<b>1,240</b></div><div style="--gem:#8fb6ff"><i></i>MAG<b>1,180</b></div><div style="--gem:#ffe58a"><i></i>SPD<b>740</b></div>
+      </span>
+    </div>
+    <div class="ehc-identity">
+      <h2>Omniverse Turtle EX</h2>
+      <div class="ehc-identity-chips"><span>Element: Omni</span><span>Class: Omniverse</span></div>
+      <div class="ehc-vitals"><div><small>HP</small><b>12,000</b></div><div><small>Power</small><b>∞</b></div></div>
+    </div>
+    <div class="ehc-ability-panel">
+      <div class="ehc-passive"><span>Worldshell Deity<small>Passive</small></span><p>Every element on the field counts as an ally, and each one adds a permanent shell layer.</p></div>
+      <ul class="ehc-skill-list">
+        <li><i>🌌</i><b>Omniverse Genesis</b><em>3,000</em></li>
+        <li><i>🌍</i><b>Miniature Worlds</b><em>∞</em></li>
+        <li><i>👑</i><b>Galactic Judgment</b><em>5,000</em></li>
+      </ul>
+    </div>
+    <div class="ehc-stars" aria-label="10 out of 10 stars">★★★★★★★★★★</div>
+    <div class="ehc-ex-rating" aria-label="Ultimate power rating, infinite">∞ ∞ ∞ ∞ ∞</div>
+    <div class="ehc-ex-badge">Mythic Omniverse EX</div>
+    <div class="ehc-strip"><span>Galactic EX</span><span>Omniverse</span><b>EX / 001</b><span>One print</span></div>
+  </article>
+</main>
+
+<footer class="footer">Sprite Hollow · Eternal Harmony Turtle · original vector card art, no imported creature assets</footer>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="ehc-sky" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#3b2c68"/><stop offset=".55" stop-color="#17152d"/><stop offset="1" stop-color="#090914"/></radialGradient>
+    <radialGradient id="ehc-core" cx="45%" cy="38%" r="62%"><stop offset="0" stop-color="#fff"/><stop offset=".42" stop-color="#c8fbff"/><stop offset="1" stop-color="#7f8cff"/></radialGradient>
+    <radialGradient id="ehc-eye" cx="35%" cy="28%" r="78%"><stop offset="0" stop-color="#fff"/><stop offset=".28" stop-color="#c8f8ff"/><stop offset=".62" stop-color="#738cff"/><stop offset="1" stop-color="#3a2a78"/></radialGradient>
+    <filter id="ehc-glow" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="ehc-shell"><circle cx="180" cy="202" r="78"/></clipPath>
+  </defs>
+  <symbol id="ehc-turtle-art" viewBox="0 0 360 360">
+    <rect width="360" height="360" rx="26" fill="url(#ehc-sky)"/>
+    <g fill="#fff" opacity=".72"><circle cx="35" cy="48" r="1.7"/><circle cx="76" cy="24" r="1.2"/><circle cx="122" cy="42" r="1"/><circle cx="302" cy="42" r="1.6"/><circle cx="330" cy="92" r="1.1"/><circle cx="312" cy="292" r="1.4"/><circle cx="58" cy="300" r="1.2"/><circle cx="27" cy="198" r="1.1"/><circle cx="334" cy="210" r="1"/><circle cx="150" cy="18" r="1.1"/><circle cx="246" cy="28" r="1.3"/><circle cx="288" cy="146" r="1"/><circle cx="72" cy="128" r="1"/><circle cx="322" cy="252" r="1.5"/><circle cx="46" cy="252" r="1"/></g>
+    <g fill="none" stroke-linecap="round"><ellipse cx="180" cy="206" rx="150" ry="54" stroke="#80e8ff" stroke-width="2" stroke-dasharray="2 7" opacity=".65" transform="rotate(-18 180 206)"/><ellipse cx="180" cy="206" rx="154" ry="58" stroke="#ffd166" stroke-width="1.6" stroke-dasharray="1 9" opacity=".55" transform="rotate(22 180 206)"/><ellipse cx="180" cy="206" rx="142" ry="52" stroke="#ff9ec7" stroke-width="1.5" stroke-dasharray="3 10" opacity=".5" transform="rotate(72 180 206)"/></g>
+    <g fill="var(--skin)" opacity=".97"><circle cx="180" cy="106" r="18"/><circle cx="135" cy="118" r="17"/><circle cx="225" cy="118" r="17"/><circle cx="108" cy="152" r="17"/><circle cx="252" cy="152" r="17"/><circle cx="96" cy="196" r="17"/><circle cx="264" cy="196" r="17"/><circle cx="98" cy="242" r="17"/><circle cx="262" cy="242" r="17"/><circle cx="116" cy="280" r="16"/><circle cx="244" cy="280" r="16"/><circle cx="150" cy="298" r="15"/><circle cx="210" cy="298" r="15"/></g>
+    <circle cx="180" cy="202" r="82" fill="#241d3d" stroke="var(--rim)" stroke-width="3.5"/>
+    <g clip-path="url(#ehc-shell)">
+      <circle cx="180" cy="202" r="78" fill="#231d3c"/>
+      <path d="M180 202 L180 124 A78 78 0 0 1 235.15 146.85 Z" fill="#4f9b63" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L235.15 146.85 A78 78 0 0 1 258 202 Z" fill="#d9562e" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L258 202 A78 78 0 0 1 235.15 257.15 Z" fill="#6fc9e8" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L235.15 257.15 A78 78 0 0 1 180 280 Z" fill="#2f86c9" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L180 280 A78 78 0 0 1 124.85 257.15 Z" fill="#9c7a4c" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L124.85 257.15 A78 78 0 0 1 102 202 Z" fill="#d8a72e" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L102 202 A78 78 0 0 1 124.85 146.85 Z" fill="#4b3370" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <path d="M180 202 L124.85 146.85 A78 78 0 0 1 180 124 Z" fill="#d8b04a" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+      <circle cx="180" cy="202" r="72" fill="none" stroke="rgba(255,255,255,.24)" stroke-width="1.2"/>
+      <circle cx="180" cy="202" r="62" fill="none" stroke="rgba(255,255,255,.12)" stroke-dasharray="2 4"/>
+      <g transform="translate(201 150)" opacity=".92"><path d="M0 8 L-6 -2 L-2 -2 L-7 -9 L0 -16 L7 -9 L2 -2 L6 -2 Z" fill="#dcffd4"/><rect x="-1.5" y="6" width="3" height="7" rx="1" fill="#d8b08a"/></g>
+      <g transform="translate(224 180)" opacity=".92"><path d="M0 10 C-9 2 -5 -6 0 -15 C2 -8 8 -5 7 2 C6 8 2 11 0 10 Z" fill="#ffe0a8"/></g>
+      <g transform="translate(224 224)" opacity=".92" stroke="#e9fdff" stroke-width="2" stroke-linecap="round"><path d="M-12 0H12M0 -12V12M-9 -9L9 9M9 -9L-9 9"/></g>
+      <g transform="translate(201 254)" opacity=".92"><path d="M-14 2 Q-7 -8 0 0 T14 0" fill="none" stroke="#d9f8ff" stroke-width="2.6" stroke-linecap="round"/><path d="M-11 9 Q-4 1 3 9 T17 9" fill="none" stroke="#8fdcff" stroke-width="2" stroke-linecap="round"/></g>
+      <g transform="translate(159 254)" opacity=".92"><path d="M-14 8 L-4 -8 L2 0 L7 -6 L14 8 Z" fill="#e7d2b0"/><path d="M-3 -4 L0 0 L3 -1" fill="none" stroke="#7f6848" stroke-width="1.4"/></g>
+      <g transform="translate(136 224)" opacity=".92"><path d="M2 -15 L-9 2 L-1 2 L-4 15 L9 -4 L1 -4 Z" fill="#fff0a8"/></g>
+      <g transform="translate(136 180)" opacity=".92"><path d="M4 -12 A13 13 0 1 0 4 12 A10 10 0 1 1 4 -12 Z" fill="#d8c5ff"/></g>
+      <g transform="translate(159 150)" opacity=".92"><circle r="7" fill="#fff3b0"/><g stroke="#ffe58a" stroke-width="1.8" stroke-linecap="round"><path d="M0 -12V-9M0 9V12M-12 0H-9M9 0H12M-8.5 -8.5L-6.5 -6.5M6.5 6.5L8.5 8.5M8.5 -8.5L6.5 -6.5M-6.5 6.5L-8.5 8.5"/></g></g>
+    </g>
+    <circle cx="180" cy="202" r="57" fill="rgba(9,8,22,.58)"/><circle cx="180" cy="202" r="50" fill="none" stroke="rgba(255,255,255,.22)" stroke-dasharray="3 5"/>
+    <g filter="url(#ehc-glow)"><polygon points="180,171 199,202 180,233 161,202" fill="url(#ehc-core)" stroke="#fff" stroke-width="2"/><polygon points="180,181 191,202 180,223 169,202" fill="#fff" opacity=".72"/><circle cx="180" cy="202" r="5" fill="#fff"/></g>
+    <circle cx="180" cy="98" r="51" fill="var(--skin)"/><circle cx="180" cy="98" r="53" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="5" stroke-dasharray="1 8"/>
+    <circle cx="180" cy="53" r="10" fill="var(--skin)"/><circle cx="163" cy="57" r="9" fill="var(--skin)"/><circle cx="197" cy="57" r="9" fill="var(--skin)"/>
+    <ellipse cx="180" cy="107" rx="35" ry="28" fill="var(--face)"/>
+    <ellipse cx="161" cy="98" rx="16" ry="18" fill="url(#ehc-eye)" stroke="#fff" stroke-width="2.5"/><ellipse cx="199" cy="98" rx="16" ry="18" fill="url(#ehc-eye)" stroke="#fff" stroke-width="2.5"/>
+    <ellipse cx="155" cy="91" rx="5" ry="7" fill="#fff" opacity=".92"/><ellipse cx="193" cy="91" rx="5" ry="7" fill="#fff" opacity=".92"/>
+    <circle cx="157" cy="105" r="3" fill="#fff" opacity=".8"/><circle cx="195" cy="105" r="3" fill="#fff" opacity=".8"/>
+    <ellipse cx="146" cy="113" rx="8" ry="5" fill="#ffb4cf" opacity=".75"/><ellipse cx="214" cy="113" rx="8" ry="5" fill="#ffb4cf" opacity=".75"/>
+    <path d="M173 119 Q180 125 187 119" fill="none" stroke="#7a4f5e" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M163 58 L168 40 L176 50 L180 34 L184 50 L192 40 L197 58 L188 55 L180 64 L172 55 Z" fill="#ffd166" stroke="#b8862a" stroke-width="1.2"/><circle cx="180" cy="47" r="3" fill="#8fe8ff"/><circle cx="171" cy="54" r="2" fill="#ff9ec7"/><circle cx="189" cy="54" r="2" fill="#ff9ec7"/>
+    <ellipse cx="132" cy="286" rx="24" ry="14" fill="var(--skin)" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><ellipse cx="228" cy="286" rx="24" ry="14" fill="var(--skin)" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+    <path d="M120 288 l-4 5 M130 291 l-2 6 M140 290 l1 6 M216 290 l-1 6 M226 291 l2 6 M236 288 l4 5" stroke="#c7a58c" stroke-width="1.6" stroke-linecap="round"/>
+    <g fill="none" stroke-linecap="round" opacity=".8"><path d="M51 212 Q70 188 92 207" stroke="#8fe8ff" stroke-width="1.5"/><path d="M268 212 Q288 186 309 207" stroke="#ffd166" stroke-width="1.5"/><path d="M72 128 Q86 110 106 122" stroke="#ff9ec7" stroke-width="1.2"/><path d="M254 124 Q276 108 292 128" stroke="#b18cff" stroke-width="1.2"/></g>
+    <g fill="#ffe9a8"><circle cx="52" cy="190" r="2.2"/><circle cx="308" cy="190" r="2.2"/><circle cx="82" cy="118" r="1.8"/><circle cx="280" cy="116" r="1.8"/><circle cx="46" cy="240" r="1.6"/><circle cx="314" cy="238" r="1.6"/></g>
+  </symbol>
+</svg>
+</body>
+</html>

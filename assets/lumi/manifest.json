@@ -1,0 +1,2055 @@
+{
+  "pack": "Lumi Sprite",
+  "original": true,
+  "frameSize": {
+    "width": 128,
+    "height": 128
+  },
+  "background": "transparent",
+  "forms": {
+    "baby_lumi": {
+      "name": "Baby Lumi",
+      "palette": {
+        "body": "#bfeaff",
+        "deep": "#5fa8d8",
+        "dark": "#2b5f86",
+        "wing": "#d9f7ff",
+        "eye": "#3fb6ee"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/baby_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/baby_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/baby_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/baby_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/baby_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/baby_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/baby_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/baby_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/baby_lumi/icon.png",
+      "portrait": "assets/lumi/baby_lumi/portrait.png"
+    },
+    "lumi_sprite": {
+      "name": "Lumi Sprite",
+      "palette": {
+        "body": "#6fd0ff",
+        "deep": "#2f8fd6",
+        "dark": "#173f68",
+        "wing": "#c8f2ff",
+        "eye": "#2aa8ee"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/lumi_sprite/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/lumi_sprite/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/lumi_sprite/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/lumi_sprite/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/lumi_sprite/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/lumi_sprite/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/lumi_sprite/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/lumi_sprite/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/lumi_sprite/icon.png",
+      "portrait": "assets/lumi/lumi_sprite/portrait.png"
+    },
+    "crystal_lumi": {
+      "name": "Crystal Lumi",
+      "palette": {
+        "body": "#a9f0ff",
+        "deep": "#4fb7d6",
+        "dark": "#1e5a72",
+        "wing": "#eafdff",
+        "eye": "#37c9e8"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/crystal_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/crystal_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/crystal_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/crystal_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/crystal_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/crystal_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/crystal_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/crystal_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/crystal_lumi/icon.png",
+      "portrait": "assets/lumi/crystal_lumi/portrait.png"
+    },
+    "royal_lumi": {
+      "name": "Royal Lumi",
+      "palette": {
+        "body": "#8fb6ff",
+        "deep": "#3f63c8",
+        "dark": "#1f2f78",
+        "wing": "#e8eeff",
+        "eye": "#ffd166"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/royal_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/royal_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/royal_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/royal_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/royal_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/royal_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/royal_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/royal_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/royal_lumi/icon.png",
+      "portrait": "assets/lumi/royal_lumi/portrait.png"
+    },
+    "shadow_lumi": {
+      "name": "Shadow Lumi",
+      "palette": {
+        "body": "#6a6a92",
+        "deep": "#30304f",
+        "dark": "#141422",
+        "wing": "#b9b9d8",
+        "eye": "#a06bff"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/shadow_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/shadow_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/shadow_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/shadow_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/shadow_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/shadow_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/shadow_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/shadow_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/shadow_lumi/icon.png",
+      "portrait": "assets/lumi/shadow_lumi/portrait.png"
+    },
+    "storm_lumi": {
+      "name": "Storm Lumi",
+      "palette": {
+        "body": "#9fb6d6",
+        "deep": "#4a6a96",
+        "dark": "#22334f",
+        "wing": "#e2ecff",
+        "eye": "#ffe066"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/storm_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/storm_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/storm_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/storm_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/storm_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/storm_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/storm_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/storm_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/storm_lumi/icon.png",
+      "portrait": "assets/lumi/storm_lumi/portrait.png"
+    },
+    "ember_lumi": {
+      "name": "Ember Lumi",
+      "palette": {
+        "body": "#ffb08a",
+        "deep": "#d8643c",
+        "dark": "#6d2415",
+        "wing": "#ffe3cc",
+        "eye": "#ffd166"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/ember_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/ember_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/ember_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/ember_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/ember_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/ember_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/ember_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/ember_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/ember_lumi/icon.png",
+      "portrait": "assets/lumi/ember_lumi/portrait.png"
+    },
+    "frost_lumi": {
+      "name": "Frost Lumi",
+      "palette": {
+        "body": "#cdefff",
+        "deep": "#7fb8d6",
+        "dark": "#345d78",
+        "wing": "#f2fdff",
+        "eye": "#8be9ff"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/frost_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/frost_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/frost_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/frost_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/frost_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/frost_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/frost_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/frost_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/frost_lumi/icon.png",
+      "portrait": "assets/lumi/frost_lumi/portrait.png"
+    },
+    "nature_lumi": {
+      "name": "Nature Lumi",
+      "palette": {
+        "body": "#b6e8b0",
+        "deep": "#5aa365",
+        "dark": "#24502c",
+        "wing": "#e6ffe2",
+        "eye": "#ffd166"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/nature_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/nature_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/nature_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/nature_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/nature_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/nature_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/nature_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/nature_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/nature_lumi/icon.png",
+      "portrait": "assets/lumi/nature_lumi/portrait.png"
+    },
+    "galaxy_lumi": {
+      "name": "Galaxy Lumi",
+      "palette": {
+        "body": "#a99aff",
+        "deep": "#5b4bc4",
+        "dark": "#241a5c",
+        "wing": "#e7e0ff",
+        "eye": "#8be9ff"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/galaxy_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/galaxy_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/galaxy_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/galaxy_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/galaxy_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/galaxy_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/galaxy_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/galaxy_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/galaxy_lumi/icon.png",
+      "portrait": "assets/lumi/galaxy_lumi/portrait.png"
+    },
+    "void_lumi": {
+      "name": "Void Lumi",
+      "palette": {
+        "body": "#7a63b0",
+        "deep": "#3a2a66",
+        "dark": "#150c2e",
+        "wing": "#cfc0f5",
+        "eye": "#ff9ec7"
+      },
+      "animations": {
+        "idle": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/idle.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "blink": {
+          "frames": 4,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/void_lumi/blink.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "walk": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/walk.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "run": {
+          "frames": 8,
+          "fps": 16,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/run.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "jump": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/void_lumi/jump.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "float": {
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/float.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "fly": {
+          "frames": 8,
+          "fps": 14,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/fly.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "celebrate": {
+          "frames": 8,
+          "fps": 10,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/celebrate.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "sleep": {
+          "frames": 4,
+          "fps": 4,
+          "loop": true,
+          "sheet": "assets/lumi/void_lumi/sleep.png",
+          "columns": 4,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "hurt": {
+          "frames": 3,
+          "fps": 12,
+          "loop": false,
+          "sheet": "assets/lumi/void_lumi/hurt.png",
+          "columns": 3,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "attack": {
+          "frames": 6,
+          "fps": 14,
+          "loop": false,
+          "sheet": "assets/lumi/void_lumi/attack.png",
+          "columns": 6,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "magic_cast": {
+          "frames": 8,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/void_lumi/magic_cast.png",
+          "columns": 8,
+          "frameWidth": 128,
+          "frameHeight": 128
+        },
+        "evolve": {
+          "frames": 12,
+          "fps": 10,
+          "loop": false,
+          "sheet": "assets/lumi/void_lumi/evolve.png",
+          "columns": 12,
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      "atlas": {
+        "image": "assets/lumi/void_lumi/atlas.png",
+        "cell": 128,
+        "columns": 12,
+        "rows": 8,
+        "size": {
+          "w": 1536,
+          "h": 1024
+        },
+        "order": [
+          "idle",
+          "walk",
+          "run",
+          "fly",
+          "jump",
+          "attack",
+          "magic_cast",
+          "evolve"
+        ],
+        "regions": {
+          "idle": {
+            "row": 0,
+            "frames": 8
+          },
+          "walk": {
+            "row": 1,
+            "frames": 8
+          },
+          "run": {
+            "row": 2,
+            "frames": 8
+          },
+          "fly": {
+            "row": 3,
+            "frames": 8
+          },
+          "jump": {
+            "row": 4,
+            "frames": 6
+          },
+          "attack": {
+            "row": 5,
+            "frames": 6
+          },
+          "magic_cast": {
+            "row": 6,
+            "frames": 8
+          },
+          "evolve": {
+            "row": 7,
+            "frames": 12
+          }
+        }
+      },
+      "icon": "assets/lumi/void_lumi/icon.png",
+      "portrait": "assets/lumi/void_lumi/portrait.png"
+    }
+  },
+  "totals": {
+    "forms": 11,
+    "animations": 13,
+    "sheets": 143,
+    "frames": 1001,
+    "atlases": 11,
+    "icons": 11,
+    "portraits": 11
+  }
+}

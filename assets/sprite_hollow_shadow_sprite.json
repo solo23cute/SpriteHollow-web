@@ -1,0 +1,9 @@
+{
+  "id": "shadow_sprite",
+  "rarity": "legendary",
+  "abilities": [
+    "dark_dash",
+    "shadow_blink"
+  ],
+  "wings": false
+}

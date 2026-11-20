@@ -1,0 +1,9 @@
+{
+  "id": "ember_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "fire_trail",
+    "phoenix_jump"
+  ],
+  "wings": false
+}

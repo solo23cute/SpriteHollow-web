@@ -1,0 +1,9 @@
+{
+  "id": "halloween_sprite",
+  "rarity": "legendary",
+  "abilities": [
+    "spooky_glow",
+    "treat_rush"
+  ],
+  "wings": false
+}

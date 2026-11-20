@@ -1,0 +1,9 @@
+{
+  "id": "neon_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "neon_glow",
+    "light_beam"
+  ],
+  "wings": true
+}

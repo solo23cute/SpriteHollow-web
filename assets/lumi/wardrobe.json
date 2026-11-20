@@ -1,0 +1,534 @@
+{
+  "round": [
+    {
+      "slot": 0,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 1,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 2,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 3,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 4,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 5,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    }
+  ],
+  "leaf": [
+    {
+      "slot": 0,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 1,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 2,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 3,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 4,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 5,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    }
+  ],
+  "fin": [
+    {
+      "slot": 0,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 1,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 2,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 3,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 4,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 5,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    }
+  ],
+  "horn": [
+    {
+      "slot": 0,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 1,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 2,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 3,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 4,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 5,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    }
+  ],
+  "crystal": [
+    {
+      "slot": 0,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 1,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 2,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 3,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 4,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 5,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    }
+  ],
+  "glow": [
+    {
+      "slot": 0,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 1,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 2,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 3,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 4,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 5,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    }
+  ],
+  "fur": [
+    {
+      "slot": 0,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 1,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 2,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 3,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 4,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 5,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    }
+  ],
+  "spike": [
+    {
+      "slot": 0,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 1,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 2,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 3,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 4,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 5,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    }
+  ],
+  "shell": [
+    {
+      "slot": 0,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 1,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 2,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 3,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 4,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 5,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    }
+  ],
+  "feather": [
+    {
+      "slot": 0,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 1,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 2,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 3,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 4,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 5,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    }
+  ],
+  "flower": [
+    {
+      "slot": 0,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 1,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 2,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 3,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 4,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 5,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    }
+  ],
+  "robot": [
+    {
+      "slot": 0,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 1,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 2,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 3,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 4,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 5,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    }
+  ],
+  "snow": [
+    {
+      "slot": 0,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 1,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 2,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 3,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 4,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    },
+    {
+      "slot": 5,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    }
+  ],
+  "dragon": [
+    {
+      "slot": 0,
+      "garment": "scarf",
+      "name": "Scarf",
+      "icon": "\ud83e\udde3"
+    },
+    {
+      "slot": 1,
+      "garment": "cape",
+      "name": "Cape",
+      "icon": "\ud83e\uddb8"
+    },
+    {
+      "slot": 2,
+      "garment": "hoodie",
+      "name": "Hoodie",
+      "icon": "\ud83e\udde5"
+    },
+    {
+      "slot": 3,
+      "garment": "armour",
+      "name": "Armour",
+      "icon": "\ud83d\udee1\ufe0f"
+    },
+    {
+      "slot": 4,
+      "garment": "vest",
+      "name": "Vest",
+      "icon": "\ud83e\uddba"
+    },
+    {
+      "slot": 5,
+      "garment": "robe",
+      "name": "Robe",
+      "icon": "\ud83d\udc58"
+    }
+  ]
+}

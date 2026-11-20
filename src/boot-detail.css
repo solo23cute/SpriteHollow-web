@@ -1,0 +1,74 @@
+/* Sprite detail by rendered size.
+   sprite-detail.js measures each sprite SVG and tags it with cumulative
+   size classes, so the markup stays identical everywhere. The chip tier
+   hides boot hardware and swaps four back-legwear styles to deliberate
+   glyphs; the small tier also keeps the three back details hidden until
+   the sole stripe reaches one rendered pixel at 86px. */
+.sprite-motion.boot-detail-chip .turn-strap,
+.sprite-motion.boot-detail-chip .turn-buckle,
+.sprite-motion.boot-detail-chip .turn-buckle-inset,
+.sprite-motion.boot-detail-chip .turn-fold {
+  display: none;
+}
+
+.sprite-motion.boot-detail-small .turn-back-sole,
+.sprite-motion.boot-detail-small .turn-back-shin,
+.sprite-motion.boot-detail-small .turn-back-hub {
+  display: none;
+}
+
+/* Chip back-legwear glyphs replace the normal pair only at avatar size. */
+.sprite-motion .turn-chip-glyph {
+  display: none;
+}
+
+.sprite-motion.boot-detail-chip .turn-chip-glyph {
+  display: inline;
+}
+
+.sprite-motion.boot-detail-chip .turn-chip-glyph + .turn-back-wear {
+  display: none;
+}
+
+/* At chip size the foot pair needs a wider stance and a deeper lift/burial
+   than the 1.6-unit lift and .72 far scale used by larger sprites. */
+.sprite-motion.boot-detail-chip .turn-back-side {
+  transform: translate(calc(var(--x-chip) * 1px), calc(var(--y-chip) * 1px));
+}
+
+.sprite-motion.boot-detail-chip .turn-back-far {
+  transform: translate(calc(var(--x-chip) * 1px), calc(var(--y-chip) * 1px)) translate(0px, 106px) scale(.52) translate(0px, -106px);
+}
+
+/* The rim has to resolve to a pixel at chip size, but a 1.5-unit stroke at
+   120px reads as a halo. The chip ring is drawn over the foot at full
+   opacity; larger sizes keep a thinner, softer semicircle. */
+.sprite-motion .turn-back-rim {
+  stroke-width: .8;
+  opacity: .55;
+}
+
+.sprite-motion.boot-detail-small .turn-back-rim {
+  stroke-width: 3.2;
+  opacity: .9;
+}
+
+.sprite-motion .turn-back-rim-chip {
+  display: none;
+}
+
+.sprite-motion.boot-detail-chip .turn-back-rim {
+  display: none;
+}
+
+.sprite-motion.boot-detail-chip .turn-back-rim-chip {
+  display: inline;
+  stroke-width: 8;
+  opacity: 1;
+}
+
+.sprite-motion.boot-detail-pet .turn-buckle,
+.sprite-motion.boot-detail-pet .turn-buckle-inset,
+.sprite-motion.boot-detail-pet .turn-fold {
+  display: none;
+}

@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "note": "One row per animation from the manifest: each row starts at x 0 and holds frameCount cells of 256px, left to right.",
+  "columns": 8,
+  "frameSize": {
+    "width": 256,
+    "height": 256
+  },
+  "rows": [
+    {
+      "animation": "idle",
+      "row": 0,
+      "startFrame": 0,
+      "frameCount": 6,
+      "fps": 8,
+      "loop": true,
+      "x": 0,
+      "y": 0,
+      "width": 1536,
+      "height": 256
+    },
+    {
+      "animation": "blink",
+      "row": 1,
+      "startFrame": 8,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "x": 0,
+      "y": 256,
+      "width": 1024,
+      "height": 256
+    },
+    {
+      "animation": "walk",
+      "row": 2,
+      "startFrame": 16,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "x": 0,
+      "y": 512,
+      "width": 2048,
+      "height": 256
+    },
+    {
+      "animation": "run",
+      "row": 3,
+      "startFrame": 24,
+      "frameCount": 8,
+      "fps": 16,
+      "loop": true,
+      "x": 0,
+      "y": 768,
+      "width": 2048,
+      "height": 256
+    },
+    {
+      "animation": "jumpStart",
+      "row": 4,
+      "startFrame": 32,
+      "frameCount": 3,
+      "fps": 12,
+      "loop": false,
+      "x": 0,
+      "y": 1024,
+      "width": 768,
+      "height": 256
+    },
+    {
+      "animation": "jumpLoop",
+      "row": 5,
+      "startFrame": 40,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": true,
+      "x": 0,
+      "y": 1280,
+      "width": 512,
+      "height": 256
+    },
+    {
+      "animation": "fall",
+      "row": 6,
+      "startFrame": 48,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": true,
+      "x": 0,
+      "y": 1536,
+      "width": 512,
+      "height": 256
+    },
+    {
+      "animation": "land",
+      "row": 7,
+      "startFrame": 56,
+      "frameCount": 3,
+      "fps": 12,
+      "loop": false,
+      "x": 0,
+      "y": 1792,
+      "width": 768,
+      "height": 256
+    },
+    {
+      "animation": "float",
+      "row": 8,
+      "startFrame": 64,
+      "frameCount": 6,
+      "fps": 10,
+      "loop": true,
+      "x": 0,
+      "y": 2048,
+      "width": 1536,
+      "height": 256
+    },
+    {
+      "animation": "fly",
+      "row": 9,
+      "startFrame": 72,
+      "frameCount": 6,
+      "fps": 15,
+      "loop": true,
+      "x": 0,
+      "y": 2304,
+      "width": 1536,
+      "height": 256
+    },
+    {
+      "animation": "wave",
+      "row": 10,
+      "startFrame": 80,
+      "frameCount": 6,
+      "fps": 10,
+      "loop": false,
+      "x": 0,
+      "y": 2560,
+      "width": 1536,
+      "height": 256
+    },
+    {
+      "animation": "dance",
+      "row": 11,
+      "startFrame": 88,
+      "frameCount": 8,
+      "fps": 14,
+      "loop": true,
+      "x": 0,
+      "y": 2816,
+      "width": 2048,
+      "height": 256
+    },
+    {
+      "animation": "celebrate",
+      "row": 12,
+      "startFrame": 96,
+      "frameCount": 8,
+      "fps": 14,
+      "loop": false,
+      "x": 0,
+      "y": 3072,
+      "width": 2048,
+      "height": 256
+    },
+    {
+      "animation": "victory",
+      "row": 13,
+      "startFrame": 104,
+      "frameCount": 3,
+      "fps": 14,
+      "loop": false,
+      "x": 0,
+      "y": 3328,
+      "width": 768,
+      "height": 256
+    }
+  ],
+  "requiredHeight": 3584
+}

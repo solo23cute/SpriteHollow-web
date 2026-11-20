@@ -1,0 +1,8 @@
+{
+  "id": "cloud_bunny",
+  "rarity": "common",
+  "abilities": [
+    "cloud_hop",
+    "fluff_puff"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "christmas_sprite",
+  "rarity": "legendary",
+  "abilities": [
+    "frost_gift",
+    "jingle_dash"
+  ],
+  "wings": true
+}

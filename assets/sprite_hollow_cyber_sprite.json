@@ -1,0 +1,9 @@
+{
+  "id": "cyber_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "data_spike",
+    "cyber_cloak"
+  ],
+  "wings": false
+}

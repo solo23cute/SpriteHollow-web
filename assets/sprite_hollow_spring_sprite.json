@@ -1,0 +1,9 @@
+{
+  "id": "spring_sprite",
+  "rarity": "rare",
+  "abilities": [
+    "blossom_burst",
+    "petal_dance"
+  ],
+  "wings": false
+}

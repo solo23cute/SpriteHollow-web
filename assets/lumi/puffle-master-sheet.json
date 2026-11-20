@@ -1,0 +1,1629 @@
+{
+  "version": 1,
+  "name": "Sprite Puffle Master Sprite Sheet",
+  "description": "16 x 16 grid of 64 px cells. One base body shared by all eleven breeds; breed colour comes from the palette file and breed FX from fxOverrides.",
+  "image": "assets/lumi/art/puffle-master-sheet-64.png",
+  "paletteFile": "assets/lumi/puffle-master-palettes.json",
+  "cell": {
+    "width": 64,
+    "height": 64
+  },
+  "columns": 16,
+  "rows": 16,
+  "slots": 256,
+  "size": {
+    "width": 1024,
+    "height": 1024
+  },
+  "background": "transparent",
+  "layers": {
+    "body": {
+      "row": 1,
+      "slots": [
+        1,
+        192
+      ]
+    },
+    "tail": {
+      "row": 13,
+      "slots": [
+        193,
+        208
+      ]
+    },
+    "eyes": {
+      "row": 14,
+      "slots": [
+        209,
+        216
+      ]
+    },
+    "mouth": {
+      "row": 14,
+      "slots": [
+        217,
+        224
+      ]
+    },
+    "fx": {
+      "rows": [
+        15,
+        16
+      ],
+      "slots": [
+        225,
+        256
+      ]
+    }
+  },
+  "clips": {
+    "idle": {
+      "name": "idle",
+      "label": "Idle",
+      "kind": "body",
+      "row": 1,
+      "start": 0,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "blink": {
+      "name": "blink",
+      "label": "Blink",
+      "kind": "body",
+      "row": 1,
+      "start": 8,
+      "frames": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    "lookAround": {
+      "name": "lookAround",
+      "label": "Look Around",
+      "kind": "body",
+      "row": 1,
+      "start": 12,
+      "frames": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "fps": 5,
+      "loop": true,
+      "slots": [
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    "squish": {
+      "name": "squish",
+      "label": "Squish",
+      "kind": "body",
+      "row": 2,
+      "start": 16,
+      "frames": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    "happyPuff": {
+      "name": "happyPuff",
+      "label": "Happy Puff",
+      "kind": "body",
+      "row": 2,
+      "start": 20,
+      "frames": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "fps": 12,
+      "loop": false,
+      "slots": [
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    "tailWag": {
+      "name": "tailWag",
+      "label": "Tail Wag",
+      "kind": "body",
+      "row": 2,
+      "start": 24,
+      "frames": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        25,
+        26,
+        27,
+        28
+      ]
+    },
+    "heartEmit": {
+      "name": "heartEmit",
+      "label": "Heart Emit",
+      "kind": "body",
+      "row": 2,
+      "start": 28,
+      "frames": [
+        28,
+        29,
+        30,
+        31
+      ],
+      "fps": 8,
+      "loop": false,
+      "slots": [
+        29,
+        30,
+        31,
+        32
+      ]
+    },
+    "fallOver": {
+      "name": "fallOver",
+      "label": "Fall Over",
+      "kind": "body",
+      "row": 3,
+      "start": 32,
+      "frames": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "fps": 8,
+      "loop": false,
+      "slots": [
+        33,
+        34,
+        35,
+        36
+      ]
+    },
+    "rollLeft": {
+      "name": "rollLeft",
+      "label": "Roll Left",
+      "kind": "body",
+      "row": 3,
+      "start": 36,
+      "frames": [
+        36,
+        37,
+        38,
+        39
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        37,
+        38,
+        39,
+        40
+      ]
+    },
+    "rollRight": {
+      "name": "rollRight",
+      "label": "Roll Right",
+      "kind": "body",
+      "row": 3,
+      "start": 40,
+      "frames": [
+        40,
+        41,
+        42,
+        43
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        41,
+        42,
+        43,
+        44
+      ]
+    },
+    "fluffBurst": {
+      "name": "fluffBurst",
+      "label": "Fluff Burst",
+      "kind": "body",
+      "row": 3,
+      "start": 44,
+      "frames": [
+        44,
+        45,
+        46,
+        47
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        45,
+        46,
+        47,
+        48
+      ]
+    },
+    "noticeFood": {
+      "name": "noticeFood",
+      "label": "Notice Food",
+      "kind": "body",
+      "row": 4,
+      "start": 48,
+      "frames": [
+        48,
+        49,
+        50,
+        51
+      ],
+      "fps": 7,
+      "loop": false,
+      "slots": [
+        49,
+        50,
+        51,
+        52
+      ]
+    },
+    "chomp": {
+      "name": "chomp",
+      "label": "Chomp",
+      "kind": "body",
+      "row": 4,
+      "start": 52,
+      "frames": [
+        52,
+        53,
+        54,
+        55
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        53,
+        54,
+        55,
+        56
+      ]
+    },
+    "chew": {
+      "name": "chew",
+      "label": "Chew",
+      "kind": "body",
+      "row": 4,
+      "start": 56,
+      "frames": [
+        56,
+        57,
+        58,
+        59
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        57,
+        58,
+        59,
+        60
+      ]
+    },
+    "celebrateFeed": {
+      "name": "celebrateFeed",
+      "label": "Celebrate",
+      "kind": "body",
+      "row": 4,
+      "start": 60,
+      "frames": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "fps": 12,
+      "loop": false,
+      "slots": [
+        61,
+        62,
+        63,
+        64
+      ]
+    },
+    "walk": {
+      "name": "walk",
+      "label": "Walk",
+      "kind": "body",
+      "row": 5,
+      "start": 64,
+      "frames": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        65,
+        66,
+        67,
+        68
+      ]
+    },
+    "run": {
+      "name": "run",
+      "label": "Run",
+      "kind": "body",
+      "row": 5,
+      "start": 68,
+      "frames": [
+        68,
+        69,
+        70,
+        71
+      ],
+      "fps": 16,
+      "loop": true,
+      "slots": [
+        69,
+        70,
+        71,
+        72
+      ]
+    },
+    "jump": {
+      "name": "jump",
+      "label": "Jump",
+      "kind": "body",
+      "row": 5,
+      "start": 72,
+      "frames": [
+        72,
+        73,
+        74,
+        75
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        73,
+        74,
+        75,
+        76
+      ]
+    },
+    "land": {
+      "name": "land",
+      "label": "Land",
+      "kind": "body",
+      "row": 5,
+      "start": 76,
+      "frames": [
+        76,
+        77,
+        78,
+        79
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        77,
+        78,
+        79,
+        80
+      ]
+    },
+    "playReady": {
+      "name": "playReady",
+      "label": "Ready",
+      "kind": "body",
+      "row": 6,
+      "start": 80,
+      "frames": [
+        80,
+        81,
+        82,
+        83
+      ],
+      "fps": 6,
+      "loop": false,
+      "slots": [
+        81,
+        82,
+        83,
+        84
+      ]
+    },
+    "leap": {
+      "name": "leap",
+      "label": "Leap",
+      "kind": "body",
+      "row": 6,
+      "start": 84,
+      "frames": [
+        84,
+        85,
+        86,
+        87
+      ],
+      "fps": 12,
+      "loop": false,
+      "slots": [
+        85,
+        86,
+        87,
+        88
+      ]
+    },
+    "catch": {
+      "name": "catch",
+      "label": "Catch",
+      "kind": "body",
+      "row": 6,
+      "start": 88,
+      "frames": [
+        88,
+        89,
+        90,
+        91
+      ],
+      "fps": 12,
+      "loop": false,
+      "slots": [
+        89,
+        90,
+        91,
+        92
+      ]
+    },
+    "victorySpin": {
+      "name": "victorySpin",
+      "label": "Victory Spin",
+      "kind": "body",
+      "row": 6,
+      "start": 92,
+      "frames": [
+        92,
+        93,
+        94,
+        95
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        93,
+        94,
+        95,
+        96
+      ]
+    },
+    "yawn": {
+      "name": "yawn",
+      "label": "Yawn",
+      "kind": "body",
+      "row": 7,
+      "start": 96,
+      "frames": [
+        96,
+        97,
+        98,
+        99
+      ],
+      "fps": 6,
+      "loop": false,
+      "slots": [
+        97,
+        98,
+        99,
+        100
+      ]
+    },
+    "curl": {
+      "name": "curl",
+      "label": "Curl",
+      "kind": "body",
+      "row": 7,
+      "start": 100,
+      "frames": [
+        100,
+        101,
+        102,
+        103
+      ],
+      "fps": 6,
+      "loop": false,
+      "slots": [
+        101,
+        102,
+        103,
+        104
+      ]
+    },
+    "sleepLoop": {
+      "name": "sleepLoop",
+      "label": "Sleep Loop",
+      "kind": "body",
+      "row": 7,
+      "start": 104,
+      "frames": [
+        104,
+        105,
+        106,
+        107
+      ],
+      "fps": 3,
+      "loop": true,
+      "slots": [
+        105,
+        106,
+        107,
+        108
+      ]
+    },
+    "dreaming": {
+      "name": "dreaming",
+      "label": "Dreaming",
+      "kind": "body",
+      "row": 7,
+      "start": 108,
+      "frames": [
+        108,
+        109,
+        110,
+        111
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        109,
+        110,
+        111,
+        112
+      ]
+    },
+    "noticePlayer": {
+      "name": "noticePlayer",
+      "label": "Notice Player",
+      "kind": "body",
+      "row": 8,
+      "start": 112,
+      "frames": [
+        112,
+        113,
+        114,
+        115
+      ],
+      "fps": 6,
+      "loop": false,
+      "slots": [
+        113,
+        114,
+        115,
+        116
+      ]
+    },
+    "wave": {
+      "name": "wave",
+      "label": "Wave",
+      "kind": "body",
+      "row": 8,
+      "start": 116,
+      "frames": [
+        116,
+        117,
+        118,
+        119
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        117,
+        118,
+        119,
+        120
+      ]
+    },
+    "hop": {
+      "name": "hop",
+      "label": "Hop",
+      "kind": "body",
+      "row": 8,
+      "start": 120,
+      "frames": [
+        120,
+        121,
+        122,
+        123
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        121,
+        122,
+        123,
+        124
+      ]
+    },
+    "welcomeHeart": {
+      "name": "welcomeHeart",
+      "label": "Welcome Heart",
+      "kind": "body",
+      "row": 8,
+      "start": 124,
+      "frames": [
+        124,
+        125,
+        126,
+        127
+      ],
+      "fps": 8,
+      "loop": false,
+      "slots": [
+        125,
+        126,
+        127,
+        128
+      ]
+    },
+    "sad": {
+      "name": "sad",
+      "label": "Sad",
+      "kind": "body",
+      "row": 9,
+      "start": 128,
+      "frames": [
+        128,
+        129,
+        130,
+        131
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        129,
+        130,
+        131,
+        132
+      ]
+    },
+    "lonely": {
+      "name": "lonely",
+      "label": "Lonely",
+      "kind": "body",
+      "row": 9,
+      "start": 132,
+      "frames": [
+        132,
+        133,
+        134,
+        135
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        133,
+        134,
+        135,
+        136
+      ]
+    },
+    "excited": {
+      "name": "excited",
+      "label": "Excited",
+      "kind": "body",
+      "row": 9,
+      "start": 136,
+      "frames": [
+        136,
+        137,
+        138,
+        139
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        137,
+        138,
+        139,
+        140
+      ]
+    },
+    "surprised": {
+      "name": "surprised",
+      "label": "Surprised",
+      "kind": "body",
+      "row": 9,
+      "start": 140,
+      "frames": [
+        140,
+        141,
+        142,
+        143
+      ],
+      "fps": 6,
+      "loop": true,
+      "slots": [
+        141,
+        142,
+        143,
+        144
+      ]
+    },
+    "glow": {
+      "name": "glow",
+      "label": "Glow",
+      "kind": "body",
+      "row": 10,
+      "start": 144,
+      "frames": [
+        144,
+        145,
+        146,
+        147
+      ],
+      "fps": 8,
+      "loop": false,
+      "slots": [
+        145,
+        146,
+        147,
+        148
+      ]
+    },
+    "ascend": {
+      "name": "ascend",
+      "label": "Ascend",
+      "kind": "body",
+      "row": 10,
+      "start": 148,
+      "frames": [
+        148,
+        149,
+        150,
+        151
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        149,
+        150,
+        151,
+        152
+      ]
+    },
+    "transform": {
+      "name": "transform",
+      "label": "Transform",
+      "kind": "body",
+      "row": 10,
+      "start": 152,
+      "frames": [
+        152,
+        153,
+        154,
+        155
+      ],
+      "fps": 8,
+      "loop": false,
+      "slots": [
+        153,
+        154,
+        155,
+        156
+      ]
+    },
+    "levelCelebrate": {
+      "name": "levelCelebrate",
+      "label": "Celebrate",
+      "kind": "body",
+      "row": 10,
+      "start": 156,
+      "frames": [
+        156,
+        157,
+        158,
+        159
+      ],
+      "fps": 12,
+      "loop": false,
+      "slots": [
+        157,
+        158,
+        159,
+        160
+      ]
+    },
+    "expand": {
+      "name": "expand",
+      "label": "Expand",
+      "kind": "body",
+      "row": 11,
+      "start": 160,
+      "frames": [
+        160,
+        161,
+        162,
+        163
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        161,
+        162,
+        163,
+        164
+      ]
+    },
+    "expandMore": {
+      "name": "expandMore",
+      "label": "Expand More",
+      "kind": "body",
+      "row": 11,
+      "start": 164,
+      "frames": [
+        164,
+        165,
+        166,
+        167
+      ],
+      "fps": 10,
+      "loop": false,
+      "slots": [
+        165,
+        166,
+        167,
+        168
+      ]
+    },
+    "cloudForm": {
+      "name": "cloudForm",
+      "label": "Cloud Form",
+      "kind": "body",
+      "row": 11,
+      "start": 168,
+      "frames": [
+        168,
+        169,
+        170,
+        171
+      ],
+      "fps": 6,
+      "loop": true,
+      "slots": [
+        169,
+        170,
+        171,
+        172
+      ]
+    },
+    "megaFloof": {
+      "name": "megaFloof",
+      "label": "Mega Floof",
+      "kind": "body",
+      "row": 11,
+      "start": 172,
+      "frames": [
+        172,
+        173,
+        174,
+        175
+      ],
+      "fps": 5,
+      "loop": true,
+      "slots": [
+        173,
+        174,
+        175,
+        176
+      ]
+    },
+    "cutePose": {
+      "name": "cutePose",
+      "label": "Cute Pose",
+      "kind": "body",
+      "row": 12,
+      "start": 176,
+      "frames": [
+        176,
+        177,
+        178,
+        179
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        177,
+        178,
+        179,
+        180
+      ]
+    },
+    "heroPose": {
+      "name": "heroPose",
+      "label": "Hero Pose",
+      "kind": "body",
+      "row": 12,
+      "start": 180,
+      "frames": [
+        180,
+        181,
+        182,
+        183
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        181,
+        182,
+        183,
+        184
+      ]
+    },
+    "sleepyPose": {
+      "name": "sleepyPose",
+      "label": "Sleepy Pose",
+      "kind": "body",
+      "row": 12,
+      "start": 184,
+      "frames": [
+        184,
+        185,
+        186,
+        187
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        185,
+        186,
+        187,
+        188
+      ]
+    },
+    "legendaryPose": {
+      "name": "legendaryPose",
+      "label": "Legendary Pose",
+      "kind": "body",
+      "row": 12,
+      "start": 188,
+      "frames": [
+        188,
+        189,
+        190,
+        191
+      ],
+      "fps": 4,
+      "loop": true,
+      "slots": [
+        189,
+        190,
+        191,
+        192
+      ]
+    },
+    "tailCenter": {
+      "name": "tailCenter",
+      "label": "Tail Center",
+      "kind": "tail",
+      "row": 13,
+      "start": 192,
+      "frames": [
+        192,
+        193,
+        194,
+        195
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        193,
+        194,
+        195,
+        196
+      ]
+    },
+    "tailLeft": {
+      "name": "tailLeft",
+      "label": "Tail Left",
+      "kind": "tail",
+      "row": 13,
+      "start": 196,
+      "frames": [
+        196,
+        197,
+        198,
+        199
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        197,
+        198,
+        199,
+        200
+      ]
+    },
+    "tailRight": {
+      "name": "tailRight",
+      "label": "Tail Right",
+      "kind": "tail",
+      "row": 13,
+      "start": 200,
+      "frames": [
+        200,
+        201,
+        202,
+        203
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        201,
+        202,
+        203,
+        204
+      ]
+    },
+    "tailBounce": {
+      "name": "tailBounce",
+      "label": "Tail Bounce",
+      "kind": "tail",
+      "row": 13,
+      "start": 204,
+      "frames": [
+        204,
+        205,
+        206,
+        207
+      ],
+      "fps": 8,
+      "loop": true,
+      "slots": [
+        205,
+        206,
+        207,
+        208
+      ]
+    },
+    "eyeOpen": {
+      "name": "eyeOpen",
+      "label": "Open",
+      "kind": "eyes",
+      "state": "open",
+      "row": 14,
+      "start": 208,
+      "frames": [
+        208
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        209
+      ]
+    },
+    "eyeHalf": {
+      "name": "eyeHalf",
+      "label": "Half",
+      "kind": "eyes",
+      "state": "half",
+      "row": 14,
+      "start": 209,
+      "frames": [
+        209
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        210
+      ]
+    },
+    "eyeClosed": {
+      "name": "eyeClosed",
+      "label": "Closed",
+      "kind": "eyes",
+      "state": "closed",
+      "row": 14,
+      "start": 210,
+      "frames": [
+        210
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        211
+      ]
+    },
+    "eyeHappy": {
+      "name": "eyeHappy",
+      "label": "Happy",
+      "kind": "eyes",
+      "state": "happy",
+      "row": 14,
+      "start": 211,
+      "frames": [
+        211
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        212
+      ]
+    },
+    "eyeStar": {
+      "name": "eyeStar",
+      "label": "Star Eyes",
+      "kind": "eyes",
+      "state": "star",
+      "row": 14,
+      "start": 212,
+      "frames": [
+        212
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        213
+      ]
+    },
+    "eyeSleepy": {
+      "name": "eyeSleepy",
+      "label": "Sleepy",
+      "kind": "eyes",
+      "state": "sleepy",
+      "row": 14,
+      "start": 213,
+      "frames": [
+        213
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        214
+      ]
+    },
+    "eyeSad": {
+      "name": "eyeSad",
+      "label": "Sad",
+      "kind": "eyes",
+      "state": "sad",
+      "row": 14,
+      "start": 214,
+      "frames": [
+        214
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        215
+      ]
+    },
+    "eyeSurprised": {
+      "name": "eyeSurprised",
+      "label": "Surprised",
+      "kind": "eyes",
+      "state": "surprised",
+      "row": 14,
+      "start": 215,
+      "frames": [
+        215
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        216
+      ]
+    },
+    "mouthSmile": {
+      "name": "mouthSmile",
+      "label": "Smile",
+      "kind": "mouth",
+      "state": "smile",
+      "row": 14,
+      "start": 216,
+      "frames": [
+        216
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        217
+      ]
+    },
+    "mouthOpen": {
+      "name": "mouthOpen",
+      "label": "Open",
+      "kind": "mouth",
+      "state": "open",
+      "row": 14,
+      "start": 217,
+      "frames": [
+        217
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        218
+      ]
+    },
+    "mouthLaugh": {
+      "name": "mouthLaugh",
+      "label": "Laugh",
+      "kind": "mouth",
+      "state": "laugh",
+      "row": 14,
+      "start": 218,
+      "frames": [
+        218
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        219
+      ]
+    },
+    "mouthYawn": {
+      "name": "mouthYawn",
+      "label": "Yawn",
+      "kind": "mouth",
+      "state": "yawn",
+      "row": 14,
+      "start": 219,
+      "frames": [
+        219
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        220
+      ]
+    },
+    "mouthNom": {
+      "name": "mouthNom",
+      "label": "Nom",
+      "kind": "mouth",
+      "state": "nom",
+      "row": 14,
+      "start": 220,
+      "frames": [
+        220
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        221
+      ]
+    },
+    "mouthSleep": {
+      "name": "mouthSleep",
+      "label": "Sleep",
+      "kind": "mouth",
+      "state": "sleep",
+      "row": 14,
+      "start": 221,
+      "frames": [
+        221
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        222
+      ]
+    },
+    "mouthSad": {
+      "name": "mouthSad",
+      "label": "Sad",
+      "kind": "mouth",
+      "state": "sad",
+      "row": 14,
+      "start": 222,
+      "frames": [
+        222
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        223
+      ]
+    },
+    "mouthGasp": {
+      "name": "mouthGasp",
+      "label": "Gasp",
+      "kind": "mouth",
+      "state": "gasp",
+      "row": 14,
+      "start": 223,
+      "frames": [
+        223
+      ],
+      "fps": 1,
+      "loop": false,
+      "slots": [
+        224
+      ]
+    },
+    "heartFx": {
+      "name": "heartFx",
+      "label": "Heart FX",
+      "kind": "fx",
+      "motif": "heart",
+      "row": 15,
+      "start": 224,
+      "frames": [
+        224,
+        225,
+        226,
+        227
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        225,
+        226,
+        227,
+        228
+      ]
+    },
+    "sparkleFx": {
+      "name": "sparkleFx",
+      "label": "Sparkle FX",
+      "kind": "fx",
+      "motif": "sparkle",
+      "row": 15,
+      "start": 228,
+      "frames": [
+        228,
+        229,
+        230,
+        231
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        229,
+        230,
+        231,
+        232
+      ]
+    },
+    "fluffFx": {
+      "name": "fluffFx",
+      "label": "Fluff FX",
+      "kind": "fx",
+      "motif": "fluff",
+      "row": 15,
+      "start": 232,
+      "frames": [
+        232,
+        233,
+        234,
+        235
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        233,
+        234,
+        235,
+        236
+      ]
+    },
+    "starFx": {
+      "name": "starFx",
+      "label": "Star FX",
+      "kind": "fx",
+      "motif": "star",
+      "row": 15,
+      "start": 236,
+      "frames": [
+        236,
+        237,
+        238,
+        239
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        237,
+        238,
+        239,
+        240
+      ]
+    },
+    "petalsFx": {
+      "name": "petalsFx",
+      "label": "Petals",
+      "kind": "fx",
+      "motif": "petals",
+      "row": 16,
+      "start": 240,
+      "frames": [
+        240,
+        241,
+        242,
+        243
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        241,
+        242,
+        243,
+        244
+      ]
+    },
+    "snowflakesFx": {
+      "name": "snowflakesFx",
+      "label": "Snowflakes",
+      "kind": "fx",
+      "motif": "snowflakes",
+      "row": 16,
+      "start": 244,
+      "frames": [
+        244,
+        245,
+        246,
+        247
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        245,
+        246,
+        247,
+        248
+      ]
+    },
+    "lightningFx": {
+      "name": "lightningFx",
+      "label": "Lightning",
+      "kind": "fx",
+      "motif": "lightning",
+      "row": 16,
+      "start": 248,
+      "frames": [
+        248,
+        249,
+        250,
+        251
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        249,
+        250,
+        251,
+        252
+      ]
+    },
+    "rainbowFx": {
+      "name": "rainbowFx",
+      "label": "Rainbow FX",
+      "kind": "fx",
+      "motif": "rainbow",
+      "row": 16,
+      "start": 252,
+      "frames": [
+        252,
+        253,
+        254,
+        255
+      ],
+      "fps": 10,
+      "loop": true,
+      "slots": [
+        253,
+        254,
+        255,
+        256
+      ]
+    }
+  },
+  "fxOverrides": {
+    "sp_sprite": {
+      "clip": "sparkleFx",
+      "motif": "cloudMotes",
+      "tint": "#D8FFF1"
+    },
+    "sp_blossom": {
+      "clip": "petalsFx",
+      "motif": "petals",
+      "tint": "#F78FBF"
+    },
+    "sp_frost": {
+      "clip": "snowflakesFx",
+      "motif": "snowflakes",
+      "tint": "#E8FBFF"
+    },
+    "sp_sunbeam": {
+      "clip": "starFx",
+      "motif": "sunRays",
+      "tint": "#FFD166"
+    },
+    "sp_moonmist": {
+      "clip": "starFx",
+      "motif": "moonMotes",
+      "tint": "#C9B8F0"
+    },
+    "sp_forest": {
+      "clip": "petalsFx",
+      "motif": "leaves",
+      "tint": "#7FB36A"
+    },
+    "sp_bubble": {
+      "clip": "sparkleFx",
+      "motif": "bubbles",
+      "tint": "#8CDFF5"
+    },
+    "sp_storm": {
+      "clip": "lightningFx",
+      "motif": "lightning",
+      "tint": "#4FC8FF"
+    },
+    "sp_dream": {
+      "clip": "starFx",
+      "motif": "stars",
+      "tint": "#D8A8FF"
+    },
+    "sp_rainbow": {
+      "clip": "rainbowFx",
+      "motif": "rainbowTrail",
+      "tint": "#FFD1F0"
+    },
+    "sp_ancient": {
+      "clip": "starFx",
+      "motif": "constellations",
+      "tint": "#FFF2B8"
+    }
+  }
+}

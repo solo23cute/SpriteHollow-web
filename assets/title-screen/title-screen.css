@@ -1,0 +1,720 @@
+/* Void Crystal title / loading screen — Sprite Hollow.
+   Palette is the icon pack's: bg #0B1020, surface #151B31, crystal #7C5CFF,
+   glow #5CE1E6, gold #FFD166, void #24123A, text #F8FAFF. */
+
+/* The treeline's cap, in one place: the splash and the loading card draw the
+   same grove, and while each carried its own literal they drifted apart for a
+   turn (190px against 228px) and the same trees read at different sizes. */
+:root { --sh-grove-cap: 228px; }
+
+.sh-title {
+  --shv-bg: #0b1020;
+  --shv-bg2: #151b31;
+  --shv-crystal: #7c5cff;
+  --shv-glow: #5ce1e6;
+  --shv-text: #f8faff;
+  --shv-muted: #a49ec4;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--shv-text);
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, var(--shv-crystal) 34%, transparent), transparent 62%),
+    radial-gradient(90% 60% at 50% 108%, color-mix(in srgb, var(--shv-glow) 22%, transparent), transparent 66%),
+    radial-gradient(60% 45% at 82% 18%, color-mix(in srgb, var(--shv-bg2) 55%, transparent), transparent 70%),
+    var(--shv-bg);
+  font-family: var(--shv-font, "Trebuchet MS", Verdana, system-ui, -apple-system, sans-serif);
+  /* This screen brings its own motion; the legacy .boot-screen fade is not it. */
+  animation: none;
+  opacity: 1;
+  transition: opacity .42s ease, transform .42s ease;
+}
+.sh-title.is-leaving { opacity: 0; transform: scale(1.02); pointer-events: none; }
+
+/* The chosen loader pattern joins the scene instead of replacing its stars. */
+.sh-title__loader {
+  position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  mix-blend-mode: screen;
+}
+.sh-title__loader > * { animation-play-state: running; }
+@media (prefers-reduced-motion: reduce) {
+  .sh-title__loader > * { animation: none !important; }
+}
+.reduce-motion .sh-title__loader > * { animation: none !important; }
+
+/* ---------- daily entry frame ---------- */
+/* The frame is painted by both entry screens. Its colours come from the
+   weekday and the part of the day, so the same app opens differently on a
+   Friday morning and a Friday night. The edges are separate spans rather than
+   a masked gradient: a missing mask must never leave a gradient sheet over
+   the whole screen. */
+.sh-dayframe {
+  position: absolute;
+  inset: calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right))
+    calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
+  z-index: 4;
+  border: 1px solid color-mix(in srgb, var(--sh-frame-a, #7c5cff) 30%, transparent);
+  border-radius: clamp(16px, 4vmin, 28px);
+  box-shadow: inset 0 0 28px color-mix(in srgb, var(--sh-frame-b, #5ce1e6) 10%, transparent);
+  pointer-events: none;
+  overflow: hidden;
+}
+/* The same frame lives in the app shell, inset between the top bar and the
+   bottom nav. It is fixed so a long menu scrolls underneath it, and it gets a
+   short entrance whenever the player opens another tab. */
+.app-dayframe {
+  position: fixed;
+  top: calc(58px + var(--safe-t));
+  right: calc(8px + var(--safe-r));
+  bottom: calc(84px + var(--safe-b));
+  left: calc(8px + var(--safe-l));
+  z-index: 11;
+  opacity: calc(.72 * var(--sh-frame-intensity, 1));
+}
+.app-dayframe.is-entering { animation: app-dayframe-in .55s ease-out both; }
+@keyframes app-dayframe-in {
+  /* Never start fully transparent: a backgrounded tab pauses CSS animations,
+     and the frame should still be there the moment the player looks back. */
+  from { opacity: calc(.42 * var(--sh-frame-intensity, 1)); transform: scale(.99); }
+  to { opacity: calc(.72 * var(--sh-frame-intensity, 1)); transform: none; }
+}
+
+.sh-dayframe__edge {
+  position: absolute;
+  display: block;
+  opacity: calc(.7 * var(--sh-frame-intensity, 1));
+  filter: drop-shadow(0 0 7px var(--sh-frame-c, #5ce1e6));
+  animation: sh-dayframe-breathe 5.6s ease-in-out infinite;
+}
+.sh-dayframe__edge--top,
+.sh-dayframe__edge--bottom {
+  left: 9%; right: 9%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--sh-frame-a, #7c5cff), var(--sh-frame-b, #5ce1e6), var(--sh-frame-c, #5ce1e6), transparent);
+}
+.sh-dayframe__edge--top { top: 0; }
+.sh-dayframe__edge--bottom { bottom: 0; }
+.sh-dayframe__edge--left,
+.sh-dayframe__edge--right {
+  top: 9%; bottom: 9%; width: 2px;
+  background: linear-gradient(180deg, transparent, var(--sh-frame-a, #7c5cff), var(--sh-frame-b, #5ce1e6), var(--sh-frame-c, #5ce1e6), transparent);
+}
+.sh-dayframe__edge--left { left: 0; }
+.sh-dayframe__edge--right { right: 0; }
+.sh-dayframe__edge::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .95), transparent);
+  mix-blend-mode: screen;
+  animation: sh-dayframe-sweep-x 5.6s ease-in-out infinite;
+}
+.sh-dayframe__edge--top::after,
+.sh-dayframe__edge--bottom::after {
+  top: -1px; width: 24%; height: 4px;
+}
+.sh-dayframe__edge--bottom::after { animation-delay: -2.8s; }
+.sh-dayframe__edge--left::after,
+.sh-dayframe__edge--right::after {
+  left: -1px; width: 4px; height: 24%;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .95), transparent);
+  animation-name: sh-dayframe-sweep-y;
+}
+.sh-dayframe__edge--left::after { animation-delay: -1.4s; }
+.sh-dayframe__edge--right::after { animation-delay: -4.2s; }
+/* Studio can change the motion of each frame. Sweep is the original look; Glow
+   keeps the breathing edge without the travelling highlight, Pulse tightens the
+   breathing rhythm, and Still leaves the coloured border at rest. */
+.sh-dayframe[data-frame-motion="breathe"] .sh-dayframe__edge { animation-duration: 6.8s; }
+.sh-dayframe[data-frame-motion="breathe"] .sh-dayframe__edge::after { display: none; }
+.sh-dayframe[data-frame-motion="pulse"] .sh-dayframe__edge { animation: sh-dayframe-pulse 2.2s ease-in-out infinite; }
+.sh-dayframe[data-frame-motion="pulse"] .sh-dayframe__edge::after { animation-duration: 2.2s; }
+.sh-dayframe[data-frame-motion="still"] .sh-dayframe__edge { animation: none; opacity: calc(.72 * var(--sh-frame-intensity, 1)); }
+.sh-dayframe[data-frame-motion="still"] .sh-dayframe__edge::after { display: none; }
+@keyframes sh-dayframe-pulse {
+  0%, 100% { opacity: calc(.34 * var(--sh-frame-intensity, 1)); filter: drop-shadow(0 0 3px var(--sh-frame-b, #5ce1e6)); }
+  50% { opacity: var(--sh-frame-intensity, 1); filter: drop-shadow(0 0 13px var(--sh-frame-c, #5ce1e6)); }
+}
+@keyframes sh-dayframe-breathe {
+  0%, 100% { opacity: calc(.45 * var(--sh-frame-intensity, 1)); }
+  50% { opacity: calc(.9 * var(--sh-frame-intensity, 1)); }
+}
+@keyframes sh-dayframe-sweep-x {
+  from { transform: translateX(-140%); }
+  to { transform: translateX(520%); }
+}
+@keyframes sh-dayframe-sweep-y {
+  from { transform: translateY(-140%); }
+  to { transform: translateY(520%); }
+}
+
+/* ---------- sky: stars, nebula, fog ---------- */
+.sh-title__sky { position: absolute; inset: 0; pointer-events: none; }
+
+/* Painted key art, dropped in at assets/title-screen/key-art.(webp|jpg|png).
+   Cover from the top so a portrait plate keeps its sky and title space when
+   the screen is shorter than the plate. Hidden until it decodes, so the
+   vector scene is what a missing file leaves on screen. */
+.sh-title__art {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: var(--sh-title-art-pos, 50% 30%);
+  opacity: 0; pointer-events: none;
+  transition: opacity .45s ease;
+}
+/* A tall plate on a wide screen keeps the logo band and the mascot's face in
+   frame; a wide plate on a tall screen keeps its centre. */
+@media (orientation: landscape) {
+  .sh-title { --sh-title-art-pos: 50% 44%; }
+}
+.sh-title.has-art .sh-title__art { opacity: 1; }
+.sh-title.has-art .sh-title__sky { display: none; }
+.sh-title.has-art {
+  background: var(--shv-bg);
+}
+
+.sh-title__stars {
+  position: absolute; inset: -20%;
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 22%, rgba(248, 250, 255, .9), transparent),
+    radial-gradient(1.2px 1.2px at 72% 14%, rgba(92, 225, 230, .85), transparent),
+    radial-gradient(1.6px 1.6px at 44% 38%, rgba(248, 250, 255, .7), transparent),
+    radial-gradient(1.1px 1.1px at 86% 46%, rgba(255, 209, 102, .8), transparent),
+    radial-gradient(1.3px 1.3px at 28% 62%, rgba(248, 250, 255, .55), transparent),
+    radial-gradient(1.2px 1.2px at 62% 74%, rgba(124, 92, 255, .9), transparent),
+    radial-gradient(1px 1px at 12% 82%, rgba(248, 250, 255, .6), transparent),
+    radial-gradient(1.5px 1.5px at 92% 72%, rgba(92, 225, 230, .6), transparent);
+  animation: sh-title-twinkle 7s ease-in-out infinite alternate;
+}
+@keyframes sh-title-twinkle { from { opacity: .55; } to { opacity: 1; } }
+
+/* Two more fields behind the eight specks above: a fine dust layer that never
+   blinks in time with them, and a handful of bright stars with their own halo.
+   One field alone read as a few dots on a phone, which is what made the sky
+   look emptier than the rest of the scene. */
+.sh-title__stars--far {
+  background-image:
+    radial-gradient(1px 1px at 8% 14%, rgba(248, 250, 255, .7), transparent),
+    radial-gradient(1px 1px at 22% 8%, rgba(191, 246, 251, .6), transparent),
+    radial-gradient(1px 1px at 34% 21%, rgba(248, 250, 255, .55), transparent),
+    radial-gradient(1px 1px at 52% 6%, rgba(255, 209, 102, .5), transparent),
+    radial-gradient(1px 1px at 66% 28%, rgba(248, 250, 255, .6), transparent),
+    radial-gradient(1px 1px at 78% 9%, rgba(92, 225, 230, .55), transparent),
+    radial-gradient(1px 1px at 90% 33%, rgba(248, 250, 255, .5), transparent),
+    radial-gradient(1px 1px at 16% 44%, rgba(124, 92, 255, .6), transparent),
+    radial-gradient(1px 1px at 38% 56%, rgba(248, 250, 255, .45), transparent),
+    radial-gradient(1px 1px at 58% 48%, rgba(191, 246, 251, .5), transparent),
+    radial-gradient(1px 1px at 74% 62%, rgba(248, 250, 255, .4), transparent),
+    radial-gradient(1px 1px at 96% 54%, rgba(92, 225, 230, .45), transparent),
+    radial-gradient(1px 1px at 6% 68%, rgba(248, 250, 255, .4), transparent),
+    radial-gradient(1px 1px at 46% 88%, rgba(255, 209, 102, .35), transparent),
+    radial-gradient(1px 1px at 84% 90%, rgba(248, 250, 255, .35), transparent);
+  animation-duration: 11.5s;
+  animation-direction: alternate-reverse;
+  opacity: .85;
+}
+.sh-title__stars--near {
+  background-image:
+    radial-gradient(2.2px 2.2px at 30% 16%, rgba(248, 250, 255, .95), transparent),
+    radial-gradient(2.6px 2.6px at 60% 32%, rgba(191, 246, 251, .9), transparent),
+    radial-gradient(2px 2px at 84% 20%, rgba(255, 209, 102, .85), transparent),
+    radial-gradient(2.4px 2.4px at 12% 52%, rgba(92, 225, 230, .8), transparent),
+    radial-gradient(2px 2px at 70% 68%, rgba(248, 250, 255, .75), transparent),
+    radial-gradient(2.2px 2.2px at 42% 80%, rgba(124, 92, 255, .8), transparent);
+  animation-duration: 5.5s;
+  animation-delay: -2.1s;
+  filter: drop-shadow(0 0 5px rgba(92, 225, 230, .45));
+}
+
+/* ---------- clouds ---------- */
+/* Soft nebula banks that cross the sky from the left over a couple of minutes,
+   behind the copy and above the stars. Screen blend keeps them as light rather
+   than paint, and the low opacity means the logo never fights them. */
+.sh-title__clouds { position: absolute; inset: 0; overflow: hidden; }
+.sh-cloud {
+  position: absolute; left: -52vw; width: 64vw; max-width: 430px;
+  height: 15vh; min-height: 52px; border-radius: 999px;
+  background:
+    radial-gradient(58% 64% at 36% 58%, rgba(191, 246, 251, .32), transparent 72%),
+    radial-gradient(52% 60% at 64% 42%, rgba(124, 92, 255, .3), transparent 74%),
+    radial-gradient(44% 52% at 86% 64%, rgba(248, 250, 255, .22), transparent 76%);
+  filter: blur(16px);
+  opacity: .5;
+  mix-blend-mode: screen;
+  animation: sh-title-cloud-drift 120s linear infinite;
+}
+.sh-title__clouds .sh-cloud:nth-child(1) { top: 8%; animation-duration: 118s; }
+.sh-title__clouds .sh-cloud:nth-child(2) { top: 23%; width: 76vw; animation-duration: 152s; animation-delay: -44s; opacity: .38; }
+.sh-title__clouds .sh-cloud:nth-child(3) { top: 40%; animation-duration: 134s; animation-delay: -86s; }
+.sh-title__clouds .sh-cloud:nth-child(4) { top: 57%; width: 84vw; animation-duration: 170s; animation-delay: -18s; opacity: .34; }
+.sh-title__clouds .sh-cloud:nth-child(5) { top: 74%; animation-duration: 142s; animation-delay: -112s; opacity: .3; }
+@keyframes sh-title-cloud-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(150vw); }
+}
+
+.sh-title__fog {
+  position: absolute; inset: auto -10% -8% -10%; height: 46%;
+  background:
+    radial-gradient(60% 100% at 24% 100%, rgba(124, 92, 255, .28), transparent 70%),
+    radial-gradient(55% 100% at 76% 100%, rgba(92, 225, 230, .24), transparent 72%);
+  filter: blur(6px);
+}
+
+/* ---------- world tree ---------- */
+.sh-title__tree {
+  position: absolute; left: 50%; bottom: -18%;
+  width: min(720px, 148vw); aspect-ratio: 1 / 1;
+  transform: translateX(-50%);
+  /* The old layer-wide deaden-and-breathe loop averaged out here; without it
+     the tree keeps that same weight while the branches and leaves move. */
+  opacity: .52;
+}
+.sh-title__tree svg {
+  display: block; width: 100%; height: 100%;
+  transform-origin: 50% 98%;
+  animation: sh-tree-sway 17s ease-in-out infinite alternate;
+}
+
+/* The tree is the splash's only moving set piece: light climbs the branches,
+   the canopy sways, and the leaves catch it in turn. Nothing pulses the whole
+   layer on top of that — a second opacity loop only fought the other two — so
+   each branch carries one travelling dash and each leaf one shimmer. All of it
+   is one-shot-free decoration, so Calm and reduced motion drop it with the
+   rest of the screen's animation. */
+.sh-tree-flow path {
+  stroke-dasharray: 9 119;
+  stroke-dashoffset: 128;
+  animation: sh-tree-flow 5.4s linear infinite;
+}
+.sh-tree-flow path:nth-child(2) { animation-delay: -1.2s; }
+.sh-tree-flow path:nth-child(3) { animation-delay: -2.4s; }
+.sh-tree-flow path:nth-child(4) { animation-delay: -3.1s; }
+.sh-tree-flow path:nth-child(5) { animation-delay: -0.7s; }
+.sh-tree-flow path:nth-child(6) { animation-delay: -1.9s; }
+.sh-tree-flow path:nth-child(7) { animation-delay: -4.2s; }
+.sh-tree-leaves path { animation: sh-tree-leaf 4.2s ease-in-out infinite; }
+.sh-tree-leaves path:nth-child(2) { animation-delay: -1.1s; }
+.sh-tree-leaves path:nth-child(3) { animation-delay: -2.2s; }
+.sh-tree-leaves path:nth-child(4) { animation-delay: -0.6s; }
+.sh-tree-leaves path:nth-child(5) { animation-delay: -3s; }
+@keyframes sh-tree-flow {
+  from { stroke-dashoffset: 128; }
+  to { stroke-dashoffset: -128; }
+}
+@keyframes sh-tree-sway {
+  from { transform: rotate(-1.2deg) scale(1); }
+  to { transform: rotate(1.2deg) scale(1.012); }
+}
+@keyframes sh-tree-leaf {
+  0%, 100% { opacity: .55; }
+  45% { opacity: 1; }
+}
+
+/* The scene wears the player's accent. The splash already resolves the Studio
+   theme into --shv-crystal/--shv-glow (its own literals are the same brand
+   colours), but only the chrome read them: the tree, its travelling light and
+   the treeline stayed Void Crystal violet under every theme. A CSS rule beats
+   the presentation attributes in the shared strings, and the literals stay as
+   the fallback for the mounts that do not define the variables (the card and
+   the Hollow's stage), so nothing changes for them. */
+.sh-title__sky .sh-tree-branches { stroke: var(--shv-crystal, #7c5cff); }
+.sh-title__sky .sh-tree-flow { stroke: var(--shv-glow, #5ce1e6); }
+.sh-title__sky .sh-tree-leaves { fill: var(--shv-glow, #5ce1e6); }
+.sh-title__sky .sh-tree-crystals { fill: var(--shv-crystal, #7c5cff); }
+.sh-title__sky .sh-grove-trunks { stroke: var(--shv-crystal, #7c5cff); }
+.sh-title__sky .sh-grove-crowns { fill: var(--shv-glow, #5ce1e6); }
+
+/* ---------- the grove ---------- */
+/* Eight small trees along the foot of the scene, either side of the world
+   tree. `meet` rather than `slice`: on a wide window a covering fit would crop
+   the crowns off the top of the band, and a cropped crown reads as a glitch. */
+.sh-title__grove {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  /* The treeline sits *behind* the hero tree, so it must not out-light it. The
+     crowns are .8 on their own group; at .66 the band read .53 against the
+     world tree's .39 and the small canopies competed with the big one — worst
+     on a phone, where they share the hero's canopy band. .48 keeps the treeline
+     at .38, the hero's own weight, so distance reads as tone, not as contrast. */
+  /* Height-capped, or the treeline's scale tracks the viewport instead of the
+     hero tree: `meet` fits 396px of band to 152 units of art on a desktop, which
+     draws every crown at 2.6x the phone's and leaves the small trees as big as
+     the world tree's petals. The cap keeps a crown at 30-35% of a hero petal,
+     the proportion a phone draws, at every width: 25px of crown against an 88px
+     petal at 390, 39px against 110px at 1440. */
+  height: min(44vh, var(--sh-grove-cap, 228px)); opacity: .48;
+}
+.sh-title__grove .sh-grove { display: block; width: 100%; height: 100%; }
+/* All three treelines ship in the shared string and each mount picks one. A
+   single copy of the eight reaches 600px at the cap, two reach 1200, three
+   1800, so each breakpoint is a width the previous copy has run out of room at:
+   below 640 one copy, to 1240 two, above that three. Without the middle stage a
+   window between 640 and 1000 got a 600px copse with 150px of bare foot either
+   side. One list for every mount — the splash, the card and the Hollow's stage
+   — because the same breakpoints written per mount had already been copied
+   three times, and a retune would have had to find all three. */
+:is(.sh-title__grove, .load-tree, .stage-grove) .sh-grove--mid,
+:is(.sh-title__grove, .load-tree, .stage-grove) .sh-grove--wide { display: none; }
+@media (min-width: 640px) {
+  :is(.sh-title__grove, .load-tree, .stage-grove) .sh-grove--near { display: none; }
+  :is(.sh-title__grove, .load-tree, .stage-grove) .sh-grove--mid { display: block; }
+}
+@media (min-width: 1240px) {
+  :is(.sh-title__grove, .load-tree, .stage-grove) .sh-grove--mid { display: none; }
+  :is(.sh-title__grove, .load-tree, .stage-grove) .sh-grove--wide { display: block; }
+}
+/* The small canopies catch the same light as the big one, one tree at a time.
+   Animated on the tree's crown group rather than on each of its four paths:
+   the same pulse for eight animated elements instead of thirty-two identical
+   ones, and the group is the thing that actually moves. Unscoped on purpose:
+   the loading card paints this same grove string, and a rule tied to the
+   splash's wrapper left the card's treeline frozen under a canopy that was
+   shimmering. */
+.sh-grove-crowns { animation: sh-grove-catch 6.4s ease-in-out infinite; }
+.sh-grove-tree:nth-child(2n) .sh-grove-crowns { animation-delay: -2.2s; }
+.sh-grove-tree:nth-child(3n) .sh-grove-crowns { animation-delay: -4.4s; }
+@keyframes sh-grove-catch {
+  /* The .8 ceiling is also the group's markup opacity, so a still frame (the
+     motion preference, or the animation not yet started) matches the bright
+     half of the pulse instead of jumping brighter than it. */
+  0%, 100% { opacity: .4; }
+  50% { opacity: .8; }
+}
+/* floating islands + shards */
+/* Islands sit at the outer edges: the centre column belongs to the mascot. */
+.sh-title__isle { position: absolute; width: 96px; opacity: .5; }
+.sh-title__isle--l { left: 1%; top: 14%; animation: sh-title-drift 11s ease-in-out infinite alternate; }
+.sh-title__isle--r { right: 1%; top: 64%; width: 74px; opacity: .42;
+  animation: sh-title-drift 13s ease-in-out infinite alternate-reverse; }
+.sh-title__isle svg { display: block; width: 100%; height: auto; }
+@keyframes sh-title-drift {
+  from { transform: translate3d(0, 0, 0) rotate(-2deg); }
+  to { transform: translate3d(6px, -14px, 0) rotate(2deg); }
+}
+
+.sh-title__shard {
+  position: absolute; width: 14px; height: 22px;
+  background: linear-gradient(160deg, rgba(92, 225, 230, .95), rgba(124, 92, 255, .5));
+  clip-path: polygon(50% 0, 100% 42%, 50% 100%, 0 42%);
+  filter: drop-shadow(0 0 8px rgba(92, 225, 230, .55));
+  animation: sh-title-spin 12s linear infinite;
+}
+/* Bands at the top and bottom keep the logo, Play and loading copy legible over
+   the scene; the middle stays open, because that is the painted mascot's space
+   and the tree's. */
+.sh-title__scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6, 8, 20, .8), rgba(6, 8, 20, .32) 22%, rgba(6, 8, 20, 0) 42%),
+    linear-gradient(0deg, rgba(6, 8, 20, .88), rgba(6, 8, 20, .4) 20%, rgba(6, 8, 20, 0) 42%),
+    radial-gradient(72% 46% at 50% 50%, rgba(6, 8, 20, .26), rgba(6, 8, 20, 0) 72%);
+}
+
+.sh-title__shard--a { left: 9%; top: 40%; }
+.sh-title__shard--b { right: 12%; top: 24%; width: 10px; height: 16px; animation-duration: 16s; }
+.sh-title__shard--c { right: 18%; bottom: 30%; width: 8px; height: 13px; animation-duration: 20s; }
+@keyframes sh-title-spin {
+  from { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-12px) rotate(6deg); }
+  to { transform: translateY(0) rotate(-6deg); }
+}
+
+/* ---------- content ---------- */
+.sh-title__inner {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px;
+  padding: calc(16px + env(safe-area-inset-top)) 22px calc(14px + env(safe-area-inset-bottom));
+  width: min(460px, 92vw); height: 100%; box-sizing: border-box;
+  text-align: center;
+}
+/* Three bands, the ones the key art reserves: the logo cluster at the top,
+   Play above the foot, the loading copy at the bottom edge. The middle is
+   deliberately empty. */
+.sh-title__crest { order: 1; }
+.sh-title__title { order: 2; }
+.sh-title__tag { order: 3; }
+/* The activity row carries the auto margin: the logo cluster stays at the top,
+   the row and Play share the foot above the loading copy, and the empty middle
+   band stays empty. */
+.sh-title__acts { order: 5; margin-top: auto; }
+.sh-title__nav { order: 4; }
+.sh-title__btn { order: 6; }
+.sh-title__line { order: 7; }
+.sh-title__do { order: 8; }
+
+.sh-title__crest {
+  position: relative;
+  width: clamp(126px, 34vw, 166px); aspect-ratio: 1;
+  margin-bottom: 2px;
+  animation: sh-title-float 5.5s ease-in-out infinite alternate;
+}
+.sh-title__crest svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.sh-title__crest img {
+  display: block; width: 100%; height: 100%; object-fit: contain;
+  filter: drop-shadow(0 10px 22px rgba(43, 162, 232, .38));
+}
+@keyframes sh-title-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-9px); }
+}
+
+/* Readiness: one perk-up and a halo as the loading copy clears and Play
+   enables. Driven by the .is-ready class, runs once, ends back at rest, so
+   nothing stays lit and nothing loops. The hop sits on the art rather than on
+   .sh-title__crest, which keeps its slow float underneath it. */
+.sh-title__crest::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle,
+    rgba(92, 225, 230, 0) 38%,
+    rgba(92, 225, 230, .5) 60%,
+    rgba(255, 209, 102, .22) 72%,
+    rgba(92, 225, 230, 0) 82%);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+.sh-title.is-ready .sh-title__crest :is(img, svg) {
+  animation: sh-title-ready-hop .8s cubic-bezier(.3, .9, .35, 1) both;
+}
+.sh-title.is-ready .sh-title__crest::after {
+  animation: sh-title-ready-glow .9s ease-out both;
+}
+/* The treeline takes the same hand-over: as the copy clears, the crowns lift a
+   shade and settle back. Brightness rather than opacity, so it cannot fight the
+   crown pulse underneath it, and once only — it ends where it started. */
+.sh-title.is-ready .sh-title__grove {
+  animation: sh-title-ready-grove .9s ease-out both;
+}
+@keyframes sh-title-ready-grove {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.45); }
+  100% { filter: brightness(1); }
+}
+@keyframes sh-title-ready-hop {
+  0% { transform: translateY(0) scale(1); }
+  22% { transform: translateY(-16px) scale(1.06); }
+  46% { transform: translateY(2px) scale(.97); }
+  68% { transform: translateY(-9px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes sh-title-ready-glow {
+  0% { opacity: 0; transform: scale(.86); }
+  30% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+
+.sh-title__title {
+  margin: 0; font-size: clamp(30px, 9vw, 46px); line-height: 1.02;
+  letter-spacing: .015em; font-weight: 800;
+  background: linear-gradient(180deg, var(--shv-text) 12%, color-mix(in srgb, var(--shv-glow) 55%, #ffffff) 48%, var(--shv-crystal) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 22px color-mix(in srgb, var(--shv-glow) 35%, transparent));
+}
+.sh-title__title em { font-style: normal; color: transparent;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--shv-glow) 55%, #ffffff), var(--shv-glow) 70%, var(--shv-crystal));
+  -webkit-background-clip: text; background-clip: text; }
+
+.sh-title__tag {
+  margin: -6px 0 4px; font-size: 12.5px; letter-spacing: .19em;
+  text-transform: uppercase; color: color-mix(in srgb, var(--shv-text) 62%, transparent);
+}
+
+/* nav preview: real icons from the Void Crystal sheet */
+.sh-title__nav { display: flex; gap: 8px; margin: 6px 0 2px; }
+.sh-title__nav span {
+  display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 13px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--shv-bg2) 95%, transparent), color-mix(in srgb, var(--shv-bg) 95%, transparent));
+  border: 1px solid color-mix(in srgb, var(--shv-glow) 28%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--shv-text) 8%, transparent), 0 8px 18px rgba(4, 6, 16, .5);
+}
+.sh-title__nav svg { width: 26px; height: 26px; display: block; }
+
+/* The four things the Hollow is for. The row itself — shape, sizes and the
+   narrow-phone steps — comes from `.act-pills` in styles.css, shared with the
+   loading card; the splash only supplies its own accents. */
+.sh-title__acts {
+  --act-accent: var(--shv-crystal, #7c5cff);
+  --act-glow: var(--shv-glow, #5ce1e6);
+  --act-halo: rgba(92, 225, 230, .3);
+}
+
+/* First run: the loading screen and the starter picker are one page. The row
+   preview and the activity pills would crowd the eggs, so the picker replaces
+   them. Choosing an egg is the only action; there is no extra Play gate. */
+.sh-title.has-intro .sh-title__nav,
+.sh-title.has-intro .sh-title__acts,
+.sh-title.has-intro .sh-title__btn { display: none; }
+.sh-title.has-intro .sh-title__inner {
+  overflow-y: auto; scrollbar-width: none;
+}
+.sh-title.has-intro .sh-title__inner::-webkit-scrollbar { display: none; }
+.sh-title__intro {
+  order: 5;
+  width: 100%;
+  margin-top: auto;
+  display: grid;
+  gap: 9px;
+}
+.sh-title__intro[hidden] { display: none; }
+.sh-title__intro .intro-pickhead {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; text-align: left;
+}
+.sh-title__intro .intro-pickhead .eyebrow { margin: 0; text-align: left; }
+.sh-title__intro .intro-picks {
+  margin-top: 0; padding-top: 0; gap: 8px;
+}
+.sh-title__intro .intro-pick {
+  padding: 7px 6px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--shv-bg2) 78%, transparent);
+  border-color: color-mix(in srgb, var(--shv-glow) 26%, transparent);
+}
+.sh-title__intro .intro-pick svg { width: 56px; height: 56px; }
+.sh-title__intro .intro-pick b { font-size: 10.5px; }
+.sh-title__intro .intro-pick span { font-size: 8.5px; }
+.sh-title__intro .intro-pick.is-selected {
+  border-color: var(--shv-glow, #5ce1e6);
+  background: color-mix(in srgb, var(--shv-glow) 16%, var(--shv-bg2));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--shv-glow) 40%, transparent), 0 8px 20px color-mix(in srgb, var(--shv-glow) 16%, transparent);
+  transform: translateY(-2px);
+}
+.sh-title__intro [data-intro-restore] {
+  margin-top: 0; padding: 10px 12px; font-size: 12px;
+}
+
+.sh-title__line {
+  min-height: 1.2em; font-size: 12.5px; letter-spacing: .06em;
+  color: color-mix(in srgb, var(--shv-text) 72%, transparent);
+}
+/* What the keeper does once the Hollow opens, named the way the game's own
+   tasks name it. It shares the bottom band with the loading copy, well clear
+   of the icon row, and clears with the copy at readiness. */
+.sh-title__do {
+  min-height: 1.2em; font-size: 11.5px; letter-spacing: .04em;
+  color: color-mix(in srgb, var(--shv-glow) 72%, var(--shv-text));
+  text-shadow: 0 0 12px color-mix(in srgb, var(--shv-glow) 35%, transparent);
+}
+.sh-title__do span { display: inline-block; }
+.sh-title__do span.is-swap { animation: sh-title-do-swap .42s ease-out; }
+@keyframes sh-title-do-swap {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* action */
+.sh-title__btn {
+  width: 100%; appearance: none; cursor: pointer;
+  padding: 13px 16px; border-radius: 14px;
+  font-family: var(--shv-font, "Trebuchet MS", Verdana, sans-serif);
+  font-size: 14px; line-height: 1; font-weight: 800; letter-spacing: .06em;
+  color: var(--shv-bg, #0b1020);
+  border: 1px solid color-mix(in srgb, var(--shv-glow) 70%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--shv-glow) 55%, #ffffff), var(--shv-glow, #5ce1e6) 58%, var(--shv-crystal, #7c5cff));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--shv-glow) 28%, transparent), inset 0 1px 0 color-mix(in srgb, var(--shv-text) 70%, transparent);
+  transition: transform .16s ease, filter .16s ease;
+}
+.sh-title__btn:hover { filter: brightness(1.06); }
+.sh-title__btn:active { transform: translateY(1px) scale(.995); }
+.sh-title__btn:focus-visible { outline: 2px solid var(--shv-glow, #5ce1e6); outline-offset: 3px; }
+.sh-title__btn[disabled] { opacity: .45; cursor: default; }
+
+/* The build tag sits in the logo band, clear of Play and the loading copy. */
+.sh-title__version {
+  position: absolute; right: 14px; top: calc(10px + env(safe-area-inset-top));
+  font-size: 10.5px; letter-spacing: .14em; color: color-mix(in srgb, var(--shv-text) 35%, transparent);
+}
+
+/* A player-supplied Studio backdrop takes priority over the crystal scene. */
+.sh-title.is-custom {
+  background-image: var(--boot-image-layer, none),
+    linear-gradient(var(--boot-angle, 145deg), var(--boot-c1, #1b1740), var(--boot-c2, #0b0a16));
+  background-size: cover, cover;
+  background-position: center, center;
+}
+.sh-title.is-custom .sh-title__sky { display: none; }
+.sh-title.is-custom .sh-title__scrim {
+  background:
+    linear-gradient(180deg, rgba(4, 3, 10, calc(.86 - var(--boot-dim, .45) * .25)), rgba(4, 3, 10, 0) 42%),
+    linear-gradient(0deg, rgba(4, 3, 10, calc(.9 - var(--boot-dim, .45) * .25)), rgba(4, 3, 10, 0) 42%);
+}
+/* The plate carries its own mascot and icon work, so the drawn crest and the
+   icon row step out of its negative space. There is only one live puffle slot
+   on the splash; the plate is responsible for its own painted cast. */
+.sh-title.has-art .sh-title__crest,
+.sh-title.has-art .sh-title__nav { display: none; }
+
+/* The build tag sits in the logo band; under 340px the title reaches it. */
+@media (max-width: 340px) { .sh-title__version { display: none; } }
+
+/* A short landscape window cannot hold the logo cluster and a 2×2 egg grid.
+   Four compact columns keep the picker above the fold. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .sh-title.has-intro .sh-title__crest { width: 82px; }
+  .sh-title.has-intro .sh-title__title { font-size: 30px; }
+  .sh-title__intro .intro-picks { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .sh-title__intro .intro-pick { padding: 5px 4px; gap: 0; }
+  .sh-title__intro .intro-pick svg { width: 42px; height: 46px; }
+  .sh-title__intro .intro-pick b { font-size: 9.5px; }
+  .sh-title__intro .intro-pick span { display: none; }
+  .sh-title__intro [data-intro-restore] { padding: 7px 10px; font-size: 10.5px; }
+  .sh-title.has-intro.is-ready .sh-title__line { display: none; }
+}
+
+@media (max-width: 360px) {
+  .sh-title__nav { gap: 6px; }
+  .sh-title__nav span { width: 38px; height: 38px; border-radius: 11px; }
+  .sh-title__nav svg { width: 22px; height: 22px; }
+  .sh-title__btn { padding: 12px 10px; font-size: 13px; }
+}
+
+@media (max-height: 560px) {
+  .sh-title__inner { gap: 10px; }
+  .sh-title__crest { width: 104px; }
+  .sh-title__title { font-size: clamp(26px, 7vw, 36px); }
+  .sh-title__nav { display: none; }
+  .sh-title__do { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Pseudo-elements need their own selectors: the universal selector matches
+     elements, so descendant decoration keeps quiet under this setting. */
+  .sh-title,
+  .sh-title *,
+  .sh-title *::before,
+  .sh-title *::after,
+  .sh-dayframe,
+  .sh-dayframe * { animation: none !important; transition-duration: .01ms !important; }
+}
+
+/* The in-app Calm setting lands on <html> (applyTheme); it gets the same quiet
+   opening as the system preference. */
+html.reduce-motion .sh-title,
+html.reduce-motion .sh-title *,
+html.reduce-motion .sh-title *::before,
+html.reduce-motion .sh-title *::after,
+html.reduce-motion .sh-dayframe,
+html.reduce-motion .sh-dayframe * {
+  animation: none !important;
+  transition-duration: .01ms !important;
+}
+
+/* High-contrast modes drop the gradient text fill and the crystal gradients;
+   without this the clipped title paints transparent over the plate. */
+@media (forced-colors: active) {
+  .sh-title__title,
+  .sh-title__title em {
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+    background: none;
+    filter: none;
+  }
+  .sh-title__nav span { background: Canvas; border-color: CanvasText; }
+  .sh-title__btn { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; }
+  /* Keep the disabled state readable instead of fading it into the background. */
+  .sh-title__btn[disabled] { opacity: 1; color: GrayText; border-color: GrayText; }
+}

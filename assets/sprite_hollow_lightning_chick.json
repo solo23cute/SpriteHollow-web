@@ -1,0 +1,8 @@
+{
+  "id": "lightning_chick",
+  "rarity": "common",
+  "abilities": [
+    "static_peck",
+    "thunder_cheep"
+  ]
+}

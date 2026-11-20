@@ -1,0 +1,9 @@
+{
+  "id": "baby_sprite",
+  "rarity": "common",
+  "abilities": [
+    "cute_blink",
+    "tiny_jump"
+  ],
+  "wings": true
+}

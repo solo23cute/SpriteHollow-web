@@ -1,0 +1,304 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="896" viewBox="0 0 1024 896">
+  <title>Sprite Hollow - Void Crystal dark-mode icon sheet</title>
+  <desc>56 icons, 8x7 grid, transparent background. Palette: background #0B1020, surface #151B31, crystal #7C5CFF, glow #5CE1E6, gold #FFD166, void #24123A, text #F8FAFF, success #5BF2A5, danger #FF6B8A.</desc>
+  <defs>
+    <linearGradient id="gCrystal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#5CE1E6"/>
+    </linearGradient>
+    <linearGradient id="gCyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5CE1E6"/><stop offset="1" stop-color="#F8FAFF"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD166"/><stop offset="1" stop-color="#FF9F43"/>
+    </linearGradient>
+    <linearGradient id="gVoid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#24123A"/>
+    </linearGradient>
+    <linearGradient id="gRainbow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/><stop offset=".35" stop-color="#5CE1E6"/>
+      <stop offset=".6" stop-color="#5BF2A5"/><stop offset=".8" stop-color="#FFD166"/>
+      <stop offset="1" stop-color="#FF6B8A"/>
+    </linearGradient>
+  <symbol id="ui-home" viewBox="0 0 64 64"><path d="M32 12 L56 32 H8 Z" fill="url(#gCrystal)"/>
+<rect x="14" y="32" width="36" height="22" rx="5" fill="#151B31" stroke="#5CE1E6" stroke-width="2"/>
+<rect x="27" y="40" width="10" height="14" rx="5" fill="url(#gCyan)"/>
+<path d="M32 3 L37 8 L32 13 L27 8 Z" fill="#FFD166" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="ui-codex" viewBox="0 0 64 64"><path d="M32 16C24 10 12 10 8 13v31c4-3 16-3 24 3z" fill="#151B31" stroke="#5CE1E6" stroke-width="2"/>
+<path d="M32 16c8-6 20-6 24-3v31c-4-3-16-3-24 3z" fill="#151B31" stroke="#5CE1E6" stroke-width="2"/>
+<path d="M14 24h10M14 31h10M40 24h10M40 31h10" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M32 4 L37 9 L32 14 L27 9 Z" fill="url(#gCrystal)" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="ui-adventure" viewBox="0 0 64 64"><g stroke-linecap="round">
+<path d="M18 50 L44 18" stroke="#5CE1E6" stroke-width="4"/>
+<path d="M26 54 L48 26" stroke="url(#gCrystal)" stroke-width="4"/>
+<path d="M38 18 L48 8" stroke="#F8FAFF" stroke-width="3" stroke-opacity=".8"/>
+<path d="M20 42 L28 50" stroke="#FFD166" stroke-width="3"/>
+</g>
+<path d="M48 5 L53 10 L48 15 L43 10 Z" fill="#5CE1E6" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/>
+<path d="M20 48 L24 52 L20 56 L16 52 Z" fill="#FFD166" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="ui-evolution" viewBox="0 0 64 64"><path d="M32 10a22 22 0 1 1-21 28" fill="none" stroke="url(#gCrystal)" stroke-width="4" stroke-linecap="round"/>
+<path d="M32 18a14 14 0 1 1-13 18" fill="none" stroke="#5CE1E6" stroke-width="3.2" stroke-linecap="round"/>
+<path d="M32 26a6 6 0 1 1-5 8" fill="none" stroke="#FFD166" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M36 49 L41 54 L36 59 L31 54 Z" fill="#FFD166" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="ui-habitat" viewBox="0 0 64 64"><path d="M8 34c0-10 11-16 24-16s24 6 24 16c0 10-6 18-13 24H21C14 52 8 44 8 34Z" fill="url(#gVoid)" stroke="#5CE1E6" stroke-width="2.4"/>
+<path d="M8 34c0 5 11 9 24 9s24-4 24-9" fill="none" stroke="#7C5CFF" stroke-opacity=".7" stroke-width="1.4"/>
+<ellipse cx="32" cy="33" rx="24" ry="7" fill="#151B31" stroke="#5CE1E6" stroke-width="2.4"/>
+<path d="M32 4 41 25 32 35 23 25Z" fill="url(#gCrystal)" stroke="#F8FAFF" stroke-width="1.8" stroke-opacity=".9"/>
+<path d="M15 20 20 32 10 32Z" fill="#5CE1E6"/>
+<path d="M48 22 53 32 43 32Z" fill="#7C5CFF"/>
+<path d="M26 46 29 55 23 53Z" fill="#5CE1E6" opacity=".95"/></symbol>
+  <symbol id="ui-shop" viewBox="0 0 64 64"><path d="M8 30c0-9 10-14 24-14s24 5 24 14" fill="#24123A" stroke="#FFD166" stroke-width="2.4"/>
+<rect x="8" y="30" width="48" height="22" rx="5" fill="#151B31" stroke="#FFD166" stroke-width="2.4"/>
+<rect x="27" y="32" width="10" height="12" rx="3" fill="#FFD166"/>
+<path d="M8 39h18M38 39h18" stroke="#FFD166" stroke-opacity=".6" stroke-width="2"/></symbol>
+  <symbol id="ui-inventory" viewBox="0 0 64 64"><rect x="14" y="22" width="36" height="30" rx="9" fill="#151B31" stroke="#5CE1E6" stroke-width="2.2"/>
+<path d="M24 22v-4a8 8 0 0 1 16 0v4" fill="none" stroke="#5CE1E6" stroke-width="2.2"/>
+<rect x="22" y="34" width="20" height="12" rx="4" fill="url(#gCrystal)" opacity=".85"/>
+<circle cx="32" cy="40" r="2" fill="#F8FAFF"/></symbol>
+  <symbol id="ui-quests" viewBox="0 0 64 64"><path d="M17 12h26a7 7 0 0 1 7 7v33a7 7 0 0 1-7 7H17z" fill="#151B31" stroke="#FFD166" stroke-width="2.2"/>
+<path d="M17 12a6 6 0 0 0 0 12h5M17 52a6 6 0 0 1 0-12h5" fill="none" stroke="#FFD166" stroke-width="2.2"/>
+<path d="M26 26h16M26 33h16M26 40h10" stroke="#F8FAFF" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="ui-mail" viewBox="0 0 64 64"><rect x="7" y="17" width="50" height="30" rx="6" fill="#151B31" stroke="#5CE1E6" stroke-width="2.2"/>
+<path d="M8 23 32 39 56 23" fill="none" stroke="url(#gCyan)" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="32" cy="40" r="6" fill="url(#gCrystal)"/></symbol>
+  <symbol id="ui-friends" viewBox="0 0 64 64"><circle cx="32" cy="22" r="9" fill="url(#gCrystal)"/>
+<circle cx="15" cy="34" r="6.5" fill="#5CE1E6"/>
+<circle cx="49" cy="34" r="6.5" fill="#7C5CFF"/>
+<path d="M22 54c0-6 4-10 10-10s10 4 10 10z" fill="url(#gCyan)" opacity=".85"/>
+<path d="M6 52c0-5 3-8 9-8M58 52c0-5-3-8-9-8" fill="none" stroke="#F8FAFF" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="ui-settings" viewBox="0 0 64 64"><g fill="#151B31" stroke="#5CE1E6" stroke-width="2">
+<rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(0 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(45 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(90 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(135 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(180 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(225 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(270 32 32)"/><rect x="29" y="4" width="6" height="12" rx="2" transform="rotate(315 32 32)"/>
+<circle cx="32" cy="32" r="17" fill="#151B31" stroke="#5CE1E6" stroke-width="2"/>
+</g>
+<path d="M32 25 L39 32 L32 39 L25 32 Z" fill="url(#gCrystal)" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="ui-events" viewBox="0 0 64 64"><rect x="7" y="14" width="50" height="40" rx="7" fill="#151B31" stroke="#5CE1E6" stroke-width="2.2"/>
+<path d="M7 27h50" stroke="#5CE1E6" stroke-width="2"/>
+<rect x="17" y="8" width="5" height="12" rx="2.5" fill="#7C5CFF"/>
+<rect x="42" y="8" width="5" height="12" rx="2.5" fill="#7C5CFF"/>
+<path d="M32 33l3.4 7 7.6 1-5.5 5.4 1.3 7.6L32 50.6 25.2 54l1.3-7.6L21 41l7.6-1z" fill="#FFD166"/></symbol>
+  <symbol id="ui-achievements" viewBox="0 0 64 64"><path d="M9 44 13 18l11 11 8-15 8 15 11-11 4 26z" fill="url(#gGold)" stroke="#FFD166" stroke-width="2"/>
+<rect x="9" y="44" width="46" height="8" rx="4" fill="#FFD166"/>
+<circle cx="20" cy="30" r="2.6" fill="#FF6B8A"/>
+<circle cx="32" cy="24" r="2.6" fill="#5CE1E6"/>
+<circle cx="44" cy="30" r="2.6" fill="#5BF2A5"/></symbol>
+  <symbol id="ui-leaderboard" viewBox="0 0 64 64"><path d="M20 10h24v12a12 12 0 0 1-24 0z" fill="url(#gGold)"/>
+<path d="M20 15h-6a9 9 0 0 0 9 9M44 15h6a9 9 0 0 1-9 9" fill="none" stroke="#FFD166" stroke-width="2.2"/>
+<rect x="28" y="33" width="8" height="11" rx="2" fill="#FFD166"/>
+<rect x="19" y="44" width="26" height="7" rx="3" fill="url(#gCrystal)"/>
+<path d="M32 12l1.6 3.4 3.4.4-2.5 2.4.7 3.4-3.2-1.8-3.2 1.8.7-3.4-2.5-2.4 3.4-.4z" fill="#F8FAFF" opacity=".9"/></symbol>
+  <symbol id="ui-battle" viewBox="0 0 64 64"><g stroke-linecap="round">
+<path d="M14 50 46 16" stroke="#5CE1E6" stroke-width="5"/>
+<path d="M50 50 18 16" stroke="#7C5CFF" stroke-width="5"/>
+<path d="M38 14 48 8 46 20Z" fill="#F8FAFF" opacity=".85"/>
+<path d="M26 14 16 8 18 20Z" fill="#F8FAFF" opacity=".85"/>
+</g>
+<path d="M32 32 L38 38 L32 44 L26 38 Z" fill="#FF6B8A" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="ui-breeding" viewBox="0 0 64 64"><ellipse cx="32" cy="34" rx="18" ry="22" fill="url(#gCrystal)"/>
+<path d="M20 32l8 5-6 5 11 4-5 8" fill="none" stroke="#F8FAFF" stroke-opacity=".9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M32 8c3 4 3 8 0 12-3-4-3-8 0-12z" fill="#5CE1E6"/>
+<circle cx="44" cy="22" r="2.4" fill="#5CE1E6"/>
+<circle cx="20" cy="20" r="1.8" fill="#FFD166"/></symbol>
+  <symbol id="ui-summon" viewBox="0 0 64 64"><rect x="28" y="36" width="8" height="18" rx="3" fill="#24123A" stroke="#7C5CFF" stroke-width="1.6"/>
+<circle cx="32" cy="26" r="14" fill="url(#gCrystal)" opacity=".9"/>
+<circle cx="20" cy="30" r="8" fill="#7C5CFF" opacity=".75"/>
+<circle cx="44" cy="30" r="8" fill="#5CE1E6" opacity=".65"/>
+<path d="M32 6l2.6 6 6 1.2-4.4 4.4 1 6-5.2-3-5.2 3 1-6L23.4 13l6-1.2z" fill="#FFD166"/></symbol>
+  <symbol id="ui-profile" viewBox="0 0 64 64"><rect x="9" y="9" width="46" height="46" rx="12" fill="#151B31" stroke="#5CE1E6" stroke-width="2.2"/>
+<circle cx="32" cy="27" r="8.5" fill="url(#gCrystal)"/>
+<path d="M18 48c2-8 8-12 14-12s12 4 14 12z" fill="url(#gCyan)" opacity=".85"/></symbol>
+  <symbol id="cur-spirit" viewBox="0 0 64 64"><ellipse cx="28" cy="48" rx="20" ry="5" fill="#5CE1E6" opacity=".22"/>
+<path d="M22 46 26 16 34 46Z" fill="url(#gCrystal)" stroke="#5CE1E6" stroke-width="1.8"/>
+<path d="M32 48 36 24 44 48Z" fill="#5CE1E6" opacity=".85"/>
+<path d="M12 46 16 26 22 46Z" fill="#7C5CFF" opacity=".8"/>
+<rect x="10" y="46" width="36" height="4" rx="2" fill="#F8FAFF" opacity=".25"/>
+<path d="M34 8.6 L37.4 12 L34 15.4 L30.6 12 Z" fill="#FFD166" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="cur-spore" viewBox="0 0 64 64"><path d="M10 32a22 22 0 0 1 44 0z" fill="url(#gCrystal)"/>
+<rect x="26" y="32" width="12" height="20" rx="5" fill="#151B31" stroke="#5CE1E6" stroke-width="1.8"/>
+<circle cx="24" cy="24" r="3.4" fill="#5CE1E6"/>
+<circle cx="38" cy="20" r="2.6" fill="#5CE1E6"/>
+<circle cx="32" cy="28" r="2.2" fill="#F8FAFF" opacity=".8"/>
+<circle cx="12" cy="12" r="2" fill="#FFD166"/>
+<circle cx="52" cy="10" r="1.6" fill="#FFD166"/></symbol>
+  <symbol id="cur-seed" viewBox="0 0 64 64"><path d="M13 57q19-9 38 0z" fill="#151B31" stroke="#5CE1E6" stroke-width="2"/>
+<path d="M32 14c9 0 15 9 15 20 0 12-7 20-15 20s-15-8-15-20c0-11 6-20 15-20z" fill="url(#gGold)" stroke="#F8FAFF" stroke-width="1.8" stroke-opacity=".65"/>
+<path d="M32 18v10l-4 4 5 4-2 9" fill="none" stroke="#24123A" stroke-width="2.2" stroke-opacity=".55" stroke-linejoin="round"/>
+<path d="M32 16V5" stroke="#5BF2A5" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M32 11C24 11 20 7 20 2c7 0 11 4 12 9z" fill="#5BF2A5"/>
+<path d="M32 11c8 0 12-4 12-9-7 0-11 4-12 9z" fill="#5BF2A5"/>
+<path d="M12 26 L13.7 29.3 L17 31 L13.7 32.7 L12 36 L10.3 32.7 L7 31 L10.3 29.3 Z" fill="#5CE1E6"/>
+<path d="M52 39 L53.36 41.64 L56 43 L53.36 44.36 L52 47 L50.64 44.36 L48 43 L50.64 41.64 Z" fill="#FFD166"/></symbol>
+  <symbol id="cur-coins" viewBox="0 0 64 64"><ellipse cx="32" cy="44" rx="20" ry="8" fill="#FFD166" opacity=".55"/>
+<ellipse cx="32" cy="36" rx="20" ry="8" fill="url(#gGold)" stroke="#FFD166" stroke-width="1.6"/>
+<ellipse cx="32" cy="27" rx="20" ry="8" fill="url(#gGold)" stroke="#FFD166" stroke-width="1.6"/>
+<ellipse cx="32" cy="18" rx="20" ry="8" fill="url(#gGold)" stroke="#F8FAFF" stroke-opacity=".5" stroke-width="1.2"/>
+<path d="M32 14 L36 18 L32 22 L28 18 Z" fill="#24123A" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="cur-moon" viewBox="0 0 64 64"><circle cx="30" cy="30" r="22" fill="url(#gCyan)" opacity=".16"/>
+<path d="M40 8a22 22 0 1 0 0 44 18 18 0 0 1 0-44z" fill="url(#gCyan)" stroke="#F8FAFF" stroke-width="1.4" stroke-opacity=".7"/>
+<path d="M36 26l4 5-4 5-4-5z" fill="#0B1020" opacity=".9"/>
+<path d="M48 37 L55 44 L48 51 L41 44 Z" fill="url(#gCrystal)" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/>
+<path d="M19 8.5 L23.5 13 L19 17.5 L14.5 13 Z" fill="#FFD166" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="cur-shard" viewBox="0 0 64 64"><path d="M11 56 19 18 30 33 26 56Z" fill="url(#gCrystal)" stroke="#F8FAFF" stroke-width="2" stroke-opacity=".85"/>
+<path d="M30 58 36 24 47 38 42 58Z" fill="url(#gCyan)" stroke="#F8FAFF" stroke-width="1.8" stroke-opacity=".8"/>
+<path d="M44 56 50 34 57 43 55 56Z" fill="#5CE1E6" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".85"/>
+<path d="M20 24 24 47" stroke="#24123A" stroke-width="2.2" stroke-opacity=".5"/>
+<path d="M37 31 40 51" stroke="#24123A" stroke-width="2" stroke-opacity=".4"/>
+<path d="M12 8 L16 12 L12 16 L8 12 Z" fill="#5CE1E6" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-common" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#C9D4E8" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#C9D4E8" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-uncommon" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#5BF2A5" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#5BF2A5" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-rare" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#4FA8FF" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#4FA8FF" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-epic" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#7C5CFF" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#7C5CFF" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-legendary" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#FFD166" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#FFD166" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-mythic" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#FF6B8A" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#FF6B8A" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-celestial" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="url(#gRainbow)" stroke="#F8FAFF" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="url(#gRainbow)" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="rar-hollowborn" viewBox="0 0 64 64"><path d="M32 5 55 13v17c0 15-10 24-23 29C19 54 9 45 9 30V13z" fill="#24123A" stroke="#5CE1E6" stroke-width="1.6" stroke-opacity=".8"/>
+<path d="M32 13 49 19v11c0 11-7 18-17 22-10-4-17-11-17-22V19z" fill="#0B1020" opacity=".55"/>
+<path d="M32 23 L39 30 L32 37 L25 30 Z" fill="#24123A" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="btn-play" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gCrystal)" stroke="#5CE1E6" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Play</text></symbol>
+  <symbol id="btn-claim" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gGold)" stroke="#FFD166" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Claim</text></symbol>
+  <symbol id="btn-collect" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gCrystal)" stroke="#5CE1E6" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="11" font-weight="800" fill="#F8FAFF" text-anchor="middle">Collect</text></symbol>
+  <symbol id="btn-summon" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gVoid)" stroke="#7C5CFF" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Summon</text></symbol>
+  <symbol id="btn-evolve" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gCyan)" stroke="#5CE1E6" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Evolve</text></symbol>
+  <symbol id="btn-feed" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gGold)" stroke="#FFD166" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Feed</text></symbol>
+  <symbol id="btn-shop" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gCrystal)" stroke="#5CE1E6" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Shop</text></symbol>
+  <symbol id="btn-equip" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gCyan)" stroke="#5CE1E6" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Equip</text></symbol>
+  <symbol id="btn-upgrade" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gGold)" stroke="#FFD166" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="11" font-weight="800" fill="#F8FAFF" text-anchor="middle">Upgrade</text></symbol>
+  <symbol id="btn-continue" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gCrystal)" stroke="#5CE1E6" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="10" font-weight="800" fill="#F8FAFF" text-anchor="middle">Continue</text></symbol>
+  <symbol id="btn-back" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gVoid)" stroke="#7C5CFF" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Back</text></symbol>
+  <symbol id="btn-close" viewBox="0 0 64 64"><rect x="4" y="19" width="56" height="26" rx="13" fill="url(#gVoid)" stroke="#FF6B8A" stroke-width="1.6"/>
+<rect x="8" y="23" width="48" height="8" rx="4" fill="#F8FAFF" opacity=".12"/>
+<text x="32" y="33" font-family="Trebuchet MS, Verdana, sans-serif" font-size="13" font-weight="800" fill="#F8FAFF" text-anchor="middle">Close</text></symbol>
+  <symbol id="hb-crown" viewBox="0 0 64 64"><path d="M10 46 14 20l10 10 8-14 8 14 10-10 4 26z" fill="#24123A" stroke="#5CE1E6" stroke-width="2"/>
+<path d="M22 44 26 28M32 44V26M42 44 38 28" stroke="#5CE1E6" stroke-opacity=".85" stroke-width="1.6"/>
+<rect x="10" y="46" width="44" height="7" rx="3.5" fill="#24123A" stroke="#7C5CFF" stroke-width="1.6"/>
+<path d="M32 19 L35 22 L32 25 L29 22 Z" fill="#5CE1E6" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="hb-portal" viewBox="0 0 64 64"><ellipse cx="32" cy="32" rx="12" ry="24" fill="#0B1020" stroke="#7C5CFF" stroke-width="2"/>
+<ellipse cx="32" cy="32" rx="7" ry="17" fill="#24123A" stroke="#5CE1E6" stroke-width="1.6"/>
+<ellipse cx="32" cy="32" rx="3" ry="9" fill="#5CE1E6" opacity=".85"/>
+<path d="M8 32c4-8 8-12 12-14M56 32c-4 8-8 12-12 14" fill="none" stroke="#7C5CFF" stroke-opacity=".6" stroke-width="1.6"/></symbol>
+  <symbol id="hb-key" viewBox="0 0 64 64"><circle cx="32" cy="18" r="10" fill="none" stroke="#5CE1E6" stroke-width="3.2"/>
+<circle cx="32" cy="18" r="4" fill="#24123A" stroke="#7C5CFF" stroke-width="1.6"/>
+<path d="M32 28v24M32 44h10M32 37h8" stroke="#5CE1E6" stroke-width="3.2" stroke-linecap="round"/></symbol>
+  <symbol id="hb-relic" viewBox="0 0 64 64"><path d="M32 8 52 24 44 52H20L12 24Z" fill="url(#gVoid)" stroke="#5CE1E6" stroke-width="2.2"/>
+<path d="M32 16v26M22 26l20 16M42 26 22 42" stroke="#F8FAFF" stroke-opacity=".6" stroke-width="1.8"/>
+<path d="M32 27 L38 33 L32 39 L26 33 Z" fill="#5CE1E6" stroke="#F8FAFF" stroke-opacity=".55" stroke-width="1"/></symbol>
+  <symbol id="hb-eclipse" viewBox="0 0 64 64"><circle cx="32" cy="32" r="21" fill="url(#gCyan)" opacity=".2"/>
+<circle cx="32" cy="32" r="20" fill="#24123A" stroke="#5CE1E6" stroke-width="2.6"/>
+<path d="M32 12a20 20 0 0 1 0 40 14 14 0 0 0 0-40z" fill="#0B1020" stroke="#7C5CFF" stroke-width="1.6"/>
+<circle cx="24" cy="26" r="2" fill="#5CE1E6"/><circle cx="46" cy="40" r="1.6" fill="#5CE1E6"/></symbol>
+  <symbol id="hb-eye" viewBox="0 0 64 64"><path d="M6 32c8-11 17-16 26-16s18 5 26 16c-8 11-17 16-26 16S14 43 6 32z" fill="#24123A" stroke="#5CE1E6" stroke-width="2"/>
+<circle cx="32" cy="32" r="11" fill="#0B1020" stroke="#7C5CFF" stroke-width="1.8"/>
+<circle cx="32" cy="32" r="6" fill="url(#gCyan)"/>
+<circle cx="32" cy="32" r="2.4" fill="#24123A"/>
+<circle cx="29" cy="28" r="1.6" fill="#F8FAFF" opacity=".9"/></symbol>
+  <symbol id="hb-rune" viewBox="0 0 64 64"><rect x="10" y="10" width="44" height="44" rx="10" fill="#24123A" stroke="#7C5CFF" stroke-width="2"/>
+<path d="M22 44V20l20 24V20" fill="none" stroke="#5CE1E6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22 32h20" stroke="#5CE1E6" stroke-opacity=".55" stroke-width="1.8"/></symbol>
+  <symbol id="hb-badge" viewBox="0 0 64 64"><path d="M32 4 54 13v17c0 16-10 25-22 30C20 55 10 46 10 30V13z" fill="url(#gVoid)" stroke="#5CE1E6" stroke-width="2.4"/>
+<path d="M32 13 47 19v11c0 12-7 19-15 23-8-4-15-11-15-23V19z" fill="#0B1020" opacity=".5"/>
+<path d="M32 20l3.6 7.4 8.4.9-6.2 5.5 1.7 8-7.5-4.4-7.5 4.4 1.7-8-6.2-5.5 8.4-.9z" fill="#5CE1E6" opacity=".9"/></symbol>
+  <symbol id="state-locked" viewBox="0 0 64 64"><rect x="12" y="28" width="40" height="28" rx="8" fill="#151B31" stroke="#5CE1E6" stroke-width="2"/>
+<path d="M22 28v-7a10 10 0 0 1 20 0v7" fill="none" stroke="#5CE1E6" stroke-width="3"/>
+<circle cx="32" cy="40" r="4" fill="#5CE1E6"/>
+<rect x="30" y="42" width="4" height="8" rx="2" fill="#5CE1E6"/></symbol>
+  <symbol id="state-new" viewBox="0 0 64 64"><path d="M32 6l5.5 12.5L50 24l-9.5 9 2.6 13.5L32 40l-11.1 6.5L23.5 33 14 24l12.5-5.5z" fill="#FFD166"/>
+<path d="M32 6l5.5 12.5L50 24l-9.5 9 2.6 13.5L32 40z" fill="#F8FAFF" opacity=".18"/>
+<circle cx="32" cy="26" r="4" fill="#0B1020" opacity=".5"/></symbol>
+  <symbol id="state-timer" viewBox="0 0 64 64"><circle cx="32" cy="34" r="20" fill="#151B31" stroke="#5CE1E6" stroke-width="2.6"/>
+<path d="M32 34V22M32 34l9 6" stroke="#5CE1E6" stroke-width="3" stroke-linecap="round"/>
+<rect x="27" y="6" width="10" height="5" rx="2.5" fill="#5CE1E6"/>
+<path d="M32 10v4" stroke="#5CE1E6" stroke-width="2.4"/></symbol>
+  <symbol id="state-energy" viewBox="0 0 64 64"><path d="M36 4 16 36h12l-4 24 20-32H32z" fill="url(#gGold)" stroke="#FFD166" stroke-width="1.6"/>
+<path d="M36 4 16 36h12" fill="#F8FAFF" opacity=".18"/></symbol>
+  </defs>
+  <use href="#ui-home" x="0" y="0" width="128" height="128"/>
+  <use href="#ui-codex" x="128" y="0" width="128" height="128"/>
+  <use href="#ui-adventure" x="256" y="0" width="128" height="128"/>
+  <use href="#ui-evolution" x="384" y="0" width="128" height="128"/>
+  <use href="#ui-habitat" x="512" y="0" width="128" height="128"/>
+  <use href="#ui-shop" x="640" y="0" width="128" height="128"/>
+  <use href="#ui-inventory" x="768" y="0" width="128" height="128"/>
+  <use href="#ui-quests" x="896" y="0" width="128" height="128"/>
+  <use href="#ui-mail" x="0" y="128" width="128" height="128"/>
+  <use href="#ui-friends" x="128" y="128" width="128" height="128"/>
+  <use href="#ui-settings" x="256" y="128" width="128" height="128"/>
+  <use href="#ui-events" x="384" y="128" width="128" height="128"/>
+  <use href="#ui-achievements" x="512" y="128" width="128" height="128"/>
+  <use href="#ui-leaderboard" x="640" y="128" width="128" height="128"/>
+  <use href="#ui-battle" x="768" y="128" width="128" height="128"/>
+  <use href="#ui-breeding" x="896" y="128" width="128" height="128"/>
+  <use href="#ui-summon" x="0" y="256" width="128" height="128"/>
+  <use href="#ui-profile" x="128" y="256" width="128" height="128"/>
+  <use href="#cur-spirit" x="256" y="256" width="128" height="128"/>
+  <use href="#cur-spore" x="384" y="256" width="128" height="128"/>
+  <use href="#cur-seed" x="512" y="256" width="128" height="128"/>
+  <use href="#cur-coins" x="640" y="256" width="128" height="128"/>
+  <use href="#cur-moon" x="768" y="256" width="128" height="128"/>
+  <use href="#cur-shard" x="896" y="256" width="128" height="128"/>
+  <use href="#rar-common" x="0" y="384" width="128" height="128"/>
+  <use href="#rar-uncommon" x="128" y="384" width="128" height="128"/>
+  <use href="#rar-rare" x="256" y="384" width="128" height="128"/>
+  <use href="#rar-epic" x="384" y="384" width="128" height="128"/>
+  <use href="#rar-legendary" x="512" y="384" width="128" height="128"/>
+  <use href="#rar-mythic" x="640" y="384" width="128" height="128"/>
+  <use href="#rar-celestial" x="768" y="384" width="128" height="128"/>
+  <use href="#rar-hollowborn" x="896" y="384" width="128" height="128"/>
+  <use href="#btn-play" x="0" y="512" width="128" height="128"/>
+  <use href="#btn-claim" x="128" y="512" width="128" height="128"/>
+  <use href="#btn-collect" x="256" y="512" width="128" height="128"/>
+  <use href="#btn-summon" x="384" y="512" width="128" height="128"/>
+  <use href="#btn-evolve" x="512" y="512" width="128" height="128"/>
+  <use href="#btn-feed" x="640" y="512" width="128" height="128"/>
+  <use href="#btn-shop" x="768" y="512" width="128" height="128"/>
+  <use href="#btn-equip" x="896" y="512" width="128" height="128"/>
+  <use href="#btn-upgrade" x="0" y="640" width="128" height="128"/>
+  <use href="#btn-continue" x="128" y="640" width="128" height="128"/>
+  <use href="#btn-back" x="256" y="640" width="128" height="128"/>
+  <use href="#btn-close" x="384" y="640" width="128" height="128"/>
+  <use href="#hb-crown" x="512" y="640" width="128" height="128"/>
+  <use href="#hb-portal" x="640" y="640" width="128" height="128"/>
+  <use href="#hb-key" x="768" y="640" width="128" height="128"/>
+  <use href="#hb-relic" x="896" y="640" width="128" height="128"/>
+  <use href="#hb-eclipse" x="0" y="768" width="128" height="128"/>
+  <use href="#hb-eye" x="128" y="768" width="128" height="128"/>
+  <use href="#hb-rune" x="256" y="768" width="128" height="128"/>
+  <use href="#hb-badge" x="384" y="768" width="128" height="128"/>
+  <use href="#state-locked" x="512" y="768" width="128" height="128"/>
+  <use href="#state-new" x="640" y="768" width="128" height="128"/>
+  <use href="#state-timer" x="768" y="768" width="128" height="128"/>
+  <use href="#state-energy" x="896" y="768" width="128" height="128"/>
+</svg>

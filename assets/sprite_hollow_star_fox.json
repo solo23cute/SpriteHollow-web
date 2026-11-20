@@ -1,0 +1,8 @@
+{
+  "id": "star_fox",
+  "rarity": "rare",
+  "abilities": [
+    "star_pounce",
+    "tail_glow"
+  ]
+}

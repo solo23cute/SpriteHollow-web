@@ -1,0 +1,9 @@
+{
+  "id": "royal_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "royal_glow",
+    "crown_spark"
+  ],
+  "wings": false
+}

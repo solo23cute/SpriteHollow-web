@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "species": [
+    "assets/sprite_hollow_baby_dragon.json",
+    "assets/sprite_hollow_baby_sprite.json",
+    "assets/sprite_hollow_basic_sprite.json",
+    "assets/sprite_hollow_christmas_sprite.json",
+    "assets/sprite_hollow_cloud_bunny.json",
+    "assets/sprite_hollow_cosmic_cat.json",
+    "assets/sprite_hollow_crystal_sprite.json",
+    "assets/sprite_hollow_cyber_sprite.json",
+    "assets/sprite_hollow_diamond_sprite.json",
+    "assets/sprite_hollow_ember_sprite.json",
+    "assets/sprite_hollow_frost_sprite.json",
+    "assets/sprite_hollow_galaxy_sprite.json",
+    "assets/sprite_hollow_ghost_sprite.json",
+    "assets/sprite_hollow_gold_sprite.json",
+    "assets/sprite_hollow_halloween_sprite.json",
+    "assets/sprite_hollow_lightning_chick.json",
+    "assets/sprite_hollow_mini_crystal.json",
+    "assets/sprite_hollow_moon_owl.json",
+    "assets/sprite_hollow_nature_sprite.json",
+    "assets/sprite_hollow_neon_sprite.json",
+    "assets/sprite_hollow_rainbow_sprite.json",
+    "assets/sprite_hollow_royal_sprite.json",
+    "assets/sprite_hollow_shadow_sprite.json",
+    "assets/sprite_hollow_spring_sprite.json",
+    "assets/sprite_hollow_star_fox.json",
+    "assets/sprite_hollow_storm_sprite.json",
+    "assets/sprite_hollow_summer_sprite.json",
+    "assets/sprite_hollow_valentine_sprite.json"
+  ],
+  "lists": [
+    "assets/sprite_hollow_creature_sprites.json",
+    "assets/sprite_hollow_seasonal_sprites.json",
+    "assets/sprite_hollow_variant_sprites.json"
+  ],
+  "effects": "assets/sprite_hollow_effects.json",
+  "animations": "assets/sprite_hollow_animations.json",
+  "sheet": "freebuff/assets/sprite-hollow/sprite_hollow_config.json",
+  "layout": "assets/sprite_hollow_sheet_layout.json"
+}

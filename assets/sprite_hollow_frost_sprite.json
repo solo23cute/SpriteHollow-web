@@ -1,0 +1,9 @@
+{
+  "id": "frost_sprite",
+  "rarity": "epic",
+  "abilities": [
+    "ice_wings",
+    "snow_burst"
+  ],
+  "wings": true
+}

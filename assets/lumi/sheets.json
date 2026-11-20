@@ -1,0 +1,3111 @@
+{
+  "pack": "Lumi Sprite",
+  "original": true,
+  "frameSize": {
+    "width": 128,
+    "height": 128
+  },
+  "background": "transparent",
+  "layout": {
+    "columns": 6,
+    "rows": 18,
+    "frames": 107
+  },
+  "clips": {
+    "idle": {
+      "start": 0,
+      "frames": 8,
+      "fps": 8,
+      "loop": true
+    },
+    "walk": {
+      "start": 8,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "fly": {
+      "start": 16,
+      "frames": 8,
+      "fps": 14,
+      "loop": true
+    },
+    "blink": {
+      "start": 24,
+      "frames": 3,
+      "fps": 10,
+      "loop": false
+    },
+    "celebrate": {
+      "start": 27,
+      "frames": 10,
+      "fps": 12,
+      "loop": true
+    },
+    "eat": {
+      "start": 37,
+      "frames": 8,
+      "fps": 10,
+      "loop": true
+    },
+    "drink": {
+      "start": 45,
+      "frames": 8,
+      "fps": 10,
+      "loop": true
+    },
+    "wash": {
+      "start": 53,
+      "frames": 8,
+      "fps": 10,
+      "loop": true
+    },
+    "sleep": {
+      "start": 61,
+      "frames": 6,
+      "fps": 4,
+      "loop": true
+    },
+    "catch": {
+      "start": 67,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "throw": {
+      "start": 75,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "relax": {
+      "start": 83,
+      "frames": 8,
+      "fps": 6,
+      "loop": true
+    },
+    "bow": {
+      "start": 91,
+      "frames": 8,
+      "fps": 9,
+      "loop": true
+    },
+    "speak": {
+      "start": 99,
+      "frames": 8,
+      "fps": 8,
+      "loop": true
+    }
+  },
+  "mapping": {
+    "idle": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "walk": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "fly": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "blink": [
+      24,
+      25,
+      26,
+      25
+    ],
+    "celebrate": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "eat": [
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+    ],
+    "drink": [
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52
+    ],
+    "wash": [
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60
+    ],
+    "sleep": [
+      61,
+      62,
+      63,
+      64,
+      65,
+      66
+    ],
+    "catch": [
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74
+    ],
+    "throw": [
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82
+    ],
+    "relax": [
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90
+    ],
+    "bow": [
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98
+    ],
+    "speak": [
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106
+    ]
+  },
+  "forms": {
+    "baby_lumi": {
+      "name": "Baby Lumi",
+      "sheet": "assets/lumi/baby_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/baby_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "lumi_sprite": {
+      "name": "Lumi Sprite",
+      "sheet": "assets/lumi/lumi_sprite/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/lumi_sprite/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "crystal_lumi": {
+      "name": "Crystal Lumi",
+      "sheet": "assets/lumi/crystal_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/crystal_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "royal_lumi": {
+      "name": "Royal Lumi",
+      "sheet": "assets/lumi/royal_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/royal_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "shadow_lumi": {
+      "name": "Shadow Lumi",
+      "sheet": "assets/lumi/shadow_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/shadow_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "storm_lumi": {
+      "name": "Storm Lumi",
+      "sheet": "assets/lumi/storm_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/storm_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "ember_lumi": {
+      "name": "Ember Lumi",
+      "sheet": "assets/lumi/ember_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/ember_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "frost_lumi": {
+      "name": "Frost Lumi",
+      "sheet": "assets/lumi/frost_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/frost_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "nature_lumi": {
+      "name": "Nature Lumi",
+      "sheet": "assets/lumi/nature_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/nature_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "galaxy_lumi": {
+      "name": "Galaxy Lumi",
+      "sheet": "assets/lumi/galaxy_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/galaxy_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    },
+    "void_lumi": {
+      "name": "Void Lumi",
+      "sheet": "assets/lumi/void_lumi/sheet.png",
+      "sheetSize": {
+        "w": 768,
+        "h": 2304
+      },
+      "keyframes": "assets/lumi/void_lumi/sheet-3x3.png",
+      "cell": 128,
+      "columns": 6,
+      "rows": 18,
+      "clips": {
+        "idle": {
+          "start": 0,
+          "frames": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "walk": {
+          "start": 8,
+          "frames": 8,
+          "indices": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "fly": {
+          "start": 16,
+          "frames": 8,
+          "indices": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        "blink": {
+          "start": 24,
+          "frames": 3,
+          "indices": [
+            24,
+            25,
+            26
+          ]
+        },
+        "celebrate": {
+          "start": 27,
+          "frames": 10,
+          "indices": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "eat": {
+          "start": 37,
+          "frames": 8,
+          "indices": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "drink": {
+          "start": 45,
+          "frames": 8,
+          "indices": [
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        "wash": {
+          "start": 53,
+          "frames": 8,
+          "indices": [
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ]
+        },
+        "sleep": {
+          "start": 61,
+          "frames": 6,
+          "indices": [
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
+          ]
+        },
+        "catch": {
+          "start": 67,
+          "frames": 8,
+          "indices": [
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74
+          ]
+        },
+        "throw": {
+          "start": 75,
+          "frames": 8,
+          "indices": [
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82
+          ]
+        },
+        "relax": {
+          "start": 83,
+          "frames": 8,
+          "indices": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        "bow": {
+          "start": 91,
+          "frames": 8,
+          "indices": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ]
+        },
+        "speak": {
+          "start": 99,
+          "frames": 8,
+          "indices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106
+          ]
+        }
+      },
+      "keyframeTable": [
+        {
+          "row": 0,
+          "column": 0,
+          "animation": "idle",
+          "frame": 1
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "animation": "idle",
+          "frame": 2
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "animation": "idle",
+          "frame": 3
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "animation": "walk",
+          "frame": 1
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "animation": "walk",
+          "frame": 2
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "animation": "walk",
+          "frame": 3
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "animation": "fly",
+          "frame": 1
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "animation": "fly",
+          "frame": 2
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "animation": "fly",
+          "frame": 3
+        }
+      ]
+    }
+  }
+}

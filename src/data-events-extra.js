@@ -149,6 +149,58 @@ if (typeof WEEKEND_ADMIN_EVENTS !== 'undefined') {
   );
 }
 
+/* The nine world events of Sprite Hollow. Each one belongs to a region and
+   hands out that region's elemental egg while it runs. */
+if (typeof WEEKEND_ADMIN_EVENTS !== 'undefined') {
+  WEEKEND_ADMIN_EVENTS.push(
+    {
+      key: 'hatch-day', name: 'Hatch Day Festival', icon: '🥚', color: '#ffe6a3',
+      blurb: 'Every egg in Bloomroot is warm at once: hatchery coins, extra XP, and a Nature Puffle egg.',
+      xpMult: 1.28, coins: 330, egg: 'sp_nature',
+    },
+    {
+      key: 'bloomlight-celebration', name: 'Bloomlight Celebration', icon: '🌸', color: '#ffd166',
+      blurb: 'The garden flowers all light up together: gift coins, faster bloom, and a Bloomlight egg.',
+      xpMult: 1.3, coins: 340, egg: 'sp_bloomlight',
+    },
+    {
+      key: 'crystal-moon-market', name: 'Crystal Moon Market', icon: '🌙', color: '#b9f5e3',
+      blurb: 'Stalls of moonlit stone open in the caverns: trade coins, extra XP, and a Crystal Puffle egg.',
+      xpMult: 1.32, coins: 350, egg: 'sp_crystal',
+    },
+    {
+      key: 'storm-racing', name: 'Storm Racing Championship', icon: '🏁', color: '#8be9ff',
+      blurb: 'Racers climb the thunder stairs for the cup: game coins, extra XP, and a Lightning Puffle egg.',
+      xpMult: 1.36, coins: 360, egg: 'sp_lightning',
+    },
+    {
+      key: 'emberpeak-fireworks', name: 'Fireworks of Emberpeak', icon: '🎆', color: '#ff8a5c',
+      blurb: 'The highlands light their own sky: rich coins, extra XP, and a Fire Puffle egg.',
+      xpMult: 1.34, coins: 355, egg: 'sp_fire',
+    },
+    {
+      key: 'aurora-night', name: 'Aurora Night Festival', icon: '🌌', color: '#bfffe9',
+      blurb: 'The glacier sky answers in ribbons: slower needs, extra XP, and an Ice Puffle egg.',
+      xpMult: 1.3, coins: 345, egg: 'sp_ice',
+    },
+    {
+      key: 'ocean-treasure-hunt', name: 'Ocean Treasure Hunt', icon: '🗺️', color: '#5ad0e0',
+      blurb: 'Chests wash up along the coast all weekend: hunt coins, extra XP, and a Water Puffle egg.',
+      xpMult: 1.32, coins: 350, egg: 'sp_water',
+    },
+    {
+      key: 'creators-day', name: "Creator's Day", icon: '👑', color: '#ffe08a',
+      blurb: 'The Hollow remembers who named the elements: generous coins, extra XP, and a Light Puffle egg.',
+      xpMult: 1.4, coins: 380, egg: 'sp_light',
+    },
+    {
+      key: 'worldheart-gathering', name: 'Worldheart Gathering', icon: '🌳', color: '#8fe07a',
+      blurb: 'Every region sends someone to the great tree: bond coins, extra XP, and a Titanroot egg.',
+      xpMult: 1.34, coins: 355, egg: 'sp_titanroot',
+    },
+  );
+}
+
 /* A short festival calendar the Hollow can show outside the admin weekends. */
 const HOLLOW_FESTIVALS = [
   { key: 'lantern-festival', name: 'Lantern Festival', icon: '🏮', month: 2, color: '#ffb347', species: 'lanterncarp' },

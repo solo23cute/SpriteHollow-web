@@ -4,113 +4,393 @@
    borders, and particle accents. `color` stays a single hex where older styles
    need one; `gradient` and `stops` carry the animated / prism / galaxy looks. */
 
-const RARITY_TIER_STYLES = {
+/* One rarity spec: every per-tier fact the game reads. The tables below and in
+   data.js / data-rarity-economy.js / data-ability-paths.js are generated from
+   this object, so adding a rank is one entry plus its rank number, not nine
+   hand-edited tables. `rank` is stable: a new tier takes a fresh number and
+   never renumbers an existing one, which is what keeps stored rarity boosts
+   pointing at the same tier after an insertion. */
+const RARITY_SPEC = {
   common: {
-    name: 'Common', color: '#C9CDD2', glow: 'rgba(201, 205, 210, .55)', icon: '⚪',
+    rank: 0,
+    name: 'Common',
+    color: '#C9CDD2',
+    glow: 'rgba(201, 205, 210, .55)',
+    icon: '⚪',
     gradient: 'linear-gradient(135deg, #F7F8FA, #C9CDD2 50%, #8E949D)',
     stops: ['#F7F8FA', '#C9CDD2', '#8E949D'],
     eggName: 'Gray Shell',
     effects: ['Basic silver sparkle particles', 'Simple silver border'],
+    listPrice: 120,
+    mutation: 0.06,
+    gen: 0,
+    desc: 'A plain shell from the meadow. A random type at Common rank.',
+    priceMult: 1,
+    spawnWeight: 60,
+    coinBonus: 1500,
+    abilityRank: 0,
+    wikiBand: 'under 75 coins',
   },
   uncommon: {
-    name: 'Uncommon', color: '#42D97C', glow: 'rgba(66, 217, 124, .5)', icon: '🟢',
+    rank: 10,
+    name: 'Uncommon',
+    color: '#42D97C',
+    glow: 'rgba(66, 217, 124, .5)',
+    icon: '🟢',
     gradient: 'linear-gradient(135deg, #B9FFD1, #42D97C 52%, #127A3E)',
     stops: ['#B9FFD1', '#42D97C', '#127A3E'],
     eggName: 'Emerald Shell',
     effects: ['Green magical glow', 'Leaf particles', 'Enhanced border shine'],
+    listPrice: 200,
+    mutation: 0.1,
+    gen: 0,
+    desc: 'Freckled shell. A random type raised to Uncommon rank.',
+    priceMult: 1.15,
+    spawnWeight: 25,
+    coinBonus: 2000,
+    abilityRank: 1,
+    wikiBand: '75–97 coins',
   },
   rare: {
-    name: 'Rare', color: '#3E89FF', glow: 'rgba(62, 137, 255, .52)', icon: '🔵',
+    rank: 20,
+    name: 'Rare',
+    color: '#3E89FF',
+    glow: 'rgba(62, 137, 255, .52)',
+    icon: '🔵',
     gradient: 'linear-gradient(135deg, #A9C8FF, #3E89FF 52%, #123C8A)',
     stops: ['#A9C8FF', '#3E89FF', '#123C8A'],
     eggName: 'Blue Crystal Shell',
     effects: ['Blue aura', 'Crystal particles', 'Animated border'],
+    listPrice: 320,
+    mutation: 0.14,
+    gen: 1,
+    desc: 'Cool blue veins. A random type raised to Rare rank.',
+    priceMult: 1.35,
+    spawnWeight: 10,
+    coinBonus: 2700,
+    abilityRank: 2,
+    wikiBand: '98–116 coins',
   },
   epic: {
-    name: 'Epic', color: '#9A5CFF', glow: 'rgba(154, 92, 255, .5)', icon: '🟣',
+    rank: 30,
+    name: 'Epic',
+    color: '#9A5CFF',
+    glow: 'rgba(154, 92, 255, .5)',
+    icon: '🟣',
     gradient: 'linear-gradient(135deg, #D9C2FF, #9A5CFF 52%, #4A1D8A)',
     stops: ['#D9C2FF', '#9A5CFF', '#4A1D8A'],
     eggName: 'Purple Arcane Shell',
     effects: ['Purple energy waves', 'Floating runes', 'Multi-layer frame'],
+    listPrice: 520,
+    mutation: 0.2,
+    gen: 1,
+    desc: 'Rose-lit shell. A random type raised to Epic rank.',
+    priceMult: 1.65,
+    spawnWeight: 4,
+    coinBonus: 4000,
+    abilityRank: 3,
+    wikiBand: '117–164 coins',
   },
   legendary: {
-    name: 'Legendary', color: '#FFB62E', glow: 'rgba(255, 182, 46, .54)', icon: '🟠',
+    rank: 40,
+    name: 'Legendary',
+    color: '#FFB62E',
+    glow: 'rgba(255, 182, 46, .54)',
+    icon: '🟠',
     gradient: 'linear-gradient(135deg, #FFE1A0, #FFB62E 52%, #A45A00)',
     stops: ['#FFE1A0', '#FFB62E', '#A45A00'],
     eggName: 'Gold Sun Shell',
     effects: ['Golden flames', 'Radiant rays', 'Animated crown effects'],
+    listPrice: 800,
+    mutation: 0.26,
+    gen: 2,
+    desc: 'Gold-flecked and warm. A random type raised to Legendary rank.',
+    priceMult: 2.1,
+    spawnWeight: 0.9,
+    coinBonus: 6750,
+    abilityRank: 4,
+    wikiBand: '165–209 coins',
   },
   mythic: {
-    name: 'Mythic', color: '#FF4B5C', glow: 'rgba(255, 75, 92, .54)', icon: '🔴',
+    rank: 50,
+    name: 'Mythic',
+    color: '#FF4B5C',
+    glow: 'rgba(255, 75, 92, .54)',
+    icon: '🔴',
     gradient: 'linear-gradient(135deg, #FFB8C0, #FF4B5C 52%, #8A1020)',
     stops: ['#FFB8C0', '#FF4B5C', '#8A1020'],
     eggName: 'Crimson Dragon Shell',
     effects: ['Cosmic fire particles', 'Mythic energy surges', 'Glowing animated wings'],
+    listPrice: 1250,
+    mutation: 0.32,
+    gen: 2,
+    desc: 'Nebula swirl. A random type raised to Mythic rank.',
+    priceMult: 2.8,
+    spawnWeight: 0.09,
+    coinBonus: 10000,
+    abilityRank: 5,
+    wikiBand: '210+ coins',
+  },
+  ultra: {
+    rank: 60,
+    name: 'Ultra',
+    color: '#B6F2FF',
+    glow: 'rgba(182, 242, 255, .56)',
+    icon: '🛰',
+    gradient: 'linear-gradient(135deg, #EAFDFF, #B6F2FF 48%, #4F8BD6)',
+    stops: ['#EAFDFF', '#B6F2FF', '#4F8BD6'],
+    eggName: 'Signal Shell',
+    effects: ['Light-band shimmer', 'Signal sparkles'],
+    listPrice: 1550,
+    mutation: 0.34,
+    gen: 3,
+    desc: 'Signal-bright shell. A random type raised to Ultra rank.',
+    priceMult: 3.1,
+    spawnWeight: 0.05,
+    coinBonus: 11500,
+    abilityRank: 6,
+    wikiBand: 'Signal rank · above Mythic, below Secret',
   },
   secret: {
-    name: 'Secret', color: '#FF8FD6', glow: 'rgba(255, 143, 214, .58)', icon: '🌈', animated: true,
+    rank: 70,
+    name: 'Secret',
+    color: '#FF8FD6',
+    glow: 'rgba(255, 143, 214, .58)',
+    icon: '🌈',
     gradient: 'linear-gradient(135deg, #FF8FD6, #B18CFF 22%, #58B8FF 42%, #67F5D4 60%, #FFE58A 80%, #FF9F6E)',
     stops: ['#FF8FD6', '#B18CFF', '#58B8FF', '#67F5D4', '#FFE58A', '#FF9F6E'],
     eggName: 'Rainbow Prism Shell',
     effects: ['Constant color shifting', 'Rainbow trails', 'Prism sparkles', 'Shimmering holographic frame'],
+    listPrice: 1900,
+    mutation: 0.36,
+    gen: 3,
+    desc: 'Whispering shell. A random type raised to Secret rank — not a Vault keeper.',
+    priceMult: 3.6,
+    spawnWeight: 0.02,
+    coinBonus: 13500,
+    abilityRank: 8,
+    wikiBand: 'Secret tier · Vault keepers and Secret variants, above Mythic',
+    animated: true,
   },
   exotic: {
-    name: 'Exotic', color: '#7AF0D0', glow: 'rgba(122, 240, 208, .5)', icon: '✦',
+    rank: 80,
+    name: 'Exotic',
+    color: '#7AF0D0',
+    glow: 'rgba(122, 240, 208, .5)',
+    icon: '✦',
     gradient: 'linear-gradient(135deg, #C9FFF4, #7AF0D0 52%, #117A66)',
     stops: ['#C9FFF4', '#7AF0D0', '#117A66'],
     eggName: 'Guardian Shell',
     effects: ['Guardian shimmer', 'Mint sparkles'],
+    listPrice: 2800,
+    mutation: 0.4,
+    gen: 3,
+    desc: 'Guardian-bright shell. A random type raised to Exotic rank.',
+    priceMult: 3.1,
+    spawnWeight: 0.01,
+    coinBonus: 18000,
+    wikiBand: 'Hollow exotics · above Secret',
   },
   master: {
-    name: 'Master', color: '#FFE9A3', glow: 'rgba(255, 233, 163, .5)', icon: '🕹️',
+    rank: 90,
+    name: 'Master',
+    color: '#FFE9A3',
+    glow: 'rgba(255, 233, 163, .5)',
+    icon: '🕹',
     gradient: 'linear-gradient(135deg, #FFF8D8, #FFE9A3 52%, #B8891C)',
     stops: ['#FFF8D8', '#FFE9A3', '#B8891C'],
     eggName: 'Crown Shell',
     effects: ['Crown light', 'Champion sparkles'],
+    listPrice: 4000,
+    mutation: 0.44,
+    gen: 4,
+    desc: 'Crown-stamped shell. A random type raised to Master rank.',
+    priceMult: 5.2,
+    spawnWeight: 0.001,
+    coinBonus: 25000,
+    abilityRank: 13,
+    wikiBand: 'The Master secret · above Exotic',
   },
   ancient: {
-    name: 'Ancient', color: '#6B5C9B', glow: 'rgba(107, 92, 155, .5)', icon: '🌑',
+    rank: 100,
+    name: 'Ancient',
+    color: '#6B5C9B',
+    glow: 'rgba(107, 92, 155, .5)',
+    icon: '🌑',
     gradient: 'linear-gradient(135deg, #C2B2EE, #6B5C9B 52%, #241A3D)',
     stops: ['#C2B2EE', '#6B5C9B', '#241A3D'],
     eggName: 'Rune Shell',
     effects: ['Ancient runes', 'Relic dust'],
+    listPrice: 6000,
+    mutation: 0.5,
+    gen: 4,
+    desc: 'Rune-scored shell. A random type raised to Ancient rank.',
+    priceMult: 5.8,
+    spawnWeight: 0.0005,
+    coinBonus: 30000,
+    abilityRank: 10,
+    wikiBand: 'Rune rank · above Master',
   },
   celestial: {
-    name: 'Celestial', color: '#8F7CFF', glow: 'rgba(143, 124, 255, .62)', icon: '🌌', animated: true,
+    rank: 110,
+    name: 'Celestial',
+    color: '#8F7CFF',
+    glow: 'rgba(143, 124, 255, .62)',
+    icon: '🌌',
     gradient: 'linear-gradient(135deg, #0B1035, #3A2268 23%, #A34C9E 54%, #D66BB5 76%, #F4F1FF)',
     stops: ['#0B1035', '#3A2268', '#A34C9E', '#D66BB5', '#F4F1FF'],
     eggName: 'Galaxy Nebula Shell',
     effects: ['Constellations moving in border', 'Tiny orbiting stars', 'Nebula particles', 'Cosmic glow'],
+    listPrice: 6200,
+    mutation: 0.48,
+    gen: 4,
+    desc: 'Star-fired shell. A random type raised to Celestial rank.',
+    priceMult: 6.2,
+    spawnWeight: 0.0002,
+    coinBonus: 35000,
+    abilityRank: 11,
+    wikiBand: 'Apex rank · above Master',
+    apex: true,
+    apexPremium: 8000,
+    animated: true,
   },
   divine: {
-    name: 'Divine', color: '#FFF4C4', glow: 'rgba(255, 244, 196, .58)', icon: '✨',
+    rank: 120,
+    name: 'Divine',
+    color: '#FFF4C4',
+    glow: 'rgba(255, 244, 196, .58)',
+    icon: '✨',
     gradient: 'linear-gradient(135deg, #FFFFFF, #FFF4C4 50%, #E8C86A)',
     stops: ['#FFFFFF', '#FFF4C4', '#E8C86A'],
     eggName: 'White-Gold Sacred Shell',
     effects: ['Celestial light beams', 'Floating halos', 'Sacred glyph animations'],
+    listPrice: 7500,
+    mutation: 0.52,
+    gen: 4,
+    desc: 'Haloed shell. A random type raised to Divine rank.',
+    priceMult: 7.5,
+    spawnWeight: 0.0001,
+    coinBonus: 50000,
+    abilityRank: 7,
+    wikiBand: 'Apex rank · above Master',
+    apex: true,
+    apexPremium: 11000,
   },
   eternal: {
-    name: 'Eternal', color: '#F4F1FF', glow: 'rgba(244, 241, 255, .55)', icon: '💠',
+    rank: 130,
+    name: 'Eternal',
+    color: '#F4F1FF',
+    glow: 'rgba(244, 241, 255, .55)',
+    icon: '💠',
     gradient: 'linear-gradient(135deg, #FFFFFF, #F4F1FF 52%, #B8C8E8)',
     stops: ['#FFFFFF', '#F4F1FF', '#B8C8E8'],
     eggName: 'Eternal Shell',
     effects: ['Endless light', 'Time-ring particles'],
+    listPrice: 10000,
+    mutation: 0.55,
+    gen: 4,
+    desc: 'A shell that seems to have always existed. Raises a random type to Eternal rank.',
+    priceMult: 10,
+    spawnWeight: 5e-05,
+    coinBonus: 75000,
+    wikiBand: 'Apex rank · above Master',
+    apex: true,
+    apexPremium: 15000,
   },
   creator: {
-    name: 'Creator', color: '#FFF4C4', glow: 'rgba(255, 244, 196, .68)', icon: '👑', animated: true,
+    rank: 140,
+    name: 'Creator',
+    color: '#FFF4C4',
+    glow: 'rgba(255, 244, 196, .68)',
+    icon: '👑',
     gradient: 'conic-gradient(from 0deg, #FFD166, #FF8FD6, #8B7BFF, #6FD6FF, #8BFFC9, #FFF4C4, #FFD166)',
     stops: ['#FFD166', '#FF8FD6', '#8B7BFF', '#6FD6FF', '#FFF4C4'],
     eggName: 'Living Cosmic Rainbow Shell',
     effects: ['Animated elemental icons orbiting', 'Living constellation frame', 'Reality distortion effect', 'Rainbow cosmic wings', 'Twelve-element energy rings'],
+    listPrice: 20000,
+    mutation: 0.6,
+    gen: 5,
+    desc: 'An origin shell holding every element at once. Raises a random type to Creator rank.',
+    priceMult: 12,
+    spawnWeight: 1e-05,
+    coinBonus: 100000,
+    abilityRank: 12,
+    wikiBand: 'Apex rank · above Master',
+    animated: true,
+  },
+  god: {
+    rank: 150,
+    name: 'God',
+    color: '#FFDD88',
+    glow: 'rgba(255, 221, 136, .72)',
+    icon: '🌟',
+    gradient: 'conic-gradient(from 90deg, #FFFFFF, #FFDD88, #FF8FD6, #8B7BFF, #6FD6FF, #FFF4C4, #FFFFFF)',
+    stops: ['#FFFFFF', '#FFDD88', '#FF8FD6', '#8B7BFF', '#FFF4C4'],
+    eggName: 'Throne of Creation Shell',
+    effects: ['A crown of every element in orbit', 'Godlight beams through the frame', 'Elemental sovereign sigils', 'Reality rewritten at the rim'],
+    listPrice: 16000,
+    sale: 1,
+    mutation: 0.65,
+    gen: 5,
+    desc: 'A shell no ladder was built to hold. Raises a random type to God rank.',
+    priceMult: 15,
+    spawnWeight: 5e-06,
+    coinBonus: 150000,
+    abilityRank: 14,
+    wikiBand: 'Apex rank · above Creator',
+    apex: true,
+    apexPremium: 20000,
+    animated: true,
   },
   ultra_secret: {
-    name: 'Ultra Secret', color: '#FFE08A', glow: 'rgba(255, 224, 138, .62)', icon: '👑', animated: true,
+    rank: 160,
+    name: 'Ultra Secret',
+    color: '#FFE08A',
+    glow: 'rgba(255, 224, 138, .62)',
+    icon: '👑',
     gradient: 'linear-gradient(135deg, #FFE08A, #FF8FD6 30%, #B18CFF 58%, #8FE3FF 82%, #FFF4C4)',
     stops: ['#FFE08A', '#FF8FD6', '#B18CFF', '#8FE3FF', '#FFF4C4'],
     eggName: 'Cosmic Throne Shell',
     effects: ['Cosmic throne light', 'Heart sparkles'],
+    priceMult: 4.6,
+    spawnWeight: 0.001,
+    abilityRank: 9,
+    wikiBand: 'Cosmic Throne · the rarest rank',
+    boostable: false,
+    animated: true,
   },
 };
+
+const RARITY_SPEC_KEYS = Object.keys(RARITY_SPEC).sort((a, b) => RARITY_SPEC[a].rank - RARITY_SPEC[b].rank);
+
+/* The tier shelf's sale is one lever, like the species-egg discount: every rank
+   declares the list price it was designed at and the shelf derives what it
+   charges, so the promotion is a number here and not sixteen hand edits. A rank
+   that ships outside a promotion sets `sale: 1` and keeps its list price. */
+const TIER_EGG_SALE = 0.75;
+function tierEggSalePrice(listPrice, sale = TIER_EGG_SALE, step = 5) {
+  return Math.max(step, Math.round((listPrice * sale) / step) * step);
+}
+Object.values(RARITY_SPEC).forEach((tier) => {
+  if (!(Number(tier.listPrice) > 0)) return;
+  const sale = Number.isFinite(tier.sale) ? tier.sale : TIER_EGG_SALE;
+  tier.price = tierEggSalePrice(tier.listPrice, sale);
+});
+
+/* The official Sprite Hollow rarity palette, generated per tier. One source of
+   truth for creature cards, eggs, hatch/summon reveals, nameplates, borders and
+   particle accents. */
+const RARITY_TIER_STYLES = {};
+RARITY_SPEC_KEYS.forEach((key) => {
+  const tier = RARITY_SPEC[key];
+  RARITY_TIER_STYLES[key] = {
+    name: tier.name, color: tier.color, glow: tier.glow, icon: tier.icon,
+    gradient: tier.gradient, stops: tier.stops.slice(),
+    eggName: tier.eggName, effects: tier.effects.slice(),
+    ...(tier.animated ? { animated: true } : {}),
+  };
+});
+
 
 /* Generated frame briefs. The palette drives the CSS frame; these prompts keep
    the same hierarchy available for card art, banners, inventory slots and
@@ -156,6 +436,30 @@ const RARITY_FRAME_META = {
     theme: 'Omni-Spectrum', glow: '#FFF4C4',
     prompt: 'Creator rarity fantasy creature frame, ultimate cosmic border, rainbow galaxy energy, floating elemental symbols, divine crown ornaments, universe creation effects, constellation runes, premium legendary RPG frame, god-tier collectible game UI, transparent background',
   },
+  ultra: {
+    theme: 'Signal Bright', glow: '#B6F2FF',
+    prompt: 'Ultra rarity creature frame, signal-bright cyan border, horizontal light bands scanning the edge, drifting data sparkles, clean sci-fi fantasy RPG card frame, premium mobile game UI, transparent background',
+  },
+  exotic: {
+    theme: 'Mint Guardian', glow: '#7AF0D0',
+    prompt: 'Exotic rarity creature frame, mint guardian shimmer border, jade relic ornaments, drifting guardian motes, fantasy RPG card frame, premium collectible game UI, transparent background',
+  },
+  master: {
+    theme: 'Champion Crown', glow: '#FFE9A3',
+    prompt: 'Master rarity creature frame, champion gold border, arcade crown ornaments, star-burst sparkles, competitive fantasy RPG card frame, premium collectible game UI, transparent background',
+  },
+  ancient: {
+    theme: 'Rune Relic', glow: '#6B5C9B',
+    prompt: 'Ancient rarity creature frame, violet rune-carved stone border, relic dust particles, weathered glyph band, deep fantasy RPG card frame, premium game UI, transparent background',
+  },
+  eternal: {
+    theme: 'Endless Light', glow: '#F4F1FF',
+    prompt: 'Eternal rarity creature frame, pale white ring border, slow time-ring ornaments, endless soft light, timeless fantasy RPG card frame, premium collectible game UI, transparent background',
+  },
+  god: {
+    theme: 'Godlight Throne', glow: '#FFDD88',
+    prompt: 'God tier creature frame, white-gold throne border, a crown of every element in orbit, godlight beams crossing the card, sovereign sigils at the rim, reality-rewritten card edge, premium legendary RPG UI, ultra detailed, transparent background',
+  },
 };
 
 const RARITY_FRAME_ANIMATIONS = {
@@ -198,6 +502,30 @@ const RARITY_FRAME_ANIMATIONS = {
   creator: {
     style: 'Elemental orbits, galaxy expansion, reality distortions', speed: 'Looping', special: 'Orbiting elemental icons, universe expansion, rainbow nebula motion, constellation lines and rotating crown',
     prompt: 'Creator tier animated fantasy frame, rainbow galaxy border, orbiting elemental symbols, moving constellations, floating creator crown, universe creation effects, cosmic energy streams, god-tier collectible game frame, ultra detailed, transparent background',
+  },
+  god: {
+    style: 'Element crown orbits, godlight beams sweep the rim, sovereign sigils ignite', speed: 'Looping', special: 'The crown completes one slow rotation while the beam sweeps twice',
+    prompt: 'God tier animated card frame, a crown of all twelve elements orbiting the border, godlight beams sweeping across it, sovereign sigils igniting at the rim, reality shimmering along the card edge, premium legendary RPG game UI, ultra detailed looping animation, transparent background',
+  },
+  ultra: {
+    style: 'Scanning light bands, data sparkles, signal pulse', speed: 'Looping', special: 'A bright scan line crosses the border every few seconds',
+    prompt: 'Ultra rarity animated card frame, scanning cyan light bands crossing the border, drifting data sparkles, a signal pulse sweeping the edges, clean sci-fi fantasy RPG UI, smooth looping animation, transparent background',
+  },
+  exotic: {
+    style: 'Guardian shimmer, drifting motes, jade pulse', speed: 'Looping', special: 'Guardian motes gather at the corners and drift away',
+    prompt: 'Exotic rarity animated card frame, mint guardian shimmer moving along the border, jade relic ornaments glowing, guardian motes drifting out of the corners, fantasy RPG card frame, premium collectible game UI, transparent background',
+  },
+  master: {
+    style: 'Crown spin, star bursts, champion glow', speed: 'Looping', special: 'Star bursts pop on the corners between rotations',
+    prompt: 'Master rarity animated card frame, arcade champion crown rotating above the card, gold star bursts at the corners, competitive fantasy RPG UI, premium collectible game frame, smooth looping animation, transparent background',
+  },
+  ancient: {
+    style: 'Runed stone breathing, relic dust, glyph crawl', speed: 'Slow', special: 'The glyphs crawl one slot along the border with each breath',
+    prompt: 'Ancient rarity animated card frame, rune-carved stone border breathing with violet light, relic dust drifting off it, glyphs crawling along the band, deep fantasy RPG UI, smooth looping animation, transparent background',
+  },
+  eternal: {
+    style: 'Time rings turning, pale light steady, one slow pulse', speed: 'Slow', special: 'The outer ring completes one turn every twelve seconds',
+    prompt: 'Eternal rarity animated card frame, pale rings turning slowly around the border, steady timeless light, one slow pulse across the frame, premium collectible game frame, smooth looping animation, transparent background',
   },
 };
 
@@ -242,10 +570,35 @@ const RARITY_SUMMON_ANIMATIONS = {
     sequence: ['Universe fades in', 'All element symbols orbit', 'A cosmic egg forms', 'Big Bang explosion', 'Origin Nexus Puffle appears'],
     prompt: 'Creator tier summon animation, universe creation sequence, orbiting elemental symbols, rainbow galaxy explosion, cosmic creator entity reveal, god-tier fantasy RPG summon cinematic, ultra detailed, legendary mobile game animation',
   },
+  eternal: {
+    sequence: ['A ring of pale light opens', 'Time folds inward on the shell', 'Every age of the egg shows at once', 'The ring closes', 'Eternal Puffle steps out'],
+    prompt: 'Eternal rarity summon animation, a slow ring of pale light, time folding around the egg, overlapping afterimages of every age, timeless fantasy RPG summon cinematic, premium mobile game animation',
+  },
+  god: {
+    sequence: ['Every element symbol orbits at once', 'A throne of light forms', 'Godlight floods the frame', 'The crown settles', 'God Puffle rises'],
+    prompt: 'God tier summon animation, orbiting crown of every element, a throne of light assembling, godlight flooding the screen, sovereign creature rising through it, legendary fantasy RPG summon cinematic, ultra detailed',
+  },
+  ultra: {
+    sequence: ['A signal ring opens', 'Data runes scroll around the shell', 'The band locks on', 'Signal Puffle answers'],
+    prompt: 'Ultra rarity summon animation, scanning signal ring opening, scrolling data runes around a glowing egg, a lock-on reticle closing, sci-fi fantasy creature reveal, premium mobile game animation',
+  },
+  exotic: {
+    sequence: ['A jade gate appears', 'Guardian motes circle the egg', 'The gate holds steady', 'Exotic Puffle wanders through'],
+    prompt: 'Exotic rarity summon animation, a mint jade gate opening, guardian motes circling a glowing egg, a wandering creature stepping through, premium fantasy RPG creature reveal',
+  },
+  master: {
+    sequence: ['An arcade cabinet flickers on', 'A champion crown descends', 'The crowd roar surges', 'Master Puffle takes the podium'],
+    prompt: 'Master rarity summon animation, arcade cabinet lights flickering on, a champion crown descending, roaring crowd light pulses, a victor creature taking the podium, retro fantasy RPG reveal',
+  },
+  ancient: {
+    sequence: ['Runes wake along the shell', 'A buried doorway rises', 'Dust pours out of the dark', 'Ancient Puffle remembers you'],
+    prompt: 'Ancient rarity summon animation, glowing runes waking across an old shell, a buried stone doorway rising, dust pouring out of the dark, archaic creature reveal, premium fantasy RPG cinematic',
+  },
 };
 
 const RARITY_IDLE_ANIMATIONS = {
   common: { style: 'Sparkles every 3 seconds, gentle border shimmer, eye blink', prompt: 'Animated creature card, subtle sparkle sweep, gentle idle movement, premium mobile game collectible card' },
+  uncommon: { style: 'Leaf particles drift, the border blooms once in a while, gentle sway', prompt: 'Uncommon fantasy creature card animation, drifting leaf particles, an occasional bloom of green light along the border, gentle idle sway, premium mobile collectible card' },
   rare: { style: 'Floating particles, fur movement, soft aura pulse', prompt: 'Fantasy creature card idle animation, floating magical particles, gentle aura pulse, premium collectible monster card' },
   epic: { style: 'Floating runes, orbiting elemental symbols, dynamic lighting', prompt: 'Epic creature card animation, magical runes orbiting creature, dynamic fantasy lighting effects, RPG collection screen' },
   legendary: { style: 'Crown rotation, animated background, halo pulse', prompt: 'Legendary rarity creature card idle animation, floating royal crown, radiant lighting effects, premium fantasy card display' },
@@ -254,10 +607,17 @@ const RARITY_IDLE_ANIMATIONS = {
   secret: { style: 'Holographic shifts, rainbow movement, prism reflections', prompt: 'Secret rarity holographic creature card animation, rainbow prism effects, color-shifting fantasy frame, animated collectible card' },
   celestial: { style: 'Moving constellations, orbiting stars, nebula movement', prompt: 'Celestial fantasy creature card animation, moving galaxy background, orbiting stars and constellations, premium cosmic collectible card' },
   creator: { style: 'Element symbols orbit, wings breathe, constellation flow, galaxy rotation, rainbow streams, crown spin and creature glow', prompt: 'Creator tier animated creature card, galaxy background rotation, orbiting elemental symbols, constellation energy effects, animated rainbow cosmic wings, divine creator crown, living fantasy collectible card, ultra premium mobile game showcase, no empty space' },
+  eternal: { style: 'Time rings turn slowly, pale light holds steady, the creature breathes in long slow cycles', prompt: 'Eternal rarity animated creature card, turning rings of pale light, steady timeless glow, long slow breathing motion, premium collectible card' },
+  god: { style: 'Element crown orbits, godlight beams sweep, sovereign sigils pulse with the creature glow', prompt: 'God tier animated creature card, orbiting crown of every element, sweeping godlight beams, pulsing sovereign sigils, living legend collectible card, ultra premium mobile game showcase, no empty space' },
+  ultra: { style: 'Scan lines sweep, data sparkles drift, the creature blinks in sync with the pulse', prompt: 'Ultra rarity animated creature card, cyan scan lines sweeping the card, drifting data sparkles, a steady signal pulse, premium sci-fi collectible card' },
+  exotic: { style: 'Guardian motes circle slowly, jade light breathes with the creature', prompt: 'Exotic rarity animated creature card, guardian motes circling lazily, breathing mint jade light, premium fantasy collectible card' },
+  master: { style: 'Crown glints, star bursts blink, a confident champion sway', prompt: 'Master rarity animated creature card, glinting champion crown, blinking star bursts, a victorious idle sway, retro premium game card' },
+  ancient: { style: 'Runes pulse slowly, dust drifts, heavy deliberate breathing', prompt: 'Ancient rarity animated creature card, slowly pulsing runes, drifting relic dust, heavy deliberate breathing, archaic premium card' },
 };
 
 const RARITY_IDLE_BACKGROUNDS = {
   common: { style: 'Static sparkle', prompt: 'Common creature card, static silver sparkle background, premium collectible card' },
+  uncommon: { style: 'Meadow verge', prompt: 'Uncommon creature card, soft meadow verge background, drifting leaves, light green glow' },
   rare: { style: 'Animated backdrop', prompt: 'Rare fantasy creature card, softly animated blue backdrop, floating particles, premium collectible card' },
   epic: { style: 'Floating runes', prompt: 'Epic creature card, floating violet runes, arcane backdrop, dynamic fantasy lighting' },
   legendary: { style: 'Moving environment', prompt: 'Legendary creature card, moving golden environment, radiant crown light, luxury fantasy card' },
@@ -266,6 +626,12 @@ const RARITY_IDLE_BACKGROUNDS = {
   secret: { style: 'Holographic reality', prompt: 'Secret creature card, holographic reality background, rainbow prism reflections' },
   celestial: { style: 'Galaxy panorama', prompt: 'Celestial creature card, galaxy panorama background, moving constellations and nebulae' },
   creator: { style: 'Infinite universe', prompt: 'Creator creature card, infinite universe background, rotating galaxies and elemental symbols' },
+  eternal: { style: 'Endless horizon', prompt: 'Eternal creature card, endless pale horizon background, slow turning light rings, timeless atmosphere' },
+  god: { style: 'Throne of light', prompt: 'God creature card, throne of light background, an orbiting crown of elements, sovereign godlight across the frame' },
+  ultra: { style: 'Signal field', prompt: 'Ultra creature card, cyan signal field background, scanning light bands, clean sci-fi premium card' },
+  exotic: { style: 'Guardian garden', prompt: 'Exotic creature card, mint guardian garden background, drifting motes, jade relic light' },
+  master: { style: 'Champion arena', prompt: 'Master creature card, arcade champion arena background, star bursts and crown light' },
+  ancient: { style: 'Buried hall', prompt: 'Ancient creature card, buried stone hall background, rune light and drifting dust' },
 };
 
 /* Elemental idle layer. The card art gets one small moving element motif, so the
@@ -391,10 +757,52 @@ const ELEMENT_FRAME_ANIMATIONS = {
   },
 };
 
+/* Every Sprite Puffle family carries its own hidden style id as its element, and
+   that id is what a saved creature holds. Without an alias a family resolved no
+   frame animation, no idle animation and no ability path at all, so each one is
+   pointed at the canonical element its puffleElement names. */
+const SPRITE_FAMILY_ELEMENT_ALIASES = {
+  sp_sprite: 'wind', sp_blossom: 'nature', sp_frost: 'ice', sp_sunbeam: 'light',
+  sp_moonmist: 'shadow', sp_forest: 'nature', sp_bubble: 'water', sp_storm: 'electric',
+  sp_dream: 'shadow', sp_rainbow: 'crystal', sp_ancient: 'light', sp_minimiku: 'electric',
+  sp_squiplash: 'water', sp_siroscar: 'water', sp_zee: 'shadow', sp_aries: 'fire',
+  sp_taurus: 'earth', sp_gemini: 'wind', sp_cancer: 'water', sp_leo: 'fire',
+  sp_virgo: 'earth', sp_libra: 'wind', sp_scorpio: 'water', sp_sagittarius: 'fire',
+  sp_capricorn: 'earth', sp_aquarius: 'wind', sp_pisces: 'water', sp_hedgehog: 'earth',
+  sp_griffin: 'wind', sp_dragon: 'fire', sp_basilisk: 'earth', sp_unicorn: 'light',
+  sp_kitsune: 'shadow', sp_phoenix: 'fire', sp_fenrir: 'ice', sp_kirin: 'shadow',
+  sp_leviathan: 'water', sp_seraph: 'light', sp_voiddragon: 'shadow', sp_eclipse: 'light',
+  sp_fire: 'fire', sp_water: 'water', sp_nature: 'nature', sp_lightning: 'electric',
+  sp_ice: 'ice', sp_air: 'wind', sp_earth: 'earth', sp_light: 'light',
+  sp_shadow: 'shadow', sp_crystal: 'crystal', sp_plasma: 'electric', sp_frostwave: 'ice',
+  sp_bloomlight: 'nature', sp_voidcrystal: 'shadow', sp_titanroot: 'earth',
+  sp_abyssal: 'water', sp_celestialprism: 'light', sp_lifeheart: 'nature',
+  sp_omnitype: 'crystal',
+  sp_signal: 'electric', sp_overdrive: 'crystal', sp_pulse: 'light',
+  /* These five are themed rather than elemental, so the element follows the
+     motif the family already carries: a gear, a lantern, a pixel, a glossy
+     screen. */
+  sp_admin: 'metal', sp_festival: 'light', sp_retro: 'electric',
+  sp_meme: 'crystal', sp_showcase: 'crystal', sp_liluzi: 'electric',
+  sp_mossmallow: 'nature', sp_honeybell: 'nature', sp_glasswing: 'crystal',
+  sp_emberquill: 'fire', sp_sunmane: 'light', sp_starlace: 'shadow',
+  sp_echofrost: 'ice', sp_prismscale: 'crystal', sp_cometwisp: 'wind',
+  sp_crownquill: 'metal', sp_runebloom: 'earth', sp_aureate: 'light',
+  sp_nebulace: 'shadow', sp_aeonpuff: 'wind', sp_cosmocrown: 'light',
+  sp_godspark: 'light',
+  sp_naptime: 'shadow', sp_rattle: 'wind', sp_stuffie: 'nature',
+  sp_puppet: 'electric', sp_kite: 'wind', sp_marble: 'crystal',
+  sp_musicbox: 'electric', sp_lullaby: 'shadow', sp_thorncrown: 'earth',
+  sp_gilded: 'light', sp_obsidian: 'shadow', sp_cometkin: 'wind',
+  sp_halokin: 'light', sp_everstar: 'light', sp_crownforge: 'fire',
+  sp_firstword: 'crystal',
+};
+
 const ELEMENT_FRAME_ALIASES = Object.entries(ELEMENT_FRAME_ANIMATIONS).reduce((map, [key, entry]) => {
   (entry.aliases || [key]).forEach((alias) => { map[alias] = key; });
   return map;
 }, {});
+Object.assign(ELEMENT_FRAME_ALIASES, SPRITE_FAMILY_ELEMENT_ALIASES);
 
 function elementFrameKey(elementKey) {
   return ELEMENT_FRAME_ALIASES[elementKey] || null;

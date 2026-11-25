@@ -15,6 +15,8 @@ const ABILITY_TABLE = {
   shadow_blink: { name: 'Shadow Blink', icon: '🕶️', blurb: 'Vanishes for a blink and comes back calmer than it left.', aura: 'shadowAura', mods: { joyMod: 0.92 } },
   star_trail: { name: 'Star Trail', icon: '🌠', blurb: 'Drags a line of stars that brightens every lesson.', aura: 'trailEffect', mods: { xpMod: 1.07 } },
   supernova: { name: 'Supernova', icon: '💥', blurb: 'Flare-ups that turn ordinary care into real progress.', aura: 'sparkles', mods: { xpMod: 1.1 } },
+  glitch_hop: { name: 'Glitch Hop', icon: '📺', blurb: 'Skips a frame between hops, so it spends less energy getting anywhere.', aura: 'lightningAura', mods: { energyMod: 0.92 } },
+  patch_stitch: { name: 'Patch Stitch', icon: '🧵', blurb: 'Re-stitches its own seams and sheds dust while it works.', aura: 'sparkles', mods: { cleanMod: 0.9 } },
   crystal_shield: { name: 'Crystal Shield', icon: '🛡️', blurb: 'A clear shell that keeps dust and grime off.', aura: 'wingGlow', mods: { cleanMod: 0.9 } },
   gem_burst: { name: 'Gem Burst', icon: '💎', blurb: 'Sheds cut facets when it is happy to see you.', aura: 'sparkles', mods: { bondMod: 1.07 } },
   lightning_dash: { name: 'Lightning Dash', icon: '⚡', blurb: 'Runs on static and barely tires.', aura: 'lightningAura', mods: { energyMod: 0.9 } },

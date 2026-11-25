@@ -29,7 +29,7 @@ const WARDROBE_WEATHER_TINTS = {
   '🌌 Galaxy': 'rgba(40, 24, 70, .34)',
 };
 
-const WARDROBE_RARITY_RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, secret: 6, celestial: 7, exotic: 6, master: 7, ancient: 5, divine: 8, eternal: 8, ultra_secret: 9, creator: 9 };
+const WARDROBE_RARITY_RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, ultra: 6, secret: 7, celestial: 8, exotic: 7, master: 8, ancient: 5, divine: 9, eternal: 9, ultra_secret: 10, creator: 10 };
 
 const WARDROBE_NAV = [
   ['outfits', '👕', 'Outfits'],

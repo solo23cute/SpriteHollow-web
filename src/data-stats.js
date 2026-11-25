@@ -12,6 +12,7 @@ const PUFFLE_RARITY_STATS = {
   epic: { hp: 260, atk: 110, def: 95, mag: 95, spd: 110 },
   legendary: { hp: 350, atk: 150, def: 130, mag: 130, spd: 140 },
   mythic: { hp: 420, atk: 185, def: 165, mag: 165, spd: 165 },
+  ultra: { hp: 460, atk: 200, def: 180, mag: 190, spd: 185 },
   secret: { hp: 500, atk: 220, def: 200, mag: 220, spd: 200 },
   ultra_secret: { hp: 600, atk: 250, def: 230, mag: 250, spd: 220 },
   ancient: { hp: 700, atk: 290, def: 280, mag: 300, spd: 250 },
@@ -41,6 +42,7 @@ const PUFFLE_FAMILY_STATS = {
   poison: { hp: 110, atk: 80, def: 100, mag: 170, spd: 120 },
   metal: { hp: 180, atk: 110, def: 180, mag: 90, spd: 70 },
   secret: { hp: 175, atk: 175, def: 175, mag: 175, spd: 175 },
+  classic: { hp: 150, atk: 110, def: 130, mag: 110, spd: 120 },
 };
 
 const PUFFLE_STAT_KEYS = ['hp', 'atk', 'def', 'mag', 'spd'];

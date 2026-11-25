@@ -98,6 +98,153 @@
     };
   }
 
+  /* Sphere-first creature traits for the Sprite Puffle creature wave. Every
+     piece is a small accessory pinned to the crown or tucked behind the ball,
+     so the pom-pom silhouette stays a perfect circle. */
+  const creatureFlip = (markup) => `<g transform="translate(120 0) scale(-1 1)">${markup}</g>`;
+  const creatureFluff = (p) => `<circle cx="60" cy="61" r="44.5" fill="none" stroke="${p.light}" stroke-width="4.2" stroke-linecap="round" stroke-dasharray="1 6" opacity=".45"/>`;
+
+  const CREATURE_FRONTS = {
+    hedgehogquill: (p) => {
+      /* A quill is a narrow base tapering to a single point. Five equal points
+         in a row read as a coronet at 180px and as fingers before that, so the
+         crest is a denser, staggered fan: uneven heights, all leaning slightly
+         back, tips kept inside the old envelope so it still sits on the crown
+         at 96px. */
+      const quill = (base, tipX, tipY, width) => `<path d="M${base - width} 28C${base - width + 0.4} 22 ${tipX - 0.9} ${tipY + 5} ${tipX} ${tipY}C${tipX + 0.9} ${tipY + 5} ${base + width - 0.4} 22 ${base + width} 28Z" fill="${p.deep}"/>`;
+      /* Dark quills on the pale head: the tan body tone reads as carved wood in
+         a row, which is what turned the crest into a coronet. Widths vary so the
+         fan does not read as a comb. */
+      /* Tips stop at the ball's own outline: a crest that stands up out of the
+         sphere leaves the silhouette at 96px, so the fan lies along the crown. */
+      return `<g stroke="${p.deep}" stroke-width=".8" stroke-linejoin="round">${quill(44, 40, 20.6, 2.6)}${quill(49.5, 47, 18.6, 2.2)}${quill(55, 54.5, 21.2, 2)}${quill(60.5, 61.5, 18.2, 2)}${quill(66, 66.5, 20.2, 2.2)}${quill(71.5, 73.5, 21, 2.6)}</g>
+        <path d="M45 29c5 2 10 3 15 3s10-1 15-3" stroke="${p.deep}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".4"/>`;
+    },
+    griffinplume: (p) => `<g stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round">
+      <path d="M44 25c-8-3-12-8-12-14 6 1 11 5 15 11Z" fill="${p.light}"/>
+      <path d="M76 25c8-3 12-8 12-14-6 1-11 5-15 11Z" fill="${p.light}"/>
+      <path d="M56 26c1-7 3-12 6-15 3 4 5 9 4 15Z" fill="${p.accent}"/>
+    </g><path d="M46 22l-6-8M74 22l6-8" stroke="${p.accent}" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>`,
+    dragoncrest: (p) => `<g stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round">
+      <path d="M47 25c-6-5-9-12-7-17 6 1 10 7 12 14Z" fill="${p.light}"/>
+      <path d="M73 25c6-5 9-12 7-17-6 1-10 7-12 14Z" fill="${p.light}"/>
+    </g><path d="M50 20c-2-4-3-7-2-10M70 20c2-4 3-7 2-10" stroke="${p.accent}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".9"/>
+    <path d="M54 28c4 2 8 2 12 0" stroke="${p.deep}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".35"/>`,
+    basiliskfrill: (p) => `<path d="M42 24l-2-10 7 5 3-9 6 7 4-9 4 9 6-7 3 9 7-5-2 10Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>
+      <circle cx="60" cy="18" r="2" fill="${p.light}"/>
+      <path d="M55 27c3 2 7 2 10 0" stroke="${p.deep}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".4"/>`,
+    unicornhorn: (p) => `<path d="M39 26c3-6 6-9 9-10M81 26c-3-6-6-9-9-10" stroke="${p.accent}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".6"/>
+      <path d="M60 3l6 21-6 8-6-8Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M56.4 12c2.4 1.8 4.8 1.8 7.2 0M57.4 17c1.6 1.4 3.6 1.4 5.2 0" stroke="${p.accent}" stroke-width="1.3" fill="none" stroke-linecap="round"/>`,
+    kitsunefox: (p) => `<path d="M38 25l3-16 14 8Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M82 25l-3-16-14 8Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M42 22l2-8 6 4Z" fill="${p.light}" opacity=".8"/>
+      <path d="M78 22l-2-8-6 4Z" fill="${p.light}" opacity=".8"/>
+      <path d="M55 27l2 4 3-3 3 3 2-4" stroke="${p.light}" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>`,
+    phoenixcrest: (p) => `<g stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round">
+      <path d="M58 32c-10-4-13-13-8-22 1 6 4 9 7 10 0-8 3-13 8-17 0 9 9 13 9 21 0 5-8 9-16 8Z" fill="${p.accent}"/>
+      <path d="M45 25c-4-4-5-8-3-12 3 3 4 6 3 12Z" fill="${p.light}"/>
+      <path d="M76 25c4-4 5-8 3-12-3 3-4 6-3 12Z" fill="${p.light}"/>
+    </g><path d="M59 29c-4-2-5-8-2-12 0 4 2 5 3 6 1-3 2-6 4-8 0 5 3 8 3 11 0 2-4 4-8 3Z" fill="${p.light}" opacity=".9"/>`,
+    fenrirwolf: (p) => `<path d="M39 25l4-15 13 7Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M81 25l-4-15-13 7Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M43 22l2-7 5 3Z" fill="${p.light}" opacity=".8"/>
+      <path d="M77 22l-2-7-5 3Z" fill="${p.light}" opacity=".8"/>
+      <path d="M55 28l2 4 3-3 3 3 2-4" stroke="${p.light}" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`,
+    kirinantler: (p) => `<g stroke-linecap="round" fill="none">
+      <path d="M50 25c-4-7-4-14-1-19M49 12l-7-6M49 17l-8-2" stroke="${p.light}" stroke-width="3.2"/>
+      <path d="M70 25c4-7 4-14 1-19M71 12l7-6M71 17l8-2" stroke="${p.light}" stroke-width="3.2"/>
+    </g><path d="M60 9l1.3 3.2 3.2 1.3-3.2 1.3L60 18l-1.3-3.2-3.2-1.3 3.2-1.3Z" fill="${p.accent}" opacity=".95"/>`,
+    leviathanfin: (p) => `<path d="M60 25c0-8 0-13-1-18M59 11l-6-5M59 11l6-5M57 16l-7-3M63 16l7-3" stroke="${p.accent}" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M44 25c0-7 5-12 12-13-3 4-4 8-3 13Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M76 25c0-7-5-12-12-13 3 4 4 8 3 13Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/>`,
+    seraphhalo: (p) => `<ellipse cx="60" cy="8" rx="17" ry="5.4" fill="none" stroke="${p.accent}" stroke-width="3.2"/>
+      <ellipse cx="60" cy="8" rx="17" ry="5.4" fill="none" stroke="${p.light}" stroke-width="1" opacity=".9"/>
+      <path d="M35 26c-3-5-3-9 0-12 4 3 5 7 4 12Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1" stroke-linejoin="round"/>
+      <path d="M85 26c3-5 3-9 0-12-4 3-5 7-4 12Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1" stroke-linejoin="round"/>`,
+    voiddragoncrest: (p) => `<g stroke="${p.accent}" stroke-width="1.1" stroke-linejoin="round">
+      <path d="M47 25c-6-5-9-12-7-17 6 1 10 7 12 14Z" fill="${p.deep}"/>
+      <path d="M73 25c6-5 9-12 7-17-6 1-10 7-12 14Z" fill="${p.deep}"/>
+    </g><path d="M60 7l1.4 3.4 3.4 1.4-3.4 1.4L60 16.6l-1.4-3.4-3.4-1.4 3.4-1.4Z" fill="${p.accent}"/>
+      <circle cx="48" cy="14" r="1.2" fill="${p.light}" opacity=".9"/>
+      <circle cx="72" cy="12" r="1" fill="${p.light}" opacity=".8"/>`,
+    eclipsecrown: (p) => `<circle cx="60" cy="21" r="11" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.3"/>
+      <path d="M60 10a11 11 0 0 1 0 22Z" fill="${p.light}"/>
+      <path d="M60 2l2.6 5.4 5.4 1-4 4 1 5.6-5-2.8-5 2.8 1-5.6-4-4 5.4-1Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1" stroke-linejoin="round"/>
+      <circle cx="60" cy="21" r="2.4" fill="${p.light}"/>`,
+  };
+
+  const CREATURE_BACKS = {
+    /* The quills live on the front layer; the back contributes only the aura
+       sparkles, since creatureBack already draws the shared fluff ring. */
+    hedgehogquill: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-hedgehogquill" pointer-events="none">${sparkles}</g>`,
+    griffinplume: (p, v, sparkles) => {
+      const wing = `<path d="M32 58c-9 1-14 7-16 15 7 1 12-3 17-8Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1" opacity=".95"/>
+        <path d="M32 74c-6 2-9 6-10 11 6 0 10-3 14-7Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1" opacity=".85"/>`;
+      return `<g class="puffle-style-aura puffle-style-griffinplume" pointer-events="none">${wing}${creatureFlip(wing)}${sparkles}</g>`;
+    },
+    dragoncrest: (p, v, sparkles) => {
+      const wing = `<path d="M31 62c-8-3-12 0-14 5 4-1 7 1 8 4-4 1-6 3-6 6 6 0 11-3 15-8Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1" opacity=".95"/>
+        <path d="M27 66c-4 0-7 2-9 5M26 73c-3 1-6 3-7 5" stroke="${p.accent}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
+      return `<g class="puffle-style-aura puffle-style-dragoncrest" pointer-events="none">${wing}${creatureFlip(wing)}${sparkles}</g>`;
+    },
+    basiliskfrill: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-basiliskfrill" pointer-events="none">
+      <path d="M78 88c8 1 13 6 8 11-3 4-9 3-10-3-1-4 0-7 0-8Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" opacity=".95"/>
+      <circle cx="30" cy="84" r="2" fill="${p.light}" opacity=".6"/>
+      <circle cx="25" cy="74" r="1.5" fill="${p.light}" opacity=".5"/>${sparkles}</g>`,
+    unicornhorn: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-unicornhorn" pointer-events="none">
+      <path d="M92 32c6 10 6 22 0 32" fill="none" stroke="${p.accent}" stroke-width="2.6" stroke-linecap="round" opacity=".55"/>
+      <path d="M28 32c-6 10-6 22 0 32" fill="none" stroke="${p.accent}" stroke-width="2.6" stroke-linecap="round" opacity=".55"/>
+      <path d="M46 18l1.4 3.4 3.4 1.4-3.4 1.4L46 27.6l-1.4-3.4-3.4-1.4 3.4-1.4ZM80 26l1.2 3 3 1.2-3 1.2L80 34.6l-1.2-3-3-1.2 3-1.2Z" fill="${p.light}" opacity=".8"/>${sparkles}</g>`,
+    kitsunefox: (p, v, sparkles) => {
+      const tail = (x, y, rx, ry, rot) => `<g transform="rotate(${rot} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${p.accent}" stroke="${p.deep}" stroke-width="1" opacity=".95"/><ellipse cx="${x - 4}" cy="${y}" rx="${(rx * 0.42).toFixed(1)}" ry="${(ry * 0.55).toFixed(1)}" fill="${p.light}" opacity=".8"/></g>`;
+      return `<g class="puffle-style-aura puffle-style-kitsunefox" pointer-events="none">
+        ${tail(31, 72, 11, 5, -18)}${tail(89, 72, 11, 5, 18)}${tail(39, 93, 9, 4.6, -8)}${tail(81, 93, 9, 4.6, 8)}${sparkles}</g>`;
+    },
+    phoenixcrest: (p, v, sparkles) => {
+      const wing = `<path d="M31 63c-8-5-13-3-15 2 4-1 7 1 8 4-3 0-6 3-7 6 6 1 12-1 16-6Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1" opacity=".92"/>`;
+      return `<g class="puffle-style-aura puffle-style-phoenixcrest" pointer-events="none">
+        <ellipse cx="60" cy="54" rx="34" ry="24" fill="${p.accent}" opacity=".16"/>${wing}${creatureFlip(wing)}
+        <circle cx="22" cy="52" r="2" fill="${p.light}" opacity=".8"/><circle cx="98" cy="60" r="1.6" fill="${p.light}" opacity=".75"/><circle cx="88" cy="96" r="1.4" fill="${p.accent}" opacity=".8"/>${sparkles}</g>`;
+    },
+    fenrirwolf: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-fenrirwolf" pointer-events="none">
+      <ellipse cx="60" cy="62" rx="46" ry="47" fill="none" stroke="${p.accent}" stroke-width="1.5" stroke-dasharray="3 7" opacity=".35"/>
+      <path d="M34 44l6 3-6 3M86 44l-6 3 6 3M20 82l5 2-5 2" stroke="${p.light}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".5"/>${sparkles}</g>`,
+    kirinantler: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-kirinantler" pointer-events="none">
+      <ellipse cx="60" cy="61" rx="46" ry="46" fill="none" stroke="${p.accent}" stroke-width="1.4" stroke-dasharray="2 6" opacity=".4"/>
+      <path d="M30 34l1.6 4 4 1.6-4 1.6L30 45l-1.6-4-4-1.6 4-1.6ZM90 38l1.2 3 3 1.2-3 1.2L90 46.6l-1.2-3-3-1.2 3-1.2ZM82 90l1.4 3.4 3.4 1.4-3.4 1.4L82 99.6l-1.4-3.4-3.4-1.4 3.4-1.4Z" fill="${p.light}" opacity=".85"/>${sparkles}</g>`,
+    leviathanfin: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-leviathanfin" pointer-events="none">
+      <ellipse cx="60" cy="86" rx="37" ry="6" fill="none" stroke="${p.accent}" stroke-width="1.8" opacity=".45"/>
+      <ellipse cx="60" cy="40" rx="37" ry="6" fill="none" stroke="${p.light}" stroke-width="1.4" opacity=".35"/>
+      <circle cx="26" cy="64" r="3" fill="none" stroke="${p.light}" stroke-width="1.1" opacity=".6"/>
+      <circle cx="94" cy="70" r="2.2" fill="none" stroke="${p.light}" stroke-width="1" opacity=".55"/>${sparkles}</g>`,
+    seraphhalo: (p, v, sparkles) => {
+      const wing = (dy) => `<path d="M34 ${50 + dy}c-7-3-11-1-13 3 4 0 7 2 7 4-4 0-6 3-6 6 5 1 10-1 13-5Z" fill="${p.light}" stroke="${p.deep}" stroke-width=".9" opacity=".95"/>`;
+      const side = `${wing(0)}${wing(10)}${wing(20)}`;
+      return `<g class="puffle-style-aura puffle-style-seraphhalo" pointer-events="none">
+        <ellipse cx="60" cy="54" rx="38" ry="30" fill="${p.accent}" opacity=".12"/>${side}${creatureFlip(side)}${sparkles}</g>`;
+    },
+    voiddragoncrest: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-voiddragoncrest" pointer-events="none">
+      <ellipse cx="60" cy="61" rx="47" ry="47" fill="none" stroke="${p.accent}" stroke-width="1.4" stroke-dasharray="1 8" opacity=".45"/>
+      <path d="M22 70c12-16 30-20 44-10 8 6 18 4 26-4" fill="none" stroke="${p.accent}" stroke-width="1.6" opacity=".38"/>
+      <circle cx="26" cy="46" r="1.8" fill="${p.light}" opacity=".85"/><circle cx="96" cy="54" r="1.4" fill="${p.light}" opacity=".8"/><circle cx="88" cy="92" r="1.6" fill="${p.light}" opacity=".75"/><circle cx="34" cy="98" r="1.3" fill="${p.light}" opacity=".7"/>${sparkles}</g>`,
+    eclipsecrown: (p, v, sparkles) => `<g class="puffle-style-aura puffle-style-eclipsecrown" pointer-events="none">
+      <path d="M14 61a46 46 0 0 1 46-46" fill="none" stroke="${p.accent}" stroke-width="2.2" opacity=".5"/>
+      <path d="M106 61a46 46 0 0 0-46-46" fill="none" stroke="${p.light}" stroke-width="2.2" opacity=".5"/>
+      <path d="M14 61a46 46 0 0 0 46 46" fill="none" stroke="${p.light}" stroke-width="1.6" opacity=".35"/>
+      <path d="M106 61a46 46 0 0 1-46 46" fill="none" stroke="${p.accent}" stroke-width="1.6" opacity=".35"/>${sparkles}</g>`,
+  };
+
+  function creatureFront(motif, p, v) {
+    const draw = CREATURE_FRONTS[motif];
+    return draw ? draw(p, v) : null;
+  }
+
+  function creatureBack(motif, p, v, sparkles) {
+    const draw = CREATURE_BACKS[motif];
+    return draw ? creatureFluff(p) + draw(p, v, sparkles) : null;
+  }
+
   function frontFor(motif, p, v, seed, bands) {
     if (motif.indexOf('zodiac-') === 0) {
       const mark = ZODIAC_MOTIFS[motif.slice(7)];
@@ -119,8 +266,8 @@
       return `${petals}<circle cx="60" cy="27" r="4.4" fill="${p.light}" stroke="${p.deep}" stroke-width="1"/>`;
     }
     if (motif === 'crystal') {
-      const lift = v * 1.4;
-      return `<path d="M60 ${6 - lift}l8 18-8 6-8-6Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M46 14l6 13-6 4-6-4Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M74 16l6 12-6 4-6-4Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M60 ${10 - lift}l5 12-5 4-5-4Z" fill="${p.light}" opacity=".7"/>`;
+      const lift = Math.min(v * 1.4, 0.9);
+      return `<path d="M60 ${8.4 - lift}l8 18-8 6-8-6Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M46 14l6 13-6 4-6-4Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M74 16l6 12-6 4-6-4Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M60 ${10 - lift}l5 12-5 4-5-4Z" fill="${p.light}" opacity=".7"/>`;
     }
     if (motif === 'ice') {
       return `<path d="M46 10l5 20-5 4-5-4Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M60 6l6 24-6 5-6-5Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><path d="M74 12l4 18-4 4-5-4Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><circle cx="44" cy="22" r="1.4" fill="${p.accent}"/><circle cx="77" cy="26" r="1.1" fill="${p.accent}"/>`;
@@ -138,7 +285,7 @@
       return `<ellipse cx="60" cy="11" rx="19" ry="6" fill="none" stroke="${p.accent}" stroke-width="3.2"/><ellipse cx="60" cy="11" rx="19" ry="6" fill="none" stroke="${p.light}" stroke-width="1" opacity=".9"/><circle cx="60" cy="10" r="1.8" fill="${p.light}"/>`;
     }
     if (motif === 'horn') {
-      return `<path d="M60 5c6 7 9 16 7 24-1 3-4 4-7 4s-6-1-7-4c-2-8 1-17 7-24Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1"/><path d="M53 18c4 1 10 1 14 0M55 24c3 1 7 1 10 0" stroke="${p.deep}" stroke-width="1" opacity=".4" fill="none"/>`;
+      return `<path d="M60 8c6 7 9 16 7 24-1 3-4 4-7 4s-6-1-7-4c-2-8 1-17 7-24Z" fill="${p.light}" stroke="${p.deep}" stroke-width="1.1"/><path d="M53 18c4 1 10 1 14 0M55 24c3 1 7 1 10 0" stroke="${p.deep}" stroke-width="1" opacity=".4" fill="none"/>`;
     }
     if (motif === 'crown') {
       return `<path d="M39 31l4-15 9 8 8-13 8 13 9-8 4 15Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.2" stroke-linejoin="round"/><circle cx="60" cy="20" r="2.6" fill="${p.light}"/><circle cx="48" cy="25" r="1.8" fill="${p.light}"/><circle cx="72" cy="25" r="1.8" fill="${p.light}"/>`;
@@ -209,6 +356,8 @@
     if (motif === 'star') {
       return `<path d="M60 4l3.8 9.4 10.2.8-7.8 6.6 2.4 10-8.6-5.6-8.6 5.6 2.4-10-7.8-6.6 10.2-.8Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1.1" stroke-linejoin="round"/><ellipse cx="60" cy="18" rx="26" ry="9" fill="none" stroke="${p.light}" stroke-width="1.4" opacity=".65" transform="rotate(${-12 + v * 4} 60 18)"/>`;
     }
+    const creature = creatureFront(motif, p, v);
+    if (creature) return creature;
     return `<path d="M60 6l2.4 6 6 .6-4.6 3.9 1.4 6-5.2-3.4-5.2 3.4 1.4-6L51.6 12.6l6-.6Z" fill="${p.accent}" stroke="${p.deep}" stroke-width="1"/>`;
   }
 
@@ -245,7 +394,9 @@
   function backFor(motif, p, v, seed, dx) {
     const sparkles = [0, 1, 2].map((i) => {
       const x = 22 + ((seed >>> (i * 5 + 2)) % 76);
-      const y = 8 + ((seed >>> (i * 7 + 3)) % 26);
+      /* Sparkles start at 14, not 8: a sensei's 1.12 scale plus the sleeping
+         tilt pushed the top row of these dots above the frame. */
+      const y = 14 + ((seed >>> (i * 7 + 3)) % 24);
       const r = 1.1 + ((seed >>> (i * 3)) % 3) * 0.4;
       return `<circle cx="${x}" cy="${y}" r="${r}" fill="${p.light}" opacity=".7"/>`;
     }).join('');
@@ -256,6 +407,8 @@
     if (motif.indexOf('zodiac-') === 0) {
       return `<g class="puffle-style-aura puffle-style-zodiac" pointer-events="none" transform="translate(${dx} 0)"><ellipse cx="60" cy="62" rx="${43 + (v % 3)}" ry="${45 + (v % 4)}" fill="none" stroke="${p.accent}" stroke-width="1.4" stroke-dasharray="2 6" opacity=".38"/>${sparkles}</g>`;
     }
+    const creature = creatureBack(motif, p, v, sparkles);
+    if (creature) return `<g class="puffle-style-aura puffle-style-${motif}" pointer-events="none" transform="translate(${dx} 0)">${creature}</g>`;
     if (motif === 'flame') {
       return `<g class="puffle-style-aura" pointer-events="none" transform="translate(${dx} 0)"><ellipse cx="60" cy="52" rx="34" ry="24" fill="${p.accent}" opacity=".16"/><ellipse cx="60" cy="92" rx="26" ry="6" fill="${p.accent}" opacity=".12"/>${sparkles}</g>`;
     }
@@ -266,6 +419,14 @@
   }
 
   window.puffleStyleMotifOf = motifOf;
+
+  /* A family's headpiece grows with the sprite: a baby's mark is small and soft,
+     a legendary's is full-size with a ring of held light. The silhouette stays
+     the same, so a grown sprite is recognisably the one you raised. */
+  const STAGE_MOTIF_SCALE = {
+    egg: 0.72, baby: 0.82, sprite: 0.9, youngadult: 0.96, adult: 1,
+    highadult: 1.01, elder: 1.02, ancient: 1.03, apex: 1.04, sensei: 1.04,
+  };
 
   window.puffleStyleArt = function puffleStyleArt(styleKey, palette, opts) {
     const options = opts || {};
@@ -279,8 +440,10 @@
     const tilt = ((seed >>> 3) % 11) - 5;
     const scale = (0.92 + ((seed >>> 7) % 9) / 100).toFixed(2);
     const dx = options.view === 'side' ? 7 : 0;
-    const head = `translate(60 26) rotate(${tilt}) scale(${scale}) translate(-60 -26)`;
-    const front = `<g class="puffle-style puffle-style-${motif}" data-puffle-motif="${motif}" pointer-events="none" transform="translate(${dx} 0)"><g transform="${head}">${frontFor(motif, p, v, seed, bands)}${badgeOf(element, p, seed)}</g></g>`;
+    const stage = String(options.stage || '').toLowerCase();
+    const growth = STAGE_MOTIF_SCALE[stage] || 1;
+    const head = `translate(60 26) rotate(${tilt}) scale(${(Number(scale) * growth).toFixed(2)}) translate(-60 -26)`;
+    const front = `<g class="puffle-style puffle-style-${motif}" data-puffle-motif="${motif}" data-motif-growth="${growth}" pointer-events="none" transform="translate(${dx} 0)"><g transform="${head}">${frontFor(motif, p, v, seed, bands)}${badgeOf(element, p, seed)}</g></g>`;
     return { motif, front, back: backFor(motif, p, v, seed, dx) };
   };
 })();

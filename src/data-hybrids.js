@@ -106,7 +106,11 @@ const HYBRID_SPECIALS = [
   {
     key: 'origin-nexus', name: 'Origin Nexus Puffle', tier: 'creator',
     parents: ['Fire', 'Water', 'Nature', 'Electric', 'Ice', 'Wind', 'Earth', 'Poison', 'Metal', 'Crystal', 'Light', 'Shadow'],
-    parts: ['crystal', 'dusk', 'radiant'],
+    /* Its own triple: the creator used to repeat Eclipse Crystal's
+       crystal+dusk+radiant, and the later registration stole that key, leaving
+       the celestial unbuildable. Crystal, Light and Electric are the three
+       parts no other celestial recipe claims. */
+    parts: ['crystal', 'radiant', 'puffle_volt'],
     look: 'Galaxy fur, rainbow crystal wings, floating elemental crowns, constellation eyes, orbiting elemental spirits, and a reality-shaping aura.',
     prompt: 'Origin Nexus Puffle, ultimate Sprite Hollow creator creature, combines Fire, Water, Nature, Electric, Ice, Wind, Earth, Poison, Metal, Crystal, Light and Shadow powers, enormous rainbow crystal wings, galaxy fur, constellation eyes, floating elemental crowns, cosmic aura, celestial guardian, legendary fantasy mascot, collectible RPG creature, Disney-Pixar-inspired style, magical lighting, highly detailed fur, vibrant colors, premium mobile game artwork, 8K, no empty space.',
   },

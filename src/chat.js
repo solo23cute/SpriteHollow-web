@@ -11,6 +11,8 @@ const CHAT_QUICK = [
   'What do you dream about?',
   'Sing me something',
   'What is your favourite food?',
+  'What do you need?',
+  'Favourite toy?',
   'Boop',
   'Any world days today?',
   'What is your favourite game?',
@@ -49,55 +51,171 @@ function personalityName(s) {
 
 const PERSONA_TONE = {
   sunny: {
-    greet: ['HI! You’re here! Best day!', 'Oh! Oh! It’s you!', 'I was hoping you’d come by!'],
-    love: ['I love you more than snacks. And I LOVE snacks.', 'My whole heart just did a little jump.', 'You’re my favourite person. Obviously.'],
     joke: ['Why did the sprite bring a ladder to the meadow? To reach the high notes!', 'What do you call a sleepy Ember? A smoulder!', 'I told my shadow a joke and it cracked up. Get it? Cracked?'],
     end: ['Come back soon, okay?', 'I’ll be right here being happy!'],
-    agree: ['YES. Let’s do the thing!', 'Absolutely! I’m already excited!'],
   },
   grump: {
-    greet: ['Oh. It’s you. Fine, I’m listening.', 'You again. …Hi.', 'I was having a perfectly grumpy day until you showed up.'],
-    love: ['Don’t get weird about it, but… same.', 'Ugh. Fine. I love you too. Don’t tell anyone.', 'You’re tolerable. That’s my highest rating.'],
     joke: ['My joke is that I’m awake. Hilarious, right?', 'Why did the Grump cross the meadow? To avoid talking to you. …That was a joke. Mostly.', 'Knock knock. No. Go away. …Okay, come back.'],
     end: ['Leave. …Actually, stay a bit. Only a bit.', 'Bye. I’m not watching you leave. I absolutely am.'],
-    agree: ['Fine. But I’m not going to enjoy it. I will. But I’m not admitting it.', 'If we must.'],
   },
   shy: {
-    greet: ['Oh! Hi… I was hoping it was you.', 'Hello… you can stay. If you want.', 'I saved you a spot. It’s a very small spot.'],
-    love: ['I— oh. That’s… a lot. I love you too. There, I said it.', 'My cheeks are doing the hot thing.', '…Can I hug you? Too much? Sorry.'],
     joke: ['I know a joke but I might say it wrong… Why did the Sprig stay in the shade? Because it was a little… shy-dy? …I’ll stop.', 'Knock knock. Who’s there? …I forgot. Sorry.', 'I had a joke and then I saw you and it left.'],
     end: ['Come back when you can… please.', 'I’ll be here. Quietly.'],
-    agree: ['Okay. Yes. I’d like that.', '…If you’re sure. Okay!'],
   },
   bold: {
-    greet: ['There you are! Ready for trouble?', 'I was about to go on an adventure without you. Good timing.', 'Stand back, I’m about to be brave at something.'],
-    love: ['Obviously. I’m extremely lovable. …I love you too, actually.', 'You’re my favourite sidekick. Co-captain. Fine, equal.', 'I’d fight a cloud for you. A small cloud. Still counts.'],
     joke: ['I’m not funny, I’m cool. But here goes: why did the Volt cross the road? Because it was a live wire!', 'What’s a bold sprite’s favourite snack? Anything it can steal from a bigger sprite.', 'My jokes are dangerous. You’re welcome.'],
     end: ['Don’t wander off too far! Or do — I’ll find you.', 'Adventure waits for neither of us!'],
-    agree: ['Finally! An excellent decision!', 'Yes! Follow me! Or lead, I don’t care, just move!'],
   },
   goofy: {
-    greet: ['Beep boop! I am a completely normal sprite. …Did that work?', 'I have been waiting for you! Also I forgot you were coming!', 'Guess what! I don’t know but guess!'],
-    love: ['I LOVE YOU! Also I found a shiny rock and I love that too. It’s a tie.', 'You get the biggest hug. It’s mostly legs. It’s a leg hug.', 'My heart made a noise just now. That’s normal, right?'],
     joke: ['What do you call a Blob who does math? A calc-y-lump!', 'I tried to tell my shadow a joke but it just nodded. Rude.', 'Why did the Gale get kicked out of the library? Too much wind-bending. …Bending. I’ll see myself out.'],
     end: ['Bye! Don’t step on any bees! Unless they’re nice!', 'I’ll be doing goofy things. Come join!'],
-    agree: ['Vroom! Let’s go!', 'Say less! I’m already doing it!'],
   },
   dreamy: {
-    greet: ['Hi… I was just thinking about clouds that look like clouds.', 'Oh! You’re here. I dreamt you’d be here. Or maybe I’m still dreaming.', 'The light is nice today. You’re nice too.'],
-    love: ['That’s the warmest thing anyone’s said to me. I’ll keep it in my pocket.', 'I love you in a very soft, floating way. It’s a good way.', 'I think my heart just bloomed. …Is that a thing? I think it’s a thing.'],
     joke: ['A dream told me a joke. I forgot the joke but the feeling was hilarious.', 'What does a Wisp eat for breakfast? Nothing. It just watches the sun and feels things.', 'I know a joke. It’s in a cloud. I’ll remember it when it rains.'],
     end: ['Float gently. Come back soon.', 'I’ll be here, half in a cloud.'],
-    agree: ['Mmm. Yes. That sounds lovely.', 'Let’s drift there together.'],
   },
   sassy: {
-    greet: ['Well, look who finally showed up. I was about to replace you with a nicer rock.', 'Hi, bestie. Your timing is cute, like the rest of you.', 'I’ve been waiting. Not patiently. Just wanted to be clear.'],
-    love: ['I mean, obviously. Have you seen me? …I love you too, okay, don’t let it go to your head.', 'Ugh, you’re going to make me be sincere. I love you. There. One (1) sincere sentence.', 'You’re lucky you’re my favourite. Don’t tell the others.'],
     joke: ['Why did the Tide sprite break up with the shore? It needed space. Too much space. It was a whole thing.', 'My mirror told me a joke. It was actually about you.', 'I only tell jokes that make me look good, so: why are you so lucky? Because you know me.'],
     end: ['Go on, go. I’ll be here being the best one.', 'Bye, favourite. Try not to miss me too much.'],
-    agree: ['Finally, a good idea from you. Let’s.', 'Fine, but I’m choosing the playlist.'],
   },
 };
+
+/* ---------------- Sprite Hollow voices ----------------
+   The eight role voices in data-personality.js own greet, idle, friend and best,
+   and their context table owns being helped, gifted, ignored, festival and
+   weather. The old tone banks only answer beats the voices do not cover
+   (jokes, goodbyes), so a puffle speaks in its own voice rather than a tone. */
+const VOICE_BEATS = { greet: 'greet', love: 'best', agree: 'friend' };
+
+/* Asks the puffle's role voice for its own line. */
+function spriteVoiceBeat(s, beat) {
+  if (typeof window.puffleVoiceLine !== 'function') return null;
+  try { return window.puffleVoiceLine(s, beat); } catch (e) { return null; }
+}
+
+function voiceContext(s, kind) {
+  if (typeof window.contextVoiceLine !== 'function') return null;
+  try { return window.contextVoiceLine(kind, (s && (s.id || s.element)) || 'puffle'); } catch (e) { return null; }
+}
+
+const EMPTY_VOICE_STATE = Object.freeze({ at: 0, giftAt: 0, quests: 0, topic: null, topicAt: 0 });
+
+function puffleVoiceState(s) {
+  if (!s.voice || typeof s.voice !== 'object') s.voice = { ...EMPTY_VOICE_STATE };
+  return s.voice;
+}
+
+/* The last thing this puffle was actually asked about, so the next hello can
+   pick the conversation back up instead of starting from nothing. */
+function chatTopicOf(text) {
+  const t = String(text || '').toLowerCase();
+  if (/\b(who('s| is) your (best )?friend|your friends?|who do you (like|hang out with))\b/.test(t)) return 'friends';
+  if (/\b(foods?|snacks?|eat|hungry|berries|berry|feed)\b/.test(t)) return 'food';
+  if (/\b(games?|play|fun|toys?)\b/.test(t)) return 'play';
+  if (/\b(sleep|naps?|tired|bed)\b/.test(t)) return 'sleep';
+  if (/\b(baths?|clean|wash|dirty)\b/.test(t)) return 'bath';
+  if (/\b(how are you|feel|mood|sad|happy)\b/.test(t)) return 'feelings';
+  if (/\b(quest|doing|story)\b/.test(t)) return 'quest';
+  if (/\b(egg|baby|family|merge|hatch)\b/.test(t)) return 'family';
+  return null;
+}
+
+const TOPIC_CALLBACKS = Object.freeze({
+  food: ['Earlier you asked about snacks. I have thought about little else since.', 'You asked what I like to eat. I have been hungry ever since. Coincidence?'],
+  play: ['We talked about games earlier. I have been practising. Quietly. In secret.'],
+  sleep: ['You asked about naps earlier. I took one. It was magnificent.'],
+  bath: ['After we talked about baths, I found three more puddles. Impressive, honestly.'],
+  feelings: ['You asked how I was doing. I am still good. Better now, actually.'],
+  quest: ['You asked what I was doing. Still on it. Very heroically.'],
+  family: ['You asked about eggs and family. I have been thinking about tiny feet.'],
+  friends: ['You asked about my friends. I have been making a list. You are on it.'],
+});
+
+function topicCallbackLine(topic, at) {
+  const bank = topic && TOPIC_CALLBACKS[topic];
+  if (!Array.isArray(bank) || !at) return '';
+  if (Date.now() - Number(at) > 48 * 60 * 60 * 1000) return '';
+  return one(bank);
+}
+
+/* Which voices have spoken to the keeper, so the wiki's voice guide can show
+   the eight voices as a collection of their own. */
+function recordVoiceHeard(s) {
+  const voice = typeof window.puffleVoiceOf === 'function' ? window.puffleVoiceOf(s) : null;
+  const key = voice && voice.key;
+  if (!key || typeof state === 'undefined' || !state.stats) return;
+  if (!state.stats.voiceHeard || typeof state.stats.voiceHeard !== 'object') state.stats.voiceHeard = {};
+  if (state.stats.voiceHeard[key]) return;
+  state.stats.voiceHeard[key] = Date.now();
+  if (typeof commit === 'function') commit('voice-heard');
+  else if (typeof saveState === 'function') saveState();
+}
+
+/* Every claimed quest step, across every region. A three-step line counts one
+   per step here, so helping with a single step is worth a thank-you even when
+   the chain is far from finished (stats.quests only counts finished lines). */
+function questStepsDone() {
+  const map = (typeof state !== 'undefined' && state.biomeQuests) || {};
+  let total = 0;
+  Object.keys(map).forEach((key) => {
+    const q = map[key];
+    if (!q || typeof q !== 'object') return;
+    total += Math.max(0, Number(q.step) || 0);
+  });
+  return total;
+}
+
+/* A holiday runs for weeks, so its greeting is for the first day only — after
+   that it surfaces now and then instead of on every hello. */
+function festivalStartsToday(festival) {
+  const start = festival && Array.isArray(festival.start) ? festival.start : null;
+  if (!start) return false;
+  const now = new Date();
+  return start[0] === now.getMonth() && start[1] === now.getDate();
+}
+
+/* What has happened since this puffle last heard from you: a finished quest
+   counts as being helped, a claimed gift as being gifted, a long silence as
+   being ignored, then today's festival or the Hollow's own weather. */
+function chatContextFor(s) {
+  const seen = puffleVoiceState(s);
+  const steps = questStepsDone();
+  const away = seen.at ? Date.now() - seen.at : 0;
+  /* Only the puffle that handed over the gift carries giftAt, so a gift to one
+     sprite no longer makes the whole roster say thank you. */
+  const gifted = (Number(seen.giftAt) || 0) > (Number(seen.at) || 0);
+  const festival = typeof observancesForDate === 'function' ? observancesForDate()[0] : null;
+  const weather = (typeof state !== 'undefined' && state.world) ? state.world.weather : null;
+  let kind = null;
+  if (steps > (Number(seen.quests) || 0)) kind = 'helped';
+  else if (gifted) kind = 'gifts';
+  else if (seen.at && away > 3 * 60 * 60 * 1000) kind = 'ignored';
+  /* A holiday lasts weeks; its line is guaranteed on the first day and only
+     rolled for when nothing more specific has happened. */
+  else if (festival && (festivalStartsToday(festival) || chance(0.25))) kind = 'festival';
+  else if (weather === 'rain' || weather === 'storm') kind = 'rain';
+  else if (weather === 'snow' || weather === 'frost') kind = 'snow';
+  return { kind, steps };
+}
+
+function rememberChat(s, ctx) {
+  const seen = puffleVoiceState(s);
+  seen.at = Date.now();
+  if (!ctx) return;
+  seen.quests = ctx.steps;
+  if (ctx.topic) {
+    seen.topic = ctx.topic;
+    seen.topicAt = Date.now();
+  }
+}
+
+function weatherVoiceKind(text) {
+  const t = String(text || '').toLowerCase();
+  const weather = (typeof state !== 'undefined' && state.world) ? state.world.weather : null;
+  if (/rain|storm|wet/.test(t) || weather === 'rain' || weather === 'storm') return 'rain';
+  if (/snow|frost|winter|cold/.test(t) || weather === 'snow' || weather === 'frost') return 'snow';
+  return null;
+}
 
 function storyLine(s) {
   const el = elementOf(s);
@@ -118,19 +236,52 @@ function dreamLine(s) {
   ]);
 }
 
+/* Voices own greeting, affection and agreement; the persona banks keep only the
+   beats a role voice does not have — jokes and goodbyes. */
 function toneLine(s, key) {
-  const bank = PERSONA_TONE[s.personality]?.[key] || PERSONA_TONE.sunny[key];
-  return one(bank);
+  const beat = VOICE_BEATS[key];
+  if (beat) {
+    const line = spriteVoiceBeat(s, beat);
+    if (line) return line;
+  }
+  const bank = (PERSONA_TONE[s.personality] || {})[key] || PERSONA_TONE.sunny[key];
+  return Array.isArray(bank) && bank.length ? one(bank) : '…';
 }
 
 function one(arr) { return pick(arr); }
 
+/* The favourite things this puffle actually wants, plus its lowest need, said
+   plainly enough that the keeper knows exactly what to get. Shared by chat and
+   the Hollow so both name the same snack and toy. */
+function puffleGuideText(s) {
+  if (!s || s.stage === 'egg' || !s.needs) return '';
+  const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  const snack = comforts ? comforts.food.name.toLowerCase() : 'a snack';
+  const toy = comforts ? comforts.toy.name.toLowerCase() : 'a toy';
+  const low = typeof Voice !== 'undefined' && Voice.lowestNeed ? Voice.lowestNeed(s) : null;
+  const needWord = { hunger: 'hungry', energy: 'sleepy', joy: 'bored', clean: 'grubby' }[low && low.key] || 'cozy';
+  const fix = {
+    hunger: `a ${snack} would fix that`,
+    energy: 'a nap would fix that',
+    joy: `playing with my ${toy} would fix that`,
+    clean: 'a bubble bath would fix that',
+  }[low && low.key] || 'nothing needs fixing right now';
+  const needSummary = low
+    ? `Right now I’m ${needWord} — ${low.key} is ${Math.round(low.value)} out of 100 — so ${fix}.`
+    : '';
+  /* No name prefix: the puffle is speaking in its own bubble and voice, and the
+     line reads the same whether it is typed in chat or said in the Hollow. */
+  return `“My favourite snack is ${snack} and my favourite toy is the ${toy}. ${needSummary}”`.replace(/\s+/g, ' ').trim();
+}
+
 function needsNote(s) {
   const n = s.needs;
+  const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  const snack = comforts ? comforts.food.name.toLowerCase() : 'a berry';
   if (n.hunger < 22) return one([
-    'Also, I am approximately one hundred percent empty. Snack?',
-    'My tummy is making whale noises. Help a sprite out?',
-    'I’m not saying I’m starving, but a berry would be very appreciated.',
+    `Also, I am approximately one hundred percent empty. ${snack[0].toUpperCase()}${snack.slice(1)}?`,
+    `My tummy is making whale noises. A ${snack} would help a sprite out?`,
+    `I’m not saying I’m starving, but a ${snack} would be very appreciated.`,
   ]);
   if (n.energy < 22) return one([
     'Also my eyelids are doing the slow blink. Nap soon?',
@@ -161,6 +312,14 @@ function chatReply(s, text) {
   const grubby = s.needs.clean < 25;
   const sad = s.needs.joy < 25;
   const note = needsNote(s);
+  /* The sheet names this puffle's own comforts, so chat has to answer with them
+     instead of the element's generic taste or the player's starred game. */
+  const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  const favFood = comforts ? comforts.food.name : el.likes;
+  /* Snapshot the context before this reply counts as having heard from you. */
+  const voiceCtx = chatContextFor(s);
+  rememberChat(s, { ...voiceCtx, topic: chatTopicOf(t) });
+  recordVoiceHeard(s);
 
   if (!t) return one(['…You okay? You opened your mouth and nothing came out.', 'I’m listening. Mostly.']);
 
@@ -169,18 +328,20 @@ function chatReply(s, text) {
   }
   if (/\b(i love you|love you|ily|love ya)\b/.test(t)) {
     addBondOnChat(s);
-    return toneLine(s, 'love') + (s.bond > 75 ? ' I mean it.' : '');
+    const tier = typeof relationshipTierFor === 'function' ? relationshipTierFor(s.bond) : null;
+    const warm = tier && (tier.key === 'partner' || tier.key === 'family') ? ` ${tier.line}` : '';
+    return toneLine(s, 'love') + warm + (s.bond > 75 ? ' I mean it.' : '');
   }
-  if (/\b(hungry|starving|food|eat|snack|berry|feed)\b/.test(t)) {
-    if (/\b(favourite|favorite|best)\b/.test(t)) return `That’s easy: ${el.likes}. If you ever want to be my favourite person forever, that’s the currency.`;
+  if (/\b(hungry|starving|foods?|eat|snacks?|berries|berry|feed)\b/.test(t)) {
+    if (/\b(favourite|favorite|best)\b/.test(t)) return `That’s easy: ${favFood}. If you ever want to be my favourite person forever, that’s the currency.`;
     if (hungry) return one([
       `YES. Please. Anything. A berry, a cloud, a nice rock. I’m not picky.`,
-      `I’m so hungry I could eat a whole sunbeam. Do you have ${el.likes}?`,
-      `Finally someone noticed! ${el.likes}, please and thank you.`,
+      `I’m so hungry I could eat a whole sunbeam. Do you have ${favFood}?`,
+      `Finally someone noticed! ${favFood}, please and thank you.`,
     ]);
     if (s.needs.hunger > 90) return one(['I’m stuffed. I couldn’t eat another bite. Ask me again in a bit.']);
     return one([
-      `I could nibble something. ${el.likes} are my favourite.`,
+      `I could nibble something. ${favFood} are my favourite.`,
       `Not starving, but I never say no to a snack.`,
       `Treats? For me? You shouldn’t have. You absolutely should have.`,
     ]);
@@ -194,10 +355,26 @@ function chatReply(s, text) {
     if (grubby) return one(['Yes. Please. The bubbles. I’ll be so shiny after.', 'I may have rolled in something. I regret nothing. But yes, bath.']);
     return one(['A bath? I’m already basically a masterpiece.', 'Bubbles are my favourite shape.']);
   }
+  /* The direct question gets the whole answer: favourite snack, favourite toy
+     and the need that actually wants fixing, with its number. */
+  if (/\b(what do you need|what do you want|what should i (get|give|feed|buy)|how can i help|how do i help|what('s| is) wrong|favourite snack|favorite snack)\b/.test(t)) {
+    return puffleGuideText(s);
+  }
+  if (/\b(toy|toys|plaything)\b/.test(t)) {
+    return comforts
+      ? one([`${comforts.toy.name}. Obviously. ${comforts.toy.icon} I would not trade it for a hundred snacks. Maybe twenty.`, `My ${comforts.toy.name.toLowerCase()}! It goes everywhere with me.`])
+      : one(['Anything I can bat across the floor counts.']);
+  }
   if (/\b(play|game|fun|activity|catch|pulse|copycat)\b/.test(t)) {
+    /* The play branch catches the word "game" first, so the favourite question
+       is answered here rather than in the branch further down. */
+    if (/\b(favou?rite|best|which)\b/.test(t) && comforts) {
+      return one([`${comforts.game.name}. ${comforts.game.icon} I am unbeaten, mostly because nobody else plays it.`, `That would be ${comforts.game.name}. Ask me again and I will say the same thing.`]);
+    }
     if (sad || sleepy) return sleepy
       ? 'I’m too sleepy for games. Rain check? …Or a nap game. I win those.'
       : one(['I’d love to. My fun tank is a little low, so yes. Please.', 'A game would fix me. Probably literally.']);
+    if (comforts) return one([`Yes! ${comforts.game.name}. ${comforts.game.icon} I’m incredible at it. Mostly.`, `I only really play ${comforts.game.name}, but I play it a lot.`, `Games? For me? Let’s go!`]);
     return one(['Yes! The Treat Catch one. I’m incredible at catching. Mostly with my face.', 'I’m so ready. Do the pulse one, I have excellent timing. Allegedly.', 'Games? For me? Let’s go!']);
   }
   if (/\b(merge|egg|baby|family|parents|breed|hatch)\b/.test(t)) {
@@ -242,12 +419,71 @@ function chatReply(s, text) {
     const bank = lines[mood.key] || lines.content;
     return one(bank) + (note && !hungry && !sleepy ? ` ${note}` : '');
   }
+  /* This has to run before the identity branch: "what are you doing" would
+     otherwise answer with the puffle's name instead of its quest. */
+  if (/\b(what are you doing|what doing|doing|story|quest|errand)\b/.test(t)) {
+    /* The active region quest is what the puffle is actually doing, so answer in
+       its own quest beat and name the real step instead of a generic line. */
+    const questKey = typeof BIOME_QUEST_KEYS !== 'undefined'
+      ? BIOME_QUEST_KEYS.find((key) => typeof biomeQuestStep === 'function' && biomeQuestStep(key))
+      : null;
+    if (questKey) {
+      const info = biomeQuestStep(questKey);
+      const line = spriteVoiceBeat(s, 'quest');
+      if (info) return [line, `${info.def.title}: ${info.step.text}.`].filter(Boolean).join(' ');
+    }
+    const quest = typeof storyPrompt === 'function' ? storyPrompt() : '';
+    if (quest) return quest;
+    return one([
+      'Existing. Spectacularly.',
+      'Thinking about a snack. Then I got distracted by you. Then I remembered the snack.',
+      'Watching a bug. It’s a good bug. We’re friends now.',
+    ]);
+  }
+  /* The bond ladder answers for itself: this is the question the tier chip on
+     the collection sheet cannot answer on its own. */
+  if (/\b(do you like me|do you love me|love me|are we (friends|best friends|close)|our bond|relationship|what do you think of me|how close are we)\b/.test(t)) {
+    const tier = typeof relationshipTierFor === 'function' ? relationshipTierFor(s.bond) : null;
+    const line = typeof puffleTierLine === 'function' ? puffleTierLine(s) : null;
+    return [line || toneLine(s, 'love'), tier ? `The book says ${tier.name} · bond ${Math.round(Number(s.bond) || 0)}/100.` : ''].filter(Boolean).join(' ');
+  }
+  /* A puffle has opinions about the rest of the roster, not just about you. */
+  if (/\b(who('s| is) your (best )?friend|your friends?|who do you (like|hang out with))\b/.test(t)) {
+    const others = (typeof grownSprites === 'function' ? grownSprites() : (state.sprites || []))
+      .filter((o) => o && o.id !== s.id && o.stage !== 'egg');
+    if (!others.length) return 'You. Obviously. There is no competition, there is only you.';
+    const score = (o) => (Number(o.bond) || 0) + (o.element === s.element ? 8 : 0);
+    const pal = others.slice().sort((a, b) => score(b) - score(a))[0];
+    const same = pal.element === s.element;
+    return one([
+      `${displayName(pal)}. ${same ? 'Same element, same nonsense. We understand each other.' : 'Different element, same nonsense. It works.'}`,
+      `Probably ${displayName(pal)}. We trade snacks and secrets. Mostly snacks.`,
+      `${displayName(pal)}, if you must know. We have a whole thing.`,
+    ]);
+  }
   if (/\b(who are you|what are you|your name|name)\b/.test(t)) {
     return `I’m ${name}! A ${typeName(s)} ${BREEDS[s.breed]?.name || 'Puff'}. I’m ${personalityName(s).toLowerCase()}, apparently. The paperwork says so.`;
   }
   if (/\b(hi|hello|hey|yo|hey there|good morning|good evening|howdy)\b/.test(t)) {
     const greet = toneLine(s, 'greet');
-    return (hungry && chance(0.55)) ? `${greet} ${note}` : greet;
+    if (voiceCtx.kind === 'ignored') {
+      const regret = voiceContext(s, 'ignored');
+      if (regret) return regret;
+    }
+    const extra = voiceCtx.kind && voiceCtx.kind !== 'ignored' ? voiceContext(s, voiceCtx.kind) : '';
+    /* A callback is used once and then forgotten, so the next hello can move on. */
+    const seen = puffleVoiceState(s);
+    const callback = topicCallbackLine(seen.topic, seen.topicAt);
+    if (callback) {
+      seen.topic = null;
+      seen.topicAt = 0;
+    }
+    const tierLine = typeof puffleTierLine === 'function' && Number(s.bond) >= 45 && chance(0.6) ? puffleTierLine(s) : '';
+    /* Two puffles can share a role voice and still speak differently, because
+       their rolled personality gets its own aside. */
+    const quirk = !callback && typeof puffleQuirkLine === 'function' && chance(0.3) ? puffleQuirkLine(s) : '';
+    const hungryNote = hungry && chance(0.55) ? note : '';
+    return [greet, callback || extra, quirk, tierLine, hungryNote].filter(Boolean).join(' ');
   }
   if (/\b(bye|goodbye|goodnight|night|see you|cya|later)\b/.test(t)) {
     if (hungry || sleepy) return `${toneLine(s, 'end')} Also, needs. Please.`;
@@ -284,15 +520,6 @@ function chatReply(s, text) {
   }
   if (/\b(help|what can you do|how do i|tip)\b/.test(t)) {
     return 'You can feed me, pet me, give me a bath, tuck me in, play games, or talk to me. I personally recommend all of them, in that order, repeatedly.';
-  }
-  if (/\b(what are you doing|what doing|doing|story|quest|errand)\b/.test(t)) {
-    const quest = typeof storyPrompt === 'function' ? storyPrompt() : '';
-    if (quest) return quest;
-    return one([
-      'Existing. Spectacularly.',
-      'Thinking about a snack. Then I got distracted by you. Then I remembered the snack.',
-      'Watching a bug. It’s a good bug. We’re friends now.',
-    ]);
   }
   if (/\b(no|nope|nah)\b/.test(t)) return one(['Okay. Fine. I’ll remember this.', 'Fine. But I’m making a face.']);
   if (/\b(yes|yeah|yep|sure|okay|ok)\b/.test(t)) {
@@ -333,6 +560,9 @@ function chatReply(s, text) {
     return `Ooh. ${pick(ideas)}. Or ${pick(ideas)}. I’m very good at this.`;
   }
   if (/\b(weather|rain|snow|sunny|storm|season)\b/.test(t)) {
+    const kind = weatherVoiceKind(t);
+    const voiced = kind ? voiceContext(s, kind) : null;
+    if (voiced) return voiced;
     return one([
       `I like ${state.world?.weather || 'the quiet weather'}. It makes the Hollow feel like it’s breathing.`,
       'When it rains I sit by the window and judge the drops. Some are faster. They know.',
@@ -366,11 +596,17 @@ function idleLine(s) {
   if (!s) return '';
   if (s.stage === 'egg') return 'The egg wiggles a little. Something in there is dreaming.';
   if (s.asleep) return `${nameOf(s)} is dreaming. Their tail twitches.`;
-  if (s.needs.hunger < 25) return `${nameOf(s)}: “so… about snacks.”`;
+  if (s.needs.hunger < 25) {
+    const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+    const snack = comforts ? comforts.food.name.toLowerCase() : 'a snack';
+    return `${nameOf(s)}: “I could really go for ${snack} right now.”`;
+  }
   if (s.needs.clean < 25) return `${nameOf(s)} is leaving little dirt prints. “I found a puddle.”`;
   if (s.needs.energy < 25) return `${nameOf(s)} yawns so widely they almost fall over.`;
   if (s.needs.joy < 25) return `${nameOf(s)} is trying to get your attention by being dramatically bored.`;
   if (typeof storyPrompt === 'function' && storyPrompt()) return `${nameOf(s)}: “${storyPrompt()}”`;
+  const voiceIdle = spriteVoiceBeat(s, 'idle');
+  if (voiceIdle && chance(0.5)) return `${nameOf(s)}: “${voiceIdle}”`;
   const personal = {
     sunny: 'practices the same happy spin for no reason.',
     grump: 'sits facing away, then scoots three inches closer.',

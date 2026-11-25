@@ -33,7 +33,7 @@ function openRaceGame() {
       <div class="race-road" data-race-road>
         <span class="race-lane-line" style="left:33.3%"></span>
         <span class="race-lane-line" style="left:66.6%"></span>
-        <div class="race-kart" data-race-kart>${sprite ? spriteSVG(sprite, { expr: 'happy' }) : '🏎️'}</div>
+        <div class="race-kart" data-race-kart>${sprite ? spriteSVG(sprite, { expr: 'happy', anim: 'run' }) : '🏎️'}</div>
       </div>
       <div class="race-move">
         <button class="catch-arrow" type="button" data-race-left aria-label="Steer left">◀</button>

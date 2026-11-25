@@ -120,9 +120,9 @@ function codexScreen(root) {
     <p class="tiny muted" style="text-align:center;margin:6px 4px 0">Finish chance varies by egg source. Percentages are each finish's exact share when a finish drops.</p>
     <div class="section-title" style="margin-top:16px"><h2>Apex trail ranks</h2><span>above Master · earned on trails</span></div>
     <div class="finish-strip" data-apex-strip></div>
-    <p class="tiny muted" style="text-align:center;margin:6px 4px 0">Celestial, Divine, and Eternal sit above the base bands. Every type sold in the Nest has an egg at each of these ranks — tap an apex rarity chip above to price a species there, or push a Master sprite up on trails.</p>
+    <p class="tiny muted" style="text-align:center;margin:6px 4px 0">${RARITY_APEX_PHRASE} sit above the base bands. Every type sold in the Nest has an egg at each of these ranks — tap an apex rarity chip above to price a species there, or push a Master sprite up on trails.</p>
     <div class="card" style="padding:12px;margin-top:14px;font-size:11px;line-height:1.6;color:var(--muted)">
-      Every type can be bought as its own egg in the Nest, including at Celestial, Divine, and Eternal rank. Base tiers follow egg price; Secret, Exotic, and Master outrank them, and the three apex ranks sit above Master for an extra premium. The gene power is always active while that sprite is in your Hollow.
+      Every type can be bought as its own egg in the Nest, including at ${RARITY_APEX_PHRASE} rank. Base tiers follow egg price; Secret, Exotic, and Master outrank them, and the ${RARITY_APEX_KEYS.length} apex ranks sit above Master for an extra premium. The gene power is always active while that sprite is in your Hollow.
     </div>`;
 
   const grid = root.querySelector('[data-codex-grid]');

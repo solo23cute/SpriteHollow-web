@@ -15,11 +15,18 @@ const ABILITY_PATH_EVOLVE_LEVEL = 40;
    without being a trap. The first pick is always free. */
 const AP_PATH_CHANGE_COST = 60;
 const ABILITY_PATH_MASTERY_RANK = 4; /* legendary and above */
-const ABILITY_SECRET_RANK = 7;
-const ABILITY_CELESTIAL_RANK = 8;
-const ABILITY_CREATOR_RANK = 9;
-
-const ABILITY_RARITY_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic', 'divine', 'secret', 'celestial', 'creator', 'master'];
+/* Every rarity tier has to appear here or it indexes as 0 and the creature is
+   treated as Common: no mastery, no secret mutation, no star core. Ultra Secret
+   and Ancient were both missing, so two whole tiers fought with nothing. */
+/* Generated from the spec's abilityRank, so a new tier is one number there.
+   Tiers with no abilityRank (exotic, eternal today) stay unranked exactly as
+   they were; giving them one is a balance decision, not a table edit. */
+const ABILITY_RARITY_ORDER = RARITY_SPEC_KEYS
+  .filter((key) => Number.isFinite(RARITY_SPEC[key].abilityRank))
+  .sort((left, right) => RARITY_SPEC[left].abilityRank - RARITY_SPEC[right].abilityRank);
+const ABILITY_CELESTIAL_RANK = ABILITY_RARITY_ORDER.indexOf('celestial');
+const ABILITY_CREATOR_RANK = ABILITY_RARITY_ORDER.indexOf('creator');
+const ABILITY_SECRET_RANK = ABILITY_RARITY_ORDER.indexOf('secret');
 
 const ABILITY_PATHS = {
   fire: {
@@ -290,6 +297,7 @@ window.SECRET_MUTATIONS = SECRET_MUTATIONS;
 window.CELESTIAL_CORES = CELESTIAL_CORES;
 window.CREATOR_PATHS = CREATOR_PATHS;
 window.CREATOR_FINAL = CREATOR_FINAL;
+window.ABILITY_RARITY_ORDER = ABILITY_RARITY_ORDER;
 window.ABILITY_PATH_EVOLVE_LEVEL = ABILITY_PATH_EVOLVE_LEVEL;
 window.AP_PATH_CHANGE_COST = AP_PATH_CHANGE_COST;
 window.abilityPathElement = abilityPathElement;

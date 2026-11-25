@@ -240,8 +240,8 @@ function worldEvolutionWikiBody() {
     <h3>Base, costumes &amp; variants</h3>
     ${worldEvolutionVariantHTML()}
     <button class="btn btn-soft btn-block" data-wiki-guide="formsvariants" style="margin-top:8px">✨ Open the Forms &amp; variants guide</button>
-    <h3>All twelve tiers</h3>
-    <p>The atlas filters the full ladder: ${RARITY_TIER_ORDER.map((key) => `<b>${TYPE_EGG_RARITIES[key].name}</b>`).join(' · ')}. Celestial, Divine, and Eternal type eggs are sold in the Nest's Type eggs section at an apex premium, or you can push a sprite up with Trail Upgrades.</p>
+    <h3>All ${RARITY_TIER_ORDER.length} tiers</h3>
+    <p>The atlas filters the full ladder: ${RARITY_TIER_ORDER.map((key) => `<b>${TYPE_EGG_RARITIES[key].name}</b>`).join(' · ')}. ${RARITY_APEX_PHRASE} type eggs are sold in the Nest's Type eggs section at an apex premium, or you can push a sprite up with Trail Upgrades.</p>
     <button class="btn btn-primary btn-block" data-world-evo-open style="margin-top:12px">🧬 Open the free World Evolution Atlas</button>
     <p class="tiny muted" style="text-align:center;margin-top:8px">Free reference · Vault ownership is separate · no unlock required to read</p>`;
 }

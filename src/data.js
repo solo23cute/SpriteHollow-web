@@ -1303,6 +1303,9 @@ Object.assign(BREEDS, {
   cp_puffle: {
     name: 'Club Penguin Puffle', kicker: 'Classic breed', icon: '🐧',
     perk: 'Bond grows 25% faster and earns 8% more XP', bondMod: 1.25, xpMod: 1.08,
+    /* The body type carries the classic Club Penguin silhouette and the twelve
+       classic colours, so the breed looks right the moment it hatches. */
+    bodyShape: 'cp_classic',
     desc: 'The round, soft classic from Club Penguin — a little propeller cap, a pocketful of colours, and room for every evolution.',
   },
 });
@@ -1453,6 +1456,12 @@ const PALETTES = {
   tangerine: { name: 'Tangerine', body: '#ff8a3d', light: '#ffd6b8', deep: '#8a3b12', accent: '#8be9ff', belly: '#fff0e4' },
   graphite: { name: 'Graphite', body: '#4a4d5c', light: '#aeb2c4', deep: '#1b1d26', accent: '#8be9ff', belly: '#e8eaf2' },
   honey: { name: 'Honey', body: '#f0b429', light: '#ffe9a8', deep: '#8a5a0a', accent: '#ff8fa3', belly: '#fff8e1' },
+  godlight: { name: 'Godlight', body: '#ffe9b0', light: '#fffbe6', deep: '#8a6a14', accent: '#ffffff', belly: '#fffdf5' },
+  nebularose: { name: 'Nebula Rose', body: '#7a5cc8', light: '#cfc2ff', deep: '#2a1b54', accent: '#ff8fd6', belly: '#efe8ff' },
+  emberglass: { name: 'Emberglass', body: '#ff9e6b', light: '#ffd8be', deep: '#7a2a12', accent: '#ffe066', belly: '#ffede0' },
+  tidefrost: { name: 'Tidefrost', body: '#8fd8e8', light: '#e2faff', deep: '#2a5f73', accent: '#b9a8ff', belly: '#f2feff' },
+  mossveil: { name: 'Mossveil', body: '#9fcb8a', light: '#e8ffd8', deep: '#36521f', accent: '#ffe08a', belly: '#f5ffee' },
+  crownrose: { name: 'Crown Rose', body: '#e8a8c8', light: '#ffe2f0', deep: '#7a2f55', accent: '#ffd166', belly: '#fff2f8' },
 };
 const PALETTE_KEYS = Object.keys(PALETTES);
 
@@ -2367,60 +2376,120 @@ const CP_PUFFLE_TYPES = {
     label: 'Blue Puffle', icon: '🔵', diet: 'hearty', size: 'standard',
     primary: '#4A9FF5', light: '#A9D6FF', deep: '#1E5FA8', belly: '#E8F5FF',
     desc: 'A loyal little teammate with a propeller cap and a heart for everyone.',
+    personality: ['Loyal', 'Content', 'Team player'],
+    ability: { name: 'Big Bounce', icon: '⚪', desc: 'Bounces higher than any other puffle and lands it with a grin.', effect: { energyDecay: 0.94 } },
+    skill: { name: 'Puffle Rescue', icon: '🛟', desc: 'Blows up the raft and keeps a panicking team in one piece.', effect: { petBond: 1.08 } },
+    wild: 'Rallying teams together and eating its weight in cookies.',
+    toy: 'Ball and snowballs', snack: 'Pretzels', likesFood: 'berry',
+    habitat: { label: 'The Snow Forts', biomes: ['aurora', 'grove'] },
     power: { name: 'Team Cheer', icon: '🔵', desc: '+15% XP, pets build more bond, and gifts arrive sooner.', effect: { xp: 1.15, petBond: 1.15, giftSpeed: 1.1 } },
   },
   red: {
     label: 'Red Puffle', icon: '🔴', diet: 'wild', size: 'standard',
     primary: '#E84B4B', light: '#FF9A8F', deep: '#8F1F25', belly: '#FFE1D9',
     desc: 'A fearless adventurer with a pirate grin and a surfboard close by.',
+    personality: ['Adventurous', 'Extreme'],
+    ability: { name: 'Cannonball', icon: '🎇', desc: 'Fires itself out of a cannon and lands the trick every time.', effect: { gameCoins: 2 } },
+    skill: { name: 'Catchin’ Waves', icon: '🏄', desc: 'Surfs the cove break and only falls off when it means to.', effect: { xp: 1.06 } },
+    wild: 'Hunting for buried treasure across Rockhopper Island.',
+    toy: 'Bowling pins and cannon', snack: 'Stinky cheese', likesFood: 'fillet',
+    habitat: { label: 'Rockhopper Island', biomes: ['tide', 'reef'] },
     power: { name: 'Adventure Rush', icon: '🏴‍☠️', desc: '+20% XP, +4 game coins, and energy fades slower.', effect: { xp: 1.2, gameCoins: 4, energyDecay: 0.9 } },
   },
   pink: {
     label: 'Pink Puffle', icon: '🩷', diet: 'sweet', size: 'standard',
     primary: '#F27FBF', light: '#FFC2E1', deep: '#9C3A6B', belly: '#FFF0F7',
     desc: 'A cheerful athlete who turns every stretch into a dance.',
+    personality: ['Athletic', 'Cheery'],
+    ability: { name: 'Bubblegum Float', icon: '🩷', desc: 'Floats on bubblegum and out-swims every other puffle.', effect: { energyDecay: 0.93 } },
+    skill: { name: 'Aqua Grabber', icon: '🌊', desc: 'Dives the iceberg caves and comes back with the treasure.', effect: { hungerDecay: 0.94 } },
+    wild: 'Using bubblegum to float across the cove.',
+    toy: 'Skipping rope, snorkel and trampoline', snack: 'Watermelon', likesFood: 'mango',
+    habitat: { label: 'The Iceberg', biomes: ['tide', 'reef'] },
     power: { name: 'Poolside Pep', icon: '🎀', desc: '+3 game coins, joy fades slower, and gifts arrive sooner.', effect: { gameCoins: 3, joyDecay: 0.9, giftSpeed: 1.12 } },
   },
   black: {
     label: 'Black Puffle', icon: '⚫', diet: 'eerie', size: 'standard',
     primary: '#35313A', light: '#6D6575', deep: '#17151B', belly: '#7A7284', accent: '#FF9A4C',
     desc: 'A strong, silent shadow with a warm ember at the core.',
+    personality: ['Intense', 'Strong'],
+    ability: { name: 'Fireball', icon: '🔥', desc: 'Bursts into flame and flies as a fireball when it is truly annoyed.', effect: { nightCoins: 2 } },
+    skill: { name: 'Cart Surfer', icon: '🛹', desc: 'Owns every rail in the mine on a skateboard.', effect: { xp: 1.07 } },
+    wild: 'Bursting into flames after eating Puffle O’s.',
+    toy: 'Skateboard', snack: 'Fish burger', likesFood: 'fillet',
+    habitat: { label: 'The Puffle Wild', biomes: ['ember', 'neon'] },
     power: { name: 'Ember Quiet', icon: '🔥', desc: 'Night games pay +4 coins and all needs fade slower.', effect: { nightCoins: 4, decay: 0.9 } },
   },
   green: {
     label: 'Green Puffle', icon: '🟢', diet: 'wild', size: 'standard',
     primary: '#55C85A', light: '#A7EE9E', deep: '#1F6B2C', belly: '#E4FFD8',
     desc: 'A giggling stunt puffle who is always first to the unicycle.',
+    personality: ['Playful', 'Funny'],
+    ability: { name: 'Propeller Spin', icon: '🚁', desc: 'Straps on a propeller cap and hovers out of reach, giggling.', effect: { energyDecay: 0.92 } },
+    skill: { name: 'Jet Pack Adventure', icon: '🚀', desc: 'Threads the caves on a jet pack without spilling a cookie.', effect: { xp: 1.07 } },
+    wild: 'Vacuuming up cookies with its mouth.',
+    toy: 'Propeller cap and unicycle', snack: 'Tacos', likesFood: 'feast',
+    habitat: { label: 'The Wilderness', biomes: ['grove', 'sugar'] },
     power: { name: 'Stunt Spree', icon: '🛴', desc: '+20% XP, +3 game coins, and energy fades slower.', effect: { xp: 1.2, gameCoins: 3, energyDecay: 0.88 } },
   },
   purple: {
     label: 'Purple Puffle', icon: '🟣', diet: 'sweet', size: 'standard',
     primary: '#A774F0', light: '#D4B6FF', deep: '#5B2E99', belly: '#F1E4FF',
     desc: 'A fabulous showstopper who never leaves the dressing room without a spotlight.',
+    personality: ['Fabulous', 'Particular'],
+    ability: { name: 'Spotlight Dance', icon: '🪩', desc: 'Steps under a disco ball and starts a dance floor that will not stop.', effect: { chatCoins: 1 } },
+    skill: { name: 'Dance Contest', icon: '💃', desc: 'Wins every dance-off, then judges the outfits.', effect: { joyDecay: 0.93 } },
+    wild: 'Choosing just the right outfit for just the right occasion.',
+    toy: 'Disco ball and bubble wand', snack: 'Hummus and pita', likesFood: 'pop',
+    habitat: { label: 'The Dance Club', biomes: ['neon', 'sugar'] },
     power: { name: 'Spotlight', icon: '🌟', desc: 'Chats pay +2 coins, gifts arrive sooner, and joy fades slower.', effect: { chatCoins: 2, giftSpeed: 1.15, joyDecay: 0.9 } },
   },
   yellow: {
     label: 'Yellow Puffle', icon: '🟡', diet: 'sweet', size: 'standard',
     primary: '#F4D64B', light: '#FFF2A6', deep: '#947A18', belly: '#FFFAD8', accent: '#E86A8A',
     desc: 'A paint-splattered dreamer with a beret and a brand-new idea.',
+    personality: ['Creative', 'Spontaneous'],
+    ability: { name: 'Living Paint', icon: '🖌️', desc: 'Sculpts a snow copy of anything it is shown a picture of.', effect: { joyDecay: 0.94 } },
+    skill: { name: 'DJ3K', icon: '🎧', desc: 'Mixes a set that gets the whole room dancing.', effect: { xp: 1.06 } },
+    wild: 'Making music that gets everyone dancing.',
+    toy: 'Paintbrush and easel', snack: 'Popcorn', likesFood: 'pop',
+    habitat: { label: 'The Stage', biomes: ['sugar', 'grove'] },
     power: { name: 'Artistic Spark', icon: '🎨', desc: '+18% XP, gifts arrive sooner, and joy fades slower.', effect: { xp: 1.18, giftSpeed: 1.18, joyDecay: 0.88 } },
   },
   white: {
     label: 'White Puffle', icon: '⚪', diet: 'hearty', size: 'standard',
     primary: '#F4F7FF', light: '#FFFFFF', deep: '#8B9AB8', belly: '#FFFFFF', accent: '#5FD8FF',
     desc: 'A shy snow spirit who leaves tiny frostprints wherever it tiptoes.',
+    personality: ['Shy', 'Powerful', 'Gentle'],
+    ability: { name: 'Freezing Breath', icon: '❄️', desc: 'Freezes liquid — and most other things — with one breath.', effect: { cleanDecay: 0.92 } },
+    skill: { name: 'Ice Sculpting', icon: '🧊', desc: 'Carves a perfect rink out of a puddle in an afternoon.', effect: { energyDecay: 0.94 } },
+    wild: 'Freezing liquid at will, then looking embarrassed about it.',
+    toy: 'Ice skates and snowflakes', snack: 'Yogurt parfait', likesFood: 'tea',
+    habitat: { label: 'The Dojo Courtyard', biomes: ['aurora', 'crystal'] },
     power: { name: 'Snowfall', icon: '❄️', desc: 'Energy, hunger, and grime all fade slower.', effect: { energyDecay: 0.85, hungerDecay: 0.92, cleanDecay: 0.88 } },
   },
   orange: {
     label: 'Orange Puffle', icon: '🟠', diet: 'wild', size: 'standard',
     primary: '#F59A3C', light: '#FFCE8A', deep: '#A85B12', belly: '#FFF0DA',
     desc: 'A goofy little explorer with buck teeth and an appetite for everything.',
+    personality: ['Curious', 'Zany'],
+    ability: { name: 'Bottomless Appetite', icon: '🍽️', desc: 'Eats almost anything, including the box it arrived in.', effect: { hungerDecay: 0.88 } },
+    skill: { name: 'Puffle Launch', icon: '🎯', desc: 'Hurls itself from a launcher and lands in exactly one piece.', effect: { gameCoins: 2 } },
+    wild: 'Making quick decisions and eating the evidence.',
+    toy: 'Box, wagon and truck', snack: 'Socks', likesFood: 'stew',
+    habitat: { label: 'The Ski Lodge', biomes: ['savanna', 'grove'] },
     power: { name: 'Zany Appetite', icon: '🍊', desc: '+12% XP, +3 game coins, and hunger fades slower.', effect: { xp: 1.12, gameCoins: 3, hungerDecay: 0.88 } },
   },
   brown: {
     label: 'Brown Puffle', icon: '🟤', diet: 'eerie', size: 'standard',
     primary: '#9B6B45', light: '#D8B089', deep: '#5D3A22', belly: '#F1DDC7',
     desc: 'A goggle-wearing inventor with graph-paper dreams and a rocket in progress.',
+    personality: ['Super smart', 'Inventive'],
+    ability: { name: 'Gadget Genius', icon: '🔧', desc: 'Builds a working machine out of a beaker, a rocket and a rainy afternoon.', effect: { xp: 1.07 } },
+    skill: { name: 'Contraption Lab', icon: '🧪', desc: 'Prototypes a new invention between breakfast and lunch.', effect: { giftSpeed: 1.08 } },
+    wild: 'Superior machine-building skills and a lot of graph paper.',
+    toy: 'Beakers and rockets', snack: 'Astronaut ice cream', likesFood: 'nectar',
+    habitat: { label: 'The Inventor’s Workshop', biomes: ['crystal', 'neon'] },
     power: { name: 'Inventor’s Focus', icon: '🔭', desc: '+18% XP, gifts arrive sooner, and grime fades slower.', effect: { xp: 1.18, giftSpeed: 1.2, cleanDecay: 0.92 } },
   },
   rainbow: {
@@ -2428,79 +2497,429 @@ const CP_PUFFLE_TYPES = {
     primary: '#B785FF', light: '#FFD1F0', deep: '#6D3AA8', belly: '#FFFFFF',
     bands: ['#FF6B6B', '#FFC857', '#5BD6A2', '#5B9DFF', '#B785FF'],
     desc: 'A regal, colour-shifting puffle that trails stardust and impossible weather.',
+    personality: ['Confident', 'Regal'],
+    ability: { name: 'Cloud Surf', icon: '☁️', desc: 'Surfs a cloud and rides a rainbow down to the pier.', effect: { giftSpeed: 1.09 } },
+    skill: { name: 'Rainbow Ride', icon: '🌈', desc: 'Picks the one cloud that goes exactly where it wants.', effect: { joyDecay: 0.92 } },
+    wild: 'Cloud surfing and riding down rainbows.',
+    toy: 'A cloud of its own', snack: 'Rainbow lollipop', likesFood: 'feast',
+    habitat: { label: 'The Rainbow Cloud', biomes: ['dream', 'aurora'] },
     power: { name: 'Prism Trail', icon: '🌈', desc: '+20% XP, +4 game coins, and gifts arrive sooner.', effect: { xp: 1.2, gameCoins: 4, giftSpeed: 1.15 } },
   },
   gold: {
     label: 'Gold Puffle', icon: '🪙', diet: 'hearty', size: 'standard',
     primary: '#F7C948', light: '#FFF0A8', deep: '#A87812', belly: '#FFF8D6',
     desc: 'A lucky golden digger with a jackhammer and a nose for treasure.',
+    personality: ['Lucky', 'Energetic'],
+    ability: { name: 'Treasure Dig', icon: '⛏️', desc: 'Digs up gold and gems wherever the ground looks interesting.', effect: { taskCoins: 1 } },
+    skill: { name: 'Puffle Digging', icon: '🪙', desc: 'Finds buried coins in places nobody has ever dug.', effect: { gameCoins: 3 } },
+    wild: 'Getting distracted by golden objects mid-dig.',
+    toy: 'Jackhammer', snack: 'Chocolate coins', likesFood: 'picnic',
+    habitat: { label: 'The Gold Mine', biomes: ['crystal', 'ember'] },
     power: { name: 'Golden Dig', icon: '🪙', desc: '+5 game coins, night games pay +3 more, and gifts arrive sooner.', effect: { gameCoins: 5, nightCoins: 3, giftSpeed: 1.1 } },
   },
 };
+
+/* Plain-language copy for an effect bag, shared by the card and the power list
+   so a colour's numbers are never written out twice. */
+function cpPuffleEffectText(effect) {
+  if (!effect) return '';
+  const parts = [];
+  const pct = (value) => `${Math.round((Number(value) - 1) * 100)}%`;
+  const slower = (key, label) => {
+    const value = Number(effect[key]);
+    if (!isFinite(value) || value >= 1) return;
+    parts.push(`${label} drains ${Math.round((1 - value) * 100)}% slower`);
+  };
+  if (effect.xp) parts.push(`+${pct(effect.xp)} XP`);
+  if (effect.petBond) parts.push(`+${pct(effect.petBond)} bond from petting`);
+  if (effect.giftSpeed) parts.push(`gifts arrive ${pct(effect.giftSpeed)} sooner`);
+  slower('energyDecay', 'energy');
+  slower('hungerDecay', 'hunger');
+  slower('joyDecay', 'joy');
+  slower('cleanDecay', 'grime');
+  const coins = (value, where) => `${value} coin${Number(value) === 1 ? '' : 's'} ${where}`;
+  if (effect.gameCoins) parts.push(`+${coins(effect.gameCoins, 'per game')}`);
+  if (effect.nightCoins) parts.push(`+${coins(effect.nightCoins, 'in night games')}`);
+  if (effect.chatCoins) parts.push(`+${coins(effect.chatCoins, 'per chat')}`);
+  if (effect.taskCoins) parts.push(`+${coins(effect.taskCoins, 'per task')}`);
+  return parts.join(' · ');
+}
+
+/* The Club Penguin family's body type. Every classic puffle colour carries the
+   silhouette it wears in Club Penguin, so a Club Penguin Puffle hatches on a
+   Club Penguin body instead of borrowing the Studio's shape picker. The shape
+   keys themselves are the CP_PUFFLE_SHAPE_KEYS bodies drawn in sprites.js. */
+const CP_PUFFLE_BODY_SHAPES = {
+  blue: 'cp_classic',
+  red: 'cp_pup',
+  pink: 'cp_bunny',
+  black: 'cp_ghost',
+  green: 'cp_bean',
+  purple: 'cp_tall',
+  yellow: 'cp_fluff',
+  white: 'cp_snow',
+  orange: 'cp_chubby',
+  brown: 'cp_alien',
+  rainbow: 'cp_kitty',
+  gold: 'cp_dino',
+};
+
+/* Every classic colour lives in the breed's own body type, so the family keeps
+   its palette with its silhouette. Set after CP_PUFFLE_TYPES exists. */
+if (BREEDS.cp_puffle) BREEDS.cp_puffle.bodyColors = CP_PUFFLE_TYPES;
+
+/* The colour name inside a classic colourway key: 'cp_color_blue' -> 'blue'. */
+function cpPuffleColourOfStyle(styleKey) {
+  const match = /^cp_color_([a-z0-9]+)$/.exec(String(styleKey || ''));
+  return match ? match[1] : null;
+}
+
+/* A Club Penguin family sprite is any of the classic breeds: the Club Penguin
+   Puffle itself or one of the ten Penguin Puffles. */
+function cpPuffleBreedKey(sprite) {
+  const breed = String((sprite && sprite.breed) || '');
+  return breed === 'cp_puffle' || breed.startsWith('cp_penguin_') ? breed : null;
+}
+
+/* The stage colour of the Club Penguin line: blue, green, purple, rainbow, then
+   gold as the puffle grows. */
+function cpPuffleStageStyle(stage) {
+  return typeof window !== 'undefined' && typeof window.puffleEvolutionColour === 'function'
+    ? window.puffleEvolutionColour('cp_puffle', stage)
+    : null;
+}
+
+/* A Club Penguin puffle's colour is rolled when its egg is laid or it is
+   caught, never chosen for it. The four friendly coats dominate, green through
+   yellow are the middle of the bell, and gold and rainbow are the ones a player
+   remembers. Every colour keeps a weight above zero so all twelve stay
+   reachable. */
+const CP_PUFFLE_COLOUR_WEIGHTS = {
+  blue: 26, red: 20, pink: 16, brown: 12,
+  green: 8, purple: 6, white: 4, black: 3,
+  orange: 2, yellow: 1.5, gold: 1, rainbow: 0.5,
+};
+
+/* Weighted roll over CP_PUFFLE_COLOUR_WEIGHTS. Takes an optional random source
+   so a test can walk the whole curve instead of gambling on it. */
+function cpPuffleColourRoll(rng) {
+  const random = typeof rng === 'function' ? rng : Math.random;
+  const entries = Object.entries(CP_PUFFLE_COLOUR_WEIGHTS);
+  const total = entries.reduce((sum, [, weight]) => sum + Number(weight), 0);
+  let roll = Math.max(0, Math.min(0.999999, Number(random()) || 0)) * total;
+  for (const [colour, weight] of entries) {
+    roll -= Number(weight);
+    if (roll < 0) return colour;
+  }
+  return entries[entries.length - 1][0];
+}
+
+function cpPuffleRollStyle(rng) {
+  return `cp_color_${cpPuffleColourRoll(rng)}`;
+}
+
+/* Which classic colourway a Club Penguin puffle wears: the colour its evolved
+   form chose, the colour it rolled, or the line colour for a sprite that has
+   neither. */
+function cpPuffleStyleForSprite(sprite) {
+  if (!cpPuffleBreedKey(sprite)) return null;
+  const form = sprite.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[sprite.form] : null;
+  if (form && form.puffle) return `cp_color_${form.puffle}`;
+  const own = cpPuffleColourOfStyle(sprite.puffleVariant);
+  if (own) return `cp_color_${own}`;
+  const stageStyle = cpPuffleStageStyle(sprite.stage);
+  if (stageStyle) return stageStyle;
+  const element = typeof ELEMENTS !== 'undefined' ? ELEMENTS[sprite.element] : null;
+  return element && cpPuffleColourOfStyle(element.puffleStyle) ? element.puffleStyle : null;
+}
+
+/* The Club Penguin silhouette that belongs to that colourway. */
+function cpPuffleShapeForSprite(sprite) {
+  const colour = cpPuffleColourOfStyle(cpPuffleStyleForSprite(sprite));
+  return colour ? CP_PUFFLE_BODY_SHAPES[colour] || null : null;
+}
+
+/* The canon Club Penguin kit that arrives with a colour: the ability the colour
+   is known for, the discipline it practises, its temperament, its snack and the
+   habitat it was observed in. The colour follows this family's evolution line,
+   so a puffle's profile grows with the form it has reached, exactly as its coat
+   and silhouette do. */
+function cpPuffleProfileForSprite(sprite) {
+  const colour = cpPuffleColourOfStyle(cpPuffleStyleForSprite(sprite));
+  const type = colour ? CP_PUFFLE_TYPES[colour] : null;
+  if (!type) return null;
+  const shape = CP_PUFFLE_BODY_SHAPES[colour] || 'cp_classic';
+  const body = typeof BODY_SHAPES !== 'undefined' ? BODY_SHAPES[shape] : null;
+  /* Only what the type cannot answer itself: the colour, the coat's body, and
+     the habitat fallback. Everything else is read from `type` by the caller. */
+  return {
+    colour,
+    type,
+    bodyName: body ? body.name : 'Classic Puffle',
+    bodyIcon: body ? body.icon : '🔵',
+    habitat: type.habitat || { label: 'The Puffle Wild', biomes: [] },
+  };
+}
+
+/* A Club Penguin puffle keeps the colour it rolled: the stage line follows that
+   coat instead of repainting it every stage. Called when a stage changes and
+   when a save loads, this only fills in a colour for an old save that never
+   rolled one, and adopts the colour of an evolved form. */
+function syncCpPuffleEvolutionColour(sprite) {
+  if (!sprite || String(sprite.breed || '') !== 'cp_puffle') return null;
+  const form = sprite.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[sprite.form] : null;
+  if (form && form.puffle) {
+    sprite.puffleVariant = `cp_color_${form.puffle}`;
+    return sprite.puffleVariant;
+  }
+  /* A creature wears a colourway of its own species; only an old save that has
+     none gets one filled in, so a rolled coat is never repainted. */
+  if (form && form.creature) {
+    if (cpCreatureColourwayFor(sprite)) return null;
+    const rolled = cpCreatureColourwayRoll(form.creature);
+    if (!rolled) return null;
+    sprite.puffleVariant = rolled;
+    return rolled;
+  }
+  if (cpPuffleColourOfStyle(sprite.puffleVariant)) return null;
+  const stageStyle = cpPuffleStageStyle(sprite.stage);
+  if (!stageStyle) return null;
+  sprite.puffleVariant = stageStyle;
+  return stageStyle;
+}
 
 const CP_PUFFLE_FORMS = Object.fromEntries(Object.entries(CP_PUFFLE_TYPES).map(([key, type]) => [`cp_${key}`, {
   id: `cp_${key}`, label: type.label, icon: type.icon, diet: type.diet, size: type.size,
   puffle: key, desc: type.desc, power: type.power,
 }]));
 
-/* Club Penguin's later Puffle Creatures. These are a separate evolution set
-   from the twelve classic colours: two creature forms sit on each diet path. */
+/* Club Penguin's later Puffle Creatures, gathered from every corner of the
+   island's world: the pet shop's cats and dogs, the Puffle Wild (deer, raccoon,
+   rabbit, unicorn), Prehistoric Party dinosaurs, Operation: Crustacean's alien
+   visitors and the Holiday Party's snowman. They are a separate evolution set
+   from the twelve classic colours, and every diet path carries at least two. */
 const CP_PUFFLE_CREATURES = {
   cat: {
-    label: 'Cat Puffle', icon: '🐱', diet: 'sweet', size: 'standard',
+    label: 'Cat Puffle', icon: '🐱', diet: 'sweet', size: 'standard', favorite: 'fillet',
     primary: '#E7ECF3', light: '#FFFFFF', deep: '#7D8797', belly: '#FFFFFF', accent: '#F3A9C2',
     desc: 'A curious white cat puffle with soft whiskers and a talent for finding sunny spots.',
     power: { name: 'Nine Lives', icon: '🐱', desc: '+3 game coins, joy fades slower, and gifts arrive sooner.', effect: { gameCoins: 3, joyDecay: 0.9, giftSpeed: 1.12 } },
   },
   dog: {
-    label: 'Dog Puffle', icon: '🐶', diet: 'hearty', size: 'standard',
+    label: 'Dog Puffle', icon: '🐶', diet: 'hearty', size: 'standard', favorite: 'meatpie',
     primary: '#B97B47', light: '#E9B67F', deep: '#6B3E20', belly: '#F7E4CD', accent: '#F2C14E',
     desc: 'A loyal brown dog puffle who greets every morning like a reunion.',
     power: { name: 'Loyal Heart', icon: '💛', desc: '+15% XP, pets build +35% more bond, and gifts arrive sooner.', effect: { xp: 1.15, petBond: 1.35, giftSpeed: 1.1 } },
   },
-  dinosaur: {
-    label: 'Dinosaur Puffle', icon: '🦕', diet: 'wild', size: 'large',
-    primary: '#6FCB63', light: '#B9F19C', deep: '#2F6B2C', belly: '#E7F9CF', accent: '#F4D64B',
-    desc: 'A tiny prehistoric puffle with a sweeping tail and a roar much bigger than its body.',
-    power: { name: 'Prehistoric Roar', icon: '🦕', desc: '+20% XP, +4 game coins, and energy fades slower.', effect: { xp: 1.2, gameCoins: 4, energyDecay: 0.9 } },
+  dragon: {
+    label: 'Dragon Puffle', icon: '🐉', diet: 'wild', size: 'large', favorite: 'turkey',
+    primary: '#5B9CE8', light: '#A9D2FF', deep: '#2B5C99', belly: '#DDF0FF', accent: '#F2C14E',
+    desc: 'A small dragon puffle from the Medieval Party, all folded wings and a proud little snout.',
+    power: { name: 'Sky Soar', icon: '🐉', desc: '+25% XP, +3 task coins, and joy fades slower.', effect: { xp: 1.25, taskCoins: 3, joyDecay: 0.92 } },
+  },
+  crystal: {
+    label: 'Crystal Puffle', icon: '💎', diet: 'eerie', size: 'standard', favorite: 'starfruit',
+    primary: '#BFE3FF', light: '#F0FAFF', deep: '#6C93B5', belly: '#FFFFFF', accent: '#8FE3FF',
+    desc: 'A puffle grown from cave crystal, cool to the touch and full of quiet light.',
+    power: { name: 'Prism Focus', icon: '💎', desc: '+4 check-in coins, chats pay +2, and all needs fade slower.', effect: { checkinCoins: 4, chatCoins: 2, decay: 0.9 } },
   },
   ghost: {
-    label: 'Ghost Puffle', icon: '👻', diet: 'eerie', size: 'standard',
+    label: 'Ghost Puffle', icon: '👻', diet: 'eerie', size: 'standard', favorite: 'moonpie',
     primary: '#D9DBFF', light: '#F7F5FF', deep: '#7C7FC4', belly: '#FFFFFF', accent: '#B8F5FF',
     desc: 'A gentle translucent puffle that drifts through walls and hums at midnight.',
     power: { name: 'Soft Haunt', icon: '👻', desc: 'Night games pay +4 coins, chats pay +1, and all needs fade slower.', effect: { nightCoins: 4, chatCoins: 1, decay: 0.9 } },
   },
   raccoon: {
-    label: 'Raccoon Puffle', icon: '🦝', diet: 'eerie', size: 'standard',
+    label: 'Raccoon Puffle', icon: '🦝', diet: 'eerie', size: 'standard', favorite: 'dumplings',
     primary: '#8D919C', light: '#CDD1D9', deep: '#4A4E58', belly: '#E9E5DE', accent: '#2E3038',
     desc: 'A clever masked puffle with a striped tail and a pocket full of stolen snacks.',
     power: { name: 'Night Forage', icon: '🦝', desc: 'Night games pay +5 coins, games pay +2, and grime fades slower.', effect: { nightCoins: 5, gameCoins: 2, cleanDecay: 0.9 } },
   },
   deer: {
-    label: 'Deer Puffle', icon: '🦌', diet: 'wild', size: 'large',
+    label: 'Deer Puffle', icon: '🦌', diet: 'wild', size: 'large', favorite: 'greens',
     primary: '#C99763', light: '#EBC79B', deep: '#79512E', belly: '#F8E8D2', accent: '#8B5E3C',
     desc: 'A gentle forest puffle with branching antlers and a quiet step.',
     power: { name: 'Forest Grace', icon: '🦌', desc: '+15% XP, energy fades slower, and gifts arrive sooner.', effect: { xp: 1.15, energyDecay: 0.86, giftSpeed: 1.15 } },
   },
   rabbit: {
-    label: 'Rabbit Puffle', icon: '🐰', diet: 'hearty', size: 'standard',
+    label: 'Rabbit Puffle', icon: '🐰', diet: 'hearty', size: 'standard', favorite: 'carrot',
     primary: '#F3D6DE', light: '#FFF6F8', deep: '#B98A99', belly: '#FFFFFF', accent: '#F2A7C0',
     desc: 'A springy little puffle with long ears and a lucky hop.',
     power: { name: 'Lucky Hop', icon: '🍀', desc: '+3 game coins, gifts arrive sooner, and joy fades slower.', effect: { gameCoins: 3, giftSpeed: 1.2, joyDecay: 0.9 } },
   },
   unicorn: {
-    label: 'Unicorn Puffle', icon: '🦄', diet: 'sweet', size: 'standard',
+    label: 'Unicorn Puffle', icon: '🦄', diet: 'sweet', size: 'standard', favorite: 'cheesecake',
     primary: '#FFF4FB', light: '#FFFFFF', deep: '#B49AC9', belly: '#FFF0F8', accent: '#FFD166',
     bands: ['#FF6B6B', '#FFC857', '#5BD6A2', '#5B9DFF', '#B785FF'],
     desc: 'A dreamy puffle with a rainbow horn and a mane full of wishes.',
     power: { name: 'Wishlight', icon: '🦄', desc: '+20% XP, +3 game coins, and gifts arrive sooner.', effect: { xp: 1.2, gameCoins: 3, giftSpeed: 1.15 } },
   },
+  alien: {
+    label: 'Alien Puffle', icon: '👽', diet: 'eerie', size: 'standard', favorite: 'boba',
+    primary: '#7ED957', light: '#C9FFB4', deep: '#2F7A2A', belly: '#E9FFDE', accent: '#B8F5FF',
+    desc: 'A tiny green visitor from Operation: Crustacean, antennae twitching at weather no Hollow puffle can feel.',
+    power: { name: 'Crop Circle', icon: '🛸', desc: '+3 game coins, night games pay +3, and gifts arrive 12% sooner.', effect: { gameCoins: 3, nightCoins: 3, giftSpeed: 1.12 } },
+  },
+  snowman: {
+    label: 'Snowman Puffle', icon: '⛄', diet: 'sweet', size: 'standard', favorite: 'sundae',
+    primary: '#F2F7FF', light: '#FFFFFF', deep: '#8FB3D9', belly: '#FFFFFF', accent: '#FF8A3D',
+    desc: 'A puff of packed snow with a carrot nose, coal buttons and a scarf that never comes off.',
+    power: { name: 'Snow Day', icon: '❄️', desc: 'Snacks give +25% XP, grime fades 12% slower, and gifts arrive 10% sooner.', effect: { snackXp: 1.25, cleanDecay: 0.88, giftSpeed: 1.1 } },
+  },
+  trex: {
+    label: 'T-Rex Puffle', icon: '🦖', diet: 'wild', size: 'large', favorite: 'drumstick',
+    primary: '#3F3F4C', light: '#8E8FA3', deep: '#1B1B22', belly: '#C9CAD6', accent: '#F4D64B',
+    desc: 'A prehistoric tyrant the size of a football, with a roar that empties the snack drawer.',
+    power: { name: 'Tiny Tyrant', icon: '🦖', desc: 'Day games pay +4 coins, games pay +3, and hunger fades slower.', effect: { dayCoins: 4, gameCoins: 3, hungerDecay: 0.92 } },
+  },
+  triceratops: {
+    label: 'Triceratops Puffle', icon: '🦕', diet: 'wild', size: 'large', favorite: 'pumpkinmash',
+    primary: '#5AA9E6', light: '#B6DBFF', deep: '#255C8C', belly: '#E6F4FF', accent: '#F2C14E',
+    desc: 'A three-horned grazer with a bony frill, happiest when it is digging up something ancient.',
+    power: { name: 'Three Horns', icon: '🦕', desc: 'Tasks pay +2 coins, pets build +30% more bond, and energy fades slower.', effect: { taskCoins: 2, petBond: 1.3, energyDecay: 0.9 } },
+  },
+  stegosaurus: {
+    label: 'Stegosaurus Puffle', icon: '🦎', diet: 'wild', size: 'large', favorite: 'broccoli',
+    primary: '#F27FA5', light: '#FFC2D6', deep: '#A63F63', belly: '#FFE7EF', accent: '#7ED0A0',
+    desc: 'A plated puffle with a spiked tail, sunning itself on warm stones for hours.',
+    power: { name: 'Sun Plates', icon: '🌞', desc: 'Check-ins pay +2 coins, +14% XP, and joy fades slower.', effect: { checkinCoins: 2, xp: 1.14, joyDecay: 0.9 } },
+  },
+  collie: {
+    label: 'Border Collie Puffle', icon: '🐕', diet: 'hearty', size: 'standard', favorite: 'stew',
+    primary: '#6E7F95', light: '#DCE6F2', deep: '#33404F', belly: '#FFFFFF', accent: '#F2C14E',
+    desc: 'A herding puffle from the pet shop, always first to the door and last to sit down.',
+    power: { name: 'Round Up', icon: '🐕', desc: 'Pets pay +2 coins, chats pay +1, and every need fades slower.', effect: { petCoins: 2, chatCoins: 1, decay: 0.94 } },
+  },
 };
 
 const CP_PUFFLE_CREATURE_FORMS = Object.fromEntries(Object.entries(CP_PUFFLE_CREATURES).map(([key, type]) => [`pc_${key}`, {
   id: `pc_${key}`, label: type.label, icon: type.icon, diet: type.diet, size: type.size,
-  creature: key, desc: type.desc, power: type.power,
+  creature: key, favorite: type.favorite, desc: type.desc, power: type.power,
 }]));
+
+/* The retired generic 'pc_dinosaur' form is replaced by the three named
+   species. A save that still carries it lands on the T-Rex, the closest match,
+   instead of silently losing the form. */
+const LEGACY_EVOLUTION_FORMS = { pc_dinosaur: 'pc_trex' };
+
+/* Every canon puffle-creature coat. A bare colour name is a classic Club
+   Penguin colour the species wears; the pet shop's pedigree coats add their own
+   key, name and fur. A species' base look stays the hand-tuned palette on its
+   CP_PUFFLE_CREATURES entry, so nothing here repeats it. */
+/* The Prehistoric Party shipped its dinosaurs in six skins, so every dinosaur
+   species wears the same six rather than one signature colour. */
+const CP_DINO_SKINS = ['green', 'blue', 'red', 'yellow', 'purple', 'orange'];
+
+const CP_CREATURE_COLOURWAYS = {
+  /* The pet shop's cat came in pedigree breeds, not only colours. */
+  cat: ['black', { key: 'orange_tabby', color: 'orange', label: 'Orange Tabby Cat Puffle' },
+    { key: 'munchkin', color: 'brown', label: 'Munchkin Cat Puffle' },
+    { key: 'russian_blue', color: 'blue', label: 'Russian Blue Cat Puffle' },
+    { key: 'siamese', label: 'Siamese Cat Puffle', palette: { primary: '#F0DFC0', light: '#FFF6E6', deep: '#6B4A2E', belly: '#FFFBF2', accent: '#4C3A2A' } },
+    { key: 'calico', label: 'Calico Cat Puffle', palette: { primary: '#FFFDF8', light: '#FFFFFF', deep: '#3A2A22', belly: '#FFFFFF', accent: '#F58A3C' } }],
+  dog: ['black', { key: 'golden', color: 'yellow', label: 'Golden Retriever Puffle' },
+    { key: 'husky', color: 'white', label: 'Husky Puffle' }],
+  ghost: ['white', 'purple', 'green'],
+  raccoon: ['green', 'orange', 'pink', 'blue', 'white', 'purple'],
+  deer: ['blue', 'black', 'red', 'purple', 'white', 'green'],
+  rabbit: ['green', 'white', 'red', 'blue', 'black', 'orange'],
+  unicorn: ['black', 'white', 'pink'],
+  alien: ['purple', 'blue', 'orange', 'yellow'],
+  snowman: ['blue', 'red', 'green'],
+  collie: ['black', 'white', 'brown'],
+  trex: CP_DINO_SKINS,
+  triceratops: CP_DINO_SKINS,
+  stegosaurus: CP_DINO_SKINS,
+  dragon: ['blue', 'green', 'red'],
+  crystal: ['blue', 'purple', 'pink'],
+};
+
+/* One row shape for everything downstream: a bare colour string becomes a coat
+   whose key is its own colour name. */
+function cpCreatureCoats(creature) {
+  return (CP_CREATURE_COLOURWAYS[creature] || []).map((coat) => (typeof coat === 'string' ? { key: coat, color: coat } : coat));
+}
+
+/* The five colours a coat paints with, or null when its colour is unknown. */
+function cpCreatureCoatPalette(coat) {
+  if (!coat) return null;
+  if (coat.palette) return coat.palette;
+  const classic = CP_PUFFLE_TYPES[coat.color];
+  return classic
+    ? { primary: classic.primary, light: classic.light, deep: classic.deep, belly: classic.belly, accent: classic.accent }
+    : null;
+}
+
+/* The coat a creature wears, read off the style key it saved. null means the
+   species' own palette. */
+function cpCreatureColourwayFor(sprite) {
+  const form = sprite && sprite.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[sprite.form] : null;
+  if (!form || !form.creature) return null;
+  const style = String(sprite.puffleVariant || '');
+  const prefix = `pc_${form.creature}_`;
+  if (!style.startsWith(prefix)) return null;
+  return cpCreatureCoats(form.creature).find((coat) => coat.key === style.slice(prefix.length)) || null;
+}
+
+/* The five colours the creature art paints with, or null for the species coat. */
+function cpCreatureArtPalette(sprite) {
+  return cpCreatureCoatPalette(cpCreatureColourwayFor(sprite));
+}
+
+/* A style key a creature may wear: its own pc_<species> coat or one of the
+   species' canon coats. Anything else returns null. */
+function cpCreatureStyleKey(form, key) {
+  const creature = form && typeof EVOLUTION_FORMS !== 'undefined' && EVOLUTION_FORMS[form] ? EVOLUTION_FORMS[form].creature : null;
+  const style = String(key || '');
+  if (!creature || !style.startsWith(`pc_${creature}`)) return null;
+  if (style === `pc_${creature}`) return style;
+  return cpCreatureCoats(creature).some((coat) => `pc_${creature}_${coat.key}` === style) ? style : null;
+}
+
+/* A colourway style key in the shape the Sprite Puffle renderer reads from
+   LUMI_PUFFLE_VARIANTS. */
+function cpCreatureStyleLook(name, pal) {
+  return {
+    classic: true, creatureStyle: true, name,
+    primary: pal.primary, secondary: pal.light, belly: pal.belly, ear: pal.light,
+    iris: pal.deep, eyeShadow: pal.deep, leaf: pal.accent, leafGlow: pal.accent, pads: pal.light,
+    /* Fur deco reads `accent`, and a species' gold or pink accent blended into
+       its own light colour turns muddy (a khaki dragon). The style accent is a
+       coat tint instead; the species accent still paints horns, prisms and
+       sparkles, which the creature markup draws from the palette itself. */
+    accent: typeof mix === 'function' ? mix(pal.light, pal.primary, 0.42) : pal.light,
+  };
+}
+
+function cpCreatureStylePalette(key) {
+  const match = /^pc_([a-z]+)(?:_(.+))?$/.exec(String(key || ''));
+  const creature = match && typeof CP_PUFFLE_CREATURES !== 'undefined' ? CP_PUFFLE_CREATURES[match[1]] : null;
+  if (!creature) return null;
+  /* pc_<species> is the species' own hand-tuned coat. */
+  if (!match[2]) return cpCreatureStyleLook(creature.label, creature);
+  const coat = cpCreatureCoats(match[1]).find((entry) => entry.key === match[2]);
+  const pal = cpCreatureCoatPalette(coat);
+  if (!pal) return null;
+  /* A pedigree coat keeps its own breed name ("Golden Retriever Puffle"); a
+     plain colour coat is "<Colour> <Species> Puffle". The suffix is stripped
+     from both labels and added once, so a colourway cannot lose its "Puffle"
+     to a species label that leaves it out. */
+  const classic = CP_PUFFLE_TYPES[coat.color];
+  const colour = classic ? classic.label.replace(/ Puffle$/, '') : '';
+  const speciesName = creature.label.replace(/ Puffle$/, '');
+  const name = coat.label || `${colour} ${speciesName} Puffle`.replace(/\s+/g, ' ').trim();
+  return cpCreatureStyleLook(name, pal);
+}
+
+/* A creature meets its coat when it evolves: one of the species' canon
+   colourways, the species' own coat included. */
+function cpCreatureColourwayRoll(creature, rng) {
+  const list = cpCreatureCoats(creature);
+  if (!list.length) return '';
+  const roll = typeof rng === 'function' ? rng() : Math.random();
+  const index = Math.max(0, Math.min(list.length - 1, Math.floor(roll * list.length)));
+  return `pc_${creature}_${list[index].key}`;
+}
 
 const CP_PUFFLE_TYPE_COUNT = Object.keys(CP_PUFFLE_TYPES).length;
 const CP_PUFFLE_CREATURE_COUNT = Object.keys(CP_PUFFLE_CREATURES).length;
@@ -2656,6 +3075,8 @@ const CP_PENGUIN_PUFFLE_KEYS = CP_PENGUIN_PUFFLES.map((row) => `cp_penguin_${row
         ...row.mods,
         desc: row.blurb,
         rarity: row.rarity,
+        bodyShape: CP_PUFFLE_BODY_SHAPES[row.color] || 'cp_classic',
+        bodyColors: CP_PUFFLE_TYPES,
         skill: row.skill.name,
       };
     }
@@ -2995,7 +3416,13 @@ const TYPE_EGG_BASE_PRICE = {
   gracecrowne: 165, geno: 215, nicorobin: 205, ace: 200, cuddle: 160,
   charlotte: 120, captainx: 175, kirby: 175,
 };
-const TYPE_EGG_DISCOUNT = 0.65;
+/* The shelf discount every species egg carries off its base price. Base prices
+   are untouched: they are what typeEggRarity() reads, so a sale price can move
+   without a species changing band. The tier eggs took a quarter off their own
+   ladder, so this takes the same quarter off the species shelf — 0.65 x 0.75.
+   The sprite-sheet species divide a tier price by this to get a base, so the
+   two cuts cancel there and their eggs land on the new tier price. */
+const TYPE_EGG_DISCOUNT = 0.4875;
 function discountedEggPrice(price, step = 5) {
   return Math.max(step, Math.round((price * TYPE_EGG_DISCOUNT) / step) * step);
 }
@@ -3007,27 +3434,32 @@ Object.keys(TYPE_EGG_BASE_PRICE).forEach((key) => {
 const TYPE_EGG_RARITIES = Object.fromEntries(
   Object.entries(RARITY_TIER_STYLES).map(([key, style]) => [key, { ...style, key }]),
 );
-const RARITY_TIER_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic', 'secret', 'exotic', 'master', 'ancient', 'celestial', 'divine', 'eternal', 'creator'];
-const RARITY_APEX_KEYS = ['celestial', 'divine', 'eternal'];
+/* The boost ladder and the economy read the spec, so a rank is added in one place. */
+const RARITY_TIER_ORDER = RARITY_SPEC_KEYS.filter((key) => RARITY_SPEC[key].boostable !== false);
+const RARITY_RANK_STEP = 10;
+const RARITY_TIER_RANKS = RARITY_TIER_ORDER.map((key) => ({ key, rank: RARITY_SPEC[key].rank }));
+const RARITY_APEX_KEYS = RARITY_SPEC_KEYS.filter((key) => RARITY_SPEC[key].apex);
+/* Copy that names the apex ranks reads the spec, so a new apex rank is one
+   entry here and nowhere else. */
+function rarityNamePhrase(keys) {
+  const names = keys.map((key) => RARITY_SPEC[key] && RARITY_SPEC[key].name).filter(Boolean);
+  if (names.length < 2) return names[0] || '';
+  return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
+}
+const RARITY_APEX_PHRASE = rarityNamePhrase(RARITY_APEX_KEYS);
+
 /* Tier eggs: one egg for every rank of the ladder. A tier egg hatches a random
    species from the type roster raised to that exact rank with a rarity boost,
    so the whole ladder is buyable without selling Vault keepers or the Master. */
-const TIER_EGG_META = {
-  common: { name: 'Common Tier Egg', price: 120, mutation: 0.06, gen: 0, desc: 'A plain shell from the meadow. A random type at Common rank.' },
-  uncommon: { name: 'Uncommon Tier Egg', price: 200, mutation: 0.1, gen: 0, desc: 'Freckled shell. A random type raised to Uncommon rank.' },
-  rare: { name: 'Rare Tier Egg', price: 320, mutation: 0.14, gen: 1, desc: 'Cool blue veins. A random type raised to Rare rank.' },
-  epic: { name: 'Epic Tier Egg', price: 520, mutation: 0.2, gen: 1, desc: 'Rose-lit shell. A random type raised to Epic rank.' },
-  legendary: { name: 'Legendary Tier Egg', price: 800, mutation: 0.26, gen: 2, desc: 'Gold-flecked and warm. A random type raised to Legendary rank.' },
-  mythic: { name: 'Mythic Tier Egg', price: 1250, mutation: 0.32, gen: 2, desc: 'Nebula swirl. A random type raised to Mythic rank.' },
-  secret: { name: 'Secret Tier Egg', price: 1900, mutation: 0.36, gen: 3, desc: 'Whispering shell. A random type raised to Secret rank — not a Vault keeper.' },
-  exotic: { name: 'Exotic Tier Egg', price: 2800, mutation: 0.4, gen: 3, desc: 'Guardian-bright shell. A random type raised to Exotic rank.' },
-  master: { name: 'Master Tier Egg', price: 4000, mutation: 0.44, gen: 4, desc: 'Crown-stamped shell. A random type raised to Master rank.' },
-  ancient: { name: 'Ancient Tier Egg', price: 6000, mutation: 0.5, gen: 4, desc: 'Rune-scored shell. A random type raised to Ancient rank.' },
-  celestial: { name: 'Celestial Tier Egg', price: 5600, mutation: 0.48, gen: 4, desc: 'Star-fired shell. A random type raised to Celestial rank.' },
-  divine: { name: 'Divine Tier Egg', price: 7500, mutation: 0.52, gen: 4, desc: 'Haloed shell. A random type raised to Divine rank.' },
-  eternal: { name: 'Eternal Tier Egg', price: 10000, mutation: 0.55, gen: 4, desc: 'A shell that seems to have always existed. Raises a random type to Eternal rank.' },
-  creator: { name: 'Creator Tier Egg', price: 20000, mutation: 0.6, gen: 5, desc: 'An origin shell holding every element at once. Raises a random type to Creator rank.' },
-};
+const TIER_EGG_META = Object.fromEntries(RARITY_SPEC_KEYS
+  .filter((key) => Number(RARITY_SPEC[key].price) > 0)
+  .map((key) => [key, {
+    name: `${RARITY_SPEC[key].name} Tier Egg`,
+    price: RARITY_SPEC[key].price,
+    mutation: RARITY_SPEC[key].mutation,
+    gen: RARITY_SPEC[key].gen,
+    desc: RARITY_SPEC[key].desc,
+  }]));
 const RARITY_BOOST_MAX = RARITY_TIER_ORDER.length - 1;
 
 /* Bond ranks are earned by care, play, trails, and time together. */
@@ -3066,15 +3498,86 @@ function typeEggRarity(key) {
   if (typeof isExoticSpecies === 'function' && isExoticSpecies(key)) return 'exotic';
   return baseTypeEggRarity(key);
 }
-/* Apex type eggs: the same species egg, sold at Celestial, Divine, or Eternal
-   rank instead of its base band. The premium is what buys the trail-only ranks. */
-const TYPE_EGG_APEX_PREMIUM = { celestial: 8000, divine: 11000, eternal: 15000 };
+/* Apex type eggs: the same species egg, sold at an apex rank instead of its
+   base band. The premium is what buys the trail-only ranks. */
+const TYPE_EGG_APEX_PREMIUM = Object.fromEntries(RARITY_SPEC_KEYS
+  .filter((key) => Number(RARITY_SPEC[key].apexPremium) > 0)
+  .map((key) => [key, RARITY_SPEC[key].apexPremium]));
 const WISHLIST_LIMIT = 12;
 function typeEggApexPrice(key, rank) {
   const premium = TYPE_EGG_APEX_PREMIUM[rank];
   const base = TYPE_EGG_PRICE[key] || TYPE_EGG_BASE_PRICE[key] || 90;
   return premium ? base + premium : base;
 }
+/* The species a band egg may hatch: exactly those whose own rank is the band.
+   One definition, read by the shop, the purchase and the audit, so the odds a
+   card prints are the odds the roll uses. */
+function tierEggBandPool(tierKey) {
+  const guardians = typeof CUSTOM_GUARDIANS !== 'undefined' && Array.isArray(CUSTOM_GUARDIANS)
+    ? CUSTOM_GUARDIANS.map((guardian) => guardian && guardian.key).filter(Boolean) : [];
+  /* TYPE_EGG_SPECIES is a snapshot taken when the data files load, and later
+     registration waves leave species out of it for good. Read the live roster
+     so a species that registers late still has a band to hatch from. */
+  const roster = typeof ELEMENT_KEYS !== 'undefined' && Array.isArray(ELEMENT_KEYS)
+    ? ELEMENT_KEYS.filter((key) => key && !guardians.includes(key))
+    : (typeof TYPE_EGG_SPECIES !== 'undefined' ? TYPE_EGG_SPECIES : WILD_SPECIES);
+  /* ELEMENT_KEYS can list a key twice when two data files register it, and a
+     duplicate would sit in the band twice and draw at double weight. */
+  return [...new Set(roster)].filter((key) => ELEMENTS[key]
+    && !(typeof isSecretSpecies === 'function' && isSecretSpecies(key))
+    && typeEggRarity(key) === tierKey);
+}
+/* A band of thousands cannot price a named species at one egg: 1,425 coins
+   against 3,763 secrets is 5.4M for the one you want. Each deep band sells a
+   window of this many species instead, so one named species costs at most
+   price x window, and the window rotates daily so every species comes round. */
+const TIER_BAND_FEATURED = 32;
+/* The most a named species may cost in band eggs. Bands under it sell their
+   whole pool; deeper ones sell a window. */
+const TIER_BAND_NAMED_BUDGET = 120000;
+/* `pinned` is the species the player asked to see. It takes one of the window's
+   slots instead of adding one, so pinning never widens the window and never
+   moves the ceiling on what a named species costs. The pin is read through
+   bandPinFor when the save has one, and dropped when it is no longer a member
+   of the band, so a stale pin cannot sell a species the band does not own. */
+function tierEggFeaturedPool(tierKey, date = new Date(),
+  pinned = (typeof bandPinFor === 'function' ? bandPinFor(tierKey) : null)) {
+  const pool = typeof tierEggBandPool === 'function' ? tierEggBandPool(tierKey) : [];
+  const price = Number(typeof TIER_EGG_META !== 'undefined' && TIER_EGG_META[tierKey]
+    ? TIER_EGG_META[tierKey].price : 0);
+  if (pool.length <= TIER_BAND_FEATURED || price * pool.length <= TIER_BAND_NAMED_BUDGET) return pool;
+  const seed = `band-${tierKey}-${typeof dayKey === 'function' ? dayKey(date) : 'today'}`;
+  const rnd = typeof seedRandom === 'function' ? seedRandom(seed) : Math.random;
+  const order = pool.slice();
+  for (let i = order.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rnd() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  const window = order.slice(0, TIER_BAND_FEATURED);
+  const pin = pinned && pool.includes(pinned) && !window.includes(pinned) ? pinned : null;
+  if (!pin) return window;
+  return [pin, ...order.filter((key) => key !== pin).slice(0, TIER_BAND_FEATURED - 1)];
+}
+/* What one named species costs in a band right now: the expected number of eggs
+   it takes to roll it out of what is left. The band egg fills the window's
+   unowned species before repeating, so the pinned species is equally likely to
+   be any one of the `left` that are missing and the expected draw is
+   (left + 1) / 2 — 16.5 eggs from a full window, one egg when it is all that is
+   missing. A pin keeps a species on sale every day but does not weight the
+   draw, so this is what buying it outright costs: the same coins as rolling for
+   it on average, with none of the variance and none of the other species. It
+   tops out at the empty-window price, which is the band's ceiling. */
+function tierBandNamedPrice(tierKey) {
+  const meta = TIER_EGG_META[tierKey];
+  if (!meta) return 0;
+  const window = tierEggFeaturedPool(tierKey);
+  const sprites = typeof state !== 'undefined' ? state.sprites : [];
+  const owned = new Set(sprites.map((sprite) => sprite.element).filter(Boolean));
+  const left = Math.max(1, window.reduce((count, key) => count + (owned.has(key) ? 0 : 1), 0));
+  return Math.round(Number(meta.price) * (left + 1) / 2);
+}
+
+
 function typeEggRarityBoost(key, rank) {
   if (!TYPE_EGG_APEX_PREMIUM[rank]) return 0;
   const target = RARITY_TIER_ORDER.indexOf(rank);
@@ -3102,28 +3605,29 @@ function typeEggBulkPrice(rank, size) {
 /* Listed coin bonuses: strictly up the ladder, so no two rungs tie. Uncommon
    used to share common's 1,500; raising it to 2,000 fills the gap to rare
    without touching what a Common earns. */
-const RARITY_COIN_BONUS = {
-  common: 1500,
-  uncommon: 2000,
-  rare: 2700,
-  epic: 4000,
-  legendary: 6750,
-  mythic: 10000,
-  secret: 13500,
-  exotic: 18000,
-  master: 25000,
-  ancient: 30000,
-  celestial: 35000,
-  divine: 50000,
-  eternal: 75000,
-  creator: 100000,
-};
-function rarityTierWithBoost(key, boost = 0) {
-  const base = typeEggRarity(key);
-  const start = RARITY_TIER_ORDER.indexOf(base);
-  const step = Math.max(0, Math.min(RARITY_BOOST_MAX, Math.floor(Number(boost) || 0)));
-  return RARITY_TIER_ORDER[Math.min(RARITY_BOOST_MAX, Math.max(0, start) + step)];
+const RARITY_COIN_BONUS = Object.fromEntries(RARITY_SPEC_KEYS
+  .filter((key) => Number(RARITY_SPEC[key].coinBonus) > 0)
+  .map((key) => [key, RARITY_SPEC[key].coinBonus]));
+/* Boosts resolve against each tier's stable rank, not its array index. A tier
+   inserted later takes a fresh rank number between two existing ones, so every
+   already-stored boost still lands on the tier it always did; renumbering the
+   ladder instead is what silently rewrote saved sprites. */
+function rarityResolveByRank(tiers, baseKey, boost = 0) {
+  const base = tiers.find((tier) => tier.key === baseKey) || tiers[0];
+  if (!base) return null;
+  const step = Math.max(0, Math.floor(Number(boost) || 0));
+  const target = base.rank + step * RARITY_RANK_STEP;
+  let chosen = base;
+  tiers.forEach((tier) => {
+    if (tier.rank <= target && tier.rank >= chosen.rank) chosen = tier;
+  });
+  return chosen.key;
 }
+function rarityTierWithBoost(key, boost = 0) {
+  return rarityResolveByRank(RARITY_TIER_RANKS, typeEggRarity(key), boost);
+}
+window.rarityResolveByRank = rarityResolveByRank;
+window.RARITY_TIER_RANKS = RARITY_TIER_RANKS;
 function rarityCoinBonus(key, boost = 0) {
   return RARITY_COIN_BONUS[rarityTierWithBoost(key, boost)] || 0;
 }
@@ -3268,6 +3772,69 @@ const SCENES = {
     blurb: 'Tall gold grass, acacia shade, and a horizon that goes on forever.',
     species: ['lion', 'tiger', 'deer', 'bull', 'sheep', 'mali', 'ace', 'vini', 'striker', 'ants', 'bug', 'snake', 'panda', 'cuddle'],
   },
+
+  /* The twelve regions of Sprite Hollow. Each lists its elemental species, so
+     the travel map and the family roster describe the same world. */
+  bloomroot: {
+    name: 'Bloomroot Valley', unlocked: true, habitat: 'Valley', emoji: '🌿', bonus: 0.5,
+    blurb: 'Warm green light, shallow roots of the Worldheart, and a path that smells of rain and pollen.',
+    species: ['bloom', 'earth', 'honey', 'honeypot', 'bunny', 'butterfly', 'deer', 'frog', 'mushroom', 'sp_nature', 'sp_bloomlight', 'sp_titanroot'],
+  },
+  emberpeak: {
+    name: 'Emberpeak Highlands', unlocked: true, habitat: 'Highlands', emoji: '🌋', bonus: 0.52,
+    blurb: 'Black ridges seamed with glowing rock, where the wind carries sparks uphill.',
+    species: ['ember', 'fire', 'demon', 'devil', 'dragon', 'bombjr', 'burntpb', 'sp_fire', 'sp_plasma'],
+  },
+  crystaltide: {
+    name: 'Crystal Tide Coast', unlocked: true, habitat: 'Coast', emoji: '🌊', bonus: 0.5,
+    blurb: 'Long glassy surf, tide pools full of light, and a horizon that keeps its promises.',
+    species: ['tide', 'water', 'fishy', 'fish', 'shark', 'whitewhale', 'starfish', 'crab', 'dolphin', 'sp_water', 'sp_frostwave', 'sp_abyssal'],
+  },
+  auroraglacier: {
+    name: 'Aurora Glacier', unlocked: true, habitat: 'Glacier', emoji: '❄️', bonus: 0.52,
+    blurb: 'Blue ice a hundred winters deep, and a sky that keeps changing its mind above it.',
+    species: ['frost', 'ice', 'snow', 'frozen', 'penguin', 'sp_ice', 'sp_frostwave'],
+  },
+  thundercloud: {
+    name: 'Thundercloud Heights', unlocked: true, habitat: 'Storm', emoji: '⚡', bonus: 0.52,
+    blurb: 'Anvils of cloud stacked like stairs, and a charge in the air that lifts your fur.',
+    species: ['volt', 'pika', 'stormscout', 'sp_lightning', 'sp_plasma'],
+  },
+  whisperwind: {
+    name: 'Whisperwind Plains', unlocked: true, habitat: 'Sky', emoji: '🌪️', bonus: 0.48,
+    blurb: 'Pale grass bent one way forever, and a breeze that seems to be going somewhere important.',
+    species: ['air', 'gale', 'cloud', 'unicorn', 'sp_air'],
+  },
+  stoneheart: {
+    name: 'Stoneheart Canyon', unlocked: true, habitat: 'Canyon', emoji: '🪨', bonus: 0.5,
+    blurb: 'Red walls, patient echoes, and a river that has been carving its argument for centuries.',
+    species: ['rock', 'stone', 'earth', 'cube', 'ants', 'bug', 'sp_earth'],
+  },
+  celestial: {
+    name: 'Celestial Meadows', unlocked: true, habitat: 'Radiant', emoji: '☀️', bonus: 0.52,
+    blurb: 'Gold grass under a wide bright sky, where the light stays a little longer than it should.',
+    species: ['radiant', 'angel', 'unicorn', 'onewish', 'gracecrowne', 'sp_light', 'sp_celestialprism'],
+  },
+  shadowveil: {
+    name: 'Shadowveil Woods', unlocked: true, habitat: 'Shadow', emoji: '🌑', bonus: 0.52,
+    blurb: 'Violet trunks and quiet footsteps, with lantern-glow only where someone has been kind.',
+    species: ['dusk', 'shadow', 'phantom', 'spider', 'bat', 'sp_shadow', 'sp_voidcrystal'],
+  },
+  prismcaverns: {
+    name: 'Prism Caverns', unlocked: true, habitat: 'Cavern', emoji: '💎', bonus: 0.52,
+    blurb: 'Halls of clear stone that split a single lamp into every colour it knows.',
+    species: ['crystal', 'cube', 'slime', 'king', 'queen', 'sp_crystal', 'sp_voidcrystal'],
+  },
+  worldheart: {
+    name: 'Worldheart Tree', unlocked: false, gift: true, habitat: 'Sacred', emoji: '🌳', bonus: 0.54,
+    blurb: 'The great tree at the centre of everything, its roots running out under every region at once.',
+    species: ['klombo', 'motherearth', 'gracecrowne', 'sp_nature', 'sp_light', 'sp_lifeheart'],
+  },
+  genesiscore: {
+    name: 'Genesis Core', unlocked: false, gift: true, habitat: 'Void', emoji: '🌌', bonus: 0.55,
+    blurb: 'The old room under the roots, where the first elements were named and left running.',
+    species: ['zeropoint', 'onewish', 'crown', 'sp_omnitype', 'sp_celestialprism'],
+  },
 };
 const SCENE_KEYS = Object.keys(SCENES);
 const GIFT_SCENES = SCENE_KEYS.filter((k) => SCENES[k].gift);
@@ -3355,26 +3922,41 @@ const WEATHER_KEYS = Object.keys(WEATHERS);
 
 /* Event presets: one press sets the sky, the stage tint and the badge that
    names the moment. They only use the three event skies, so an ordinary day
-   never picks one by itself. Keys stay stable so saved badges keep resolving;
-   the visible name follows the badge. */
+   never picks one by itself. Keys stay stable so saved badges keep resolving.
+   A preset's name is the moment's own name, which is not always its badge:
+   Starlight Vigil is kept under the Celestial badge and First Light under the
+   Genesis badge. Those names are product decisions the table records, not a
+   typo, so nothing should "fix" them to match their badges again. */
 const EVENT_PRESETS = {
   prismatic: {
     key: 'prismatic', name: 'Prismatic Procession', icon: '🌈', badge: 'Prismatic',
     weather: 'rainbow', tint: '#ff9ec7', tint2: '#5ad6ff',
     blurb: 'A rainbow arch, petals on the wind, and butterflies over every biome.',
+    mote: '🌸',
+    vigilBlurb: 'Petals ride the arch tonight. Tap each one while it glows, and the procession keeps its light.',
   },
   starlight: {
-    key: 'starlight', name: 'Celestial Vigil', icon: '✨', badge: 'Celestial',
+    key: 'starlight', name: 'Starlight Vigil', icon: '✨', badge: 'Celestial',
     weather: 'celestial', tint: '#8fb6ff', tint2: '#b69cff',
     blurb: 'Stars lean close and moonbeams pool across the Hollow.',
+    mote: '✨',
+    vigilBlurb: 'Stars lean close for the vigil. Tap each mote of starlight while it glows to keep it.',
   },
   firstlight: {
-    key: 'firstlight', name: 'Genesis Dawn', icon: '🌱', badge: 'Genesis',
+    key: 'firstlight', name: 'First Light', icon: '🌱', badge: 'Genesis',
     weather: 'genesis', tint: '#8fe07a', tint2: '#ffd166',
     blurb: 'New ground, fresh sprouts, and light that has never been used.',
+    mote: '🌱',
+    vigilBlurb: 'New sprouts break the first light. Tap each one as it surfaces.',
   },
 };
 const EVENT_PRESET_KEYS = Object.keys(EVENT_PRESETS);
+
+/* A preset is a sky and a keepsake until it is played. The vigil is that play:
+   a short tap game where the live event's own motes surface, and reaching the
+   target keeps the badge for the day. One duration and one target for every
+   event, so a new preset only has to name what its vigil catches. */
+const EVENT_VIGIL = Object.freeze({ duration: 30, target: 18 });
 
 /* ---------- names ---------- */
 const NAME_START = {

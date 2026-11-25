@@ -30,6 +30,7 @@ function openFetchGame() {
   const shell = gameOverlayShell('petfetch');
   const { board } = shell;
   const s = activeSprite();
+  const toyItem = s && typeof puffleFetchToy === 'function' ? puffleFetchToy(s) : { name: 'Ball', icon: '🎾' };
   let score = 0;
   let hits = 0;
   let running = true;
@@ -37,8 +38,8 @@ function openFetchGame() {
 
   board.innerHTML = `<div style="position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,#14351f,#1f5230 62%,#2c6b3c)">
       ${s ? `<div style="position:absolute;left:8%;bottom:16%;width:62px">${spriteSVG(s, { expr: 'happy' })}</div>` : ''}
-      <button data-toy style="position:absolute;left:45%;top:40%;font-size:36px;line-height:1;background:none;border:0;cursor:pointer;touch-action:manipulation;transition:left .16s ease,top .16s ease">🎾</button>
-      <div class="tiny" style="position:absolute;left:0;right:0;bottom:8%;color:#fff;text-align:center">Tap the toy each time it hops.</div>
+      <button data-toy style="position:absolute;left:45%;top:40%;font-size:36px;line-height:1;background:none;border:0;cursor:pointer;touch-action:manipulation;transition:left .16s ease,top .16s ease">${toyItem.icon}</button>
+      <div class="tiny" style="position:absolute;left:0;right:0;bottom:8%;color:#fff;text-align:center">Tap the ${esc(toyItem.name.toLowerCase())} each time it hops.</div>
     </div>`;
 
   const toy = board.querySelector('[data-toy]');
@@ -57,7 +58,7 @@ function openFetchGame() {
     hits += 1;
     shell.scoreEl.textContent = score;
     Sfx.coin();
-    burstOn(toy, ['🎾', '✨'], 3);
+    burstOn(toy, [toyItem.icon, '✨'], 3);
     hop();
   });
 

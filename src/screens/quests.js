@@ -10,6 +10,30 @@ function biomeQuestRewardText(step) {
   ].filter(Boolean).join(' · ');
 }
 
+/* A region's leader speaks for its line: the greeting while it is open, the
+   closing beat when the guardian falls. Empty for regions without a leader. */
+function regionLeaderLine(sceneKey, beat = 'greet') {
+  const leader = typeof voiceLeaderForScene === 'function' ? voiceLeaderForScene(sceneKey) : null;
+  if (!leader) return '';
+  const line = (leader.beats && (leader.beats[beat] || leader.beats.greet)) || '';
+  return line ? `${leader.icon} ${leader.name}: “${line}”` : '';
+}
+
+/* The leader notices who is standing beside you: the active puffle's name and
+   family fill the leader's companion line, so the roster is present in a region
+   before any quest step is claimed. */
+function leaderCompanionLine(sceneKey) {
+  const leader = typeof voiceLeaderForScene === 'function' ? voiceLeaderForScene(sceneKey) : null;
+  if (!leader || !leader.companion) return '';
+  const s = typeof activeSprite === 'function' ? activeSprite() : null;
+  if (!s || s.stage === 'egg') return '';
+  const family = (typeof typeName === 'function' ? typeName(s) : '') || 'Puffle';
+  const line = leader.companion
+    .replace(/\{name\}/g, displayName(s))
+    .replace(/\{family\}/g, family);
+  return `${leader.icon} ${leader.name}: “${line}”`;
+}
+
 function seasonChargePanel() {
   if (typeof seasonChargeInfo !== 'function') return '';
   const info = seasonChargeInfo();
@@ -26,12 +50,18 @@ function biomeQuestCard(sceneKey) {
   const def = BIOME_QUESTS[sceneKey];
   const scene = SCENES[sceneKey];
   if (!def || !scene) return '';
+  /* Hollow Eclipse enemies answer once per region: the encounter beat while the
+     line is open, their freed line once the guardian falls. */
+  const eclipse = typeof voiceEnemiesForScene === 'function' ? (voiceEnemiesForScene(sceneKey) || [])[0] : null;
+  const leaderGreet = regionLeaderLine(sceneKey);
+  const leaderCompanion = typeof leaderCompanionLine === 'function' ? leaderCompanionLine(sceneKey) : '';
   const info = biomeQuestStep(sceneKey);
   if (!info) {
     return `<article class="quest-card done">
       <div class="quest-head"><span class="quest-icon">${def.icon}</span><b>${esc(scene.name)}</b><span class="chip">✓</span></div>
       <span class="quest-title">${esc(def.title)} · complete</span>
       <p class="quest-step">All three steps claimed and the guardian bested. ${esc(scene.name)} remembers you kindly.</p>
+      ${eclipse ? `<p class="quest-step">${eclipse.icon} <b>${esc(eclipse.name)}</b> is at peace: “${esc(eclipse.beats.defeated || eclipse.beats.encounter)}”</p>` : ''}
     </article>`;
   }
   const have = Math.min(info.step.need, Number(info.q.progress) || 0);
@@ -50,11 +80,15 @@ function biomeQuestCard(sceneKey) {
     <div class="quest-head"><span class="quest-icon">${def.icon}</span><b>${esc(scene.name)}</b><span class="chip">${have}/${info.step.need}</span></div>
     <span class="quest-title">${esc(def.title)} · step ${info.index + 1} of ${def.steps.length}${finale ? ' · finale' : ''}</span>
     <p class="quest-step">${esc(info.step.text)}${here ? ' <span class="tiny muted">(you are here)</span>' : ''}</p>
+    ${leaderGreet ? `<p class="tiny muted" style="margin:2px 0 4px">${esc(leaderGreet)}</p>` : ''}
+    ${leaderCompanion ? `<p class="tiny" data-quest-companion style="margin:2px 0 4px;color:var(--accent)">${esc(leaderCompanion)}</p>` : ''}
+    ${eclipse ? `<p class="quest-step">${eclipse.icon} <b>${esc(eclipse.name)}</b> — ${esc(eclipse.about)} “${esc(eclipse.beats.encounter)}”</p>` : ''}
     <div class="bar"><i style="width:${pct}%"></i></div>
     <div class="quest-foot">
       <span class="tiny muted">${biomeQuestRewardText(info.step)}${finale ? ` · ⚡ +1 Season Charge · ⚔️ ${esc(guardianName)} · free boss` : ''}</span>
       ${here ? '' : `<button class="btn btn-ghost btn-sm" data-quest-travel="${sceneKey}">Travel · +${TRAVEL_COINS} 🪙</button>`}
       ${action}
+      ${eclipse ? `<button class="btn btn-soft btn-sm" data-quest-enemy="${eclipse.id}" data-quest-scene="${sceneKey}">${eclipse.icon} Face ${esc(eclipse.name)}</button>` : ''}
     </div>
   </article>`;
 }
@@ -95,18 +129,46 @@ function questTrackHtml() {
   </button>`;
 }
 
+/* The Worldheart's closing words. They play once when the Worldheart line is
+   finished and stay readable from the district quest sheet afterwards. */
+function worldheartStoryDone() {
+  const q = state.biomeQuests && state.biomeQuests.worldheart;
+  return !!(q && q.done);
+}
+
+function openWorldheartFinale() {
+  const lines = typeof window !== 'undefined' && Array.isArray(window.SPRITE_HOLLOW_FINAL_LINES)
+    ? window.SPRITE_HOLLOW_FINAL_LINES
+    : [];
+  if (!lines.length) return;
+  if (state.seen) state.seen.worldheartFinale = true;
+  openSheet({
+    title: '🌌 The Worldheart story',
+    sub: 'Every trial is done and the Worldheart is whole again.',
+    body: `<div class="card" style="padding:14px 16px">
+      ${lines.map((line, index) => `<p class="quest-step" style="font-size:${index === lines.length - 1 ? '1.05rem' : '.95rem'};opacity:${index === lines.length - 1 ? 1 : 0.82}">“${esc(line)}”</p>`).join('')}
+    </div>`,
+  });
+  if (typeof Sfx !== 'undefined' && Sfx.win) Sfx.win();
+}
+
 function openDistrictQuests() {
   openSheet({
     title: '🗺️ District quests',
     sub: 'One game, one care action, then the guardian. Free entry, free travel, and every step takes one action.',
     body: `${seasonChargePanel()}<p class="quest-intro">Travel to a district, win <b>one game</b>, and look after a sprite <b>once</b>. Travel is free and pays ${TRAVEL_COINS} coins; every step pays coins, XP, and bond — and the finale is a free guardian bout. Every win also adds a <b>Season Charge</b>, and three charges hatch an event sprite egg.</p>
       <button class="btn btn-soft btn-block" data-quest-gallery style="margin-bottom:8px">⚔️ Guardian gallery · every biome, unlimited bouts</button>
+      ${worldheartStoryDone() ? '<button class="btn btn-ghost btn-block" data-worldheart-finale style="margin-bottom:8px">🌌 The Worldheart\'s closing words</button>' : ''}
       <div class="quest-grid" data-quest-grid>${BIOME_QUEST_KEYS.map(biomeQuestCard).join('')}</div>`,
     onMount: (overlay) => {
       if (typeof wireBiomeQuests === 'function') wireBiomeQuests(overlay);
       overlay.querySelector('[data-quest-gallery]')?.addEventListener('click', () => {
         Sfx.click();
         openGuardianGallery();
+      });
+      overlay.querySelector('[data-worldheart-finale]')?.addEventListener('click', () => {
+        Sfx.click();
+        openWorldheartFinale();
       });
     },
   });
@@ -334,22 +396,36 @@ function openGuardianGallery(sceneKey = null, options = {}) {
   });
 }
 
-/* ---------------- guardian duel ---------------- */function openGuardianDuel(sceneKey, onWin, opts = {}) {
+/* ---------------- guardian duel ---------------- */
+function openGuardianDuel(sceneKey, onWin, opts = {}) {
   const def = BIOME_QUESTS[sceneKey] || null;
   const scene = SCENES[sceneKey];
   if (!scene) return null;
-  const practice = !!opts.practice;
-  const guardianKey = opts.guardianKey && ELEMENTS[opts.guardianKey]
-    ? opts.guardianKey
-    : guardianForScene(sceneKey, opts.index || 0);
+  /* A Hollow Eclipse enemy can be faced directly: it borrows its element's
+     battle profile but keeps its own name, encounter line and defeat line. */
+  const enemy = opts.enemyId && typeof SPRITE_HOLLOW_VOICES !== 'undefined'
+    ? SPRITE_HOLLOW_VOICES.find((voice) => voice.enemy && voice.id === opts.enemyId) || null
+    : null;
+  /* An enemy bout never settles a quest, so it is always practice-shaped. */
+  const practice = !!opts.practice || !!enemy;
+  const guardianKey = (enemy && ELEMENTS[enemy.element] ? enemy.element : null)
+    || (opts.guardianKey && ELEMENTS[opts.guardianKey] ? opts.guardianKey : guardianForScene(sceneKey, opts.index || 0));
+  const boutLabel = enemy ? 'Hollow Eclipse bout' : practice ? 'Practice bout' : 'Quest finale';
   if (!guardianKey) { toast('No guardian answers here yet.', '⚔️'); return null; }
   const guardian = ELEMENTS[guardianKey];
+  const opponentName = enemy ? enemy.name : guardian.name;
   const tint = sceneTint(sceneKey);
   const active = activeSprite();
   const mine = active && active.stage !== 'egg' && !active.retired
     ? active
     : (typeof hollowSprites === 'function' ? hollowSprites()[0] : active);
-  const greeting = (Array.isArray(guardian.greeting) ? guardian.greeting[0] : guardian.greeting) || 'The guardian steps forward.';
+  const greeting = enemy
+    ? `${enemy.icon} ${enemy.name}: “${enemy.beats.encounter}”`
+    : (Array.isArray(guardian.greeting) ? guardian.greeting[0] : guardian.greeting) || 'The guardian steps forward.';
+  /* A Hollow Eclipse enemy answers in its own region's bout; a bout against the
+     enemy itself already speaks as it, so no second line is added. */
+  const eclipse = enemy ? null : (typeof voiceEnemiesForScene === 'function' ? (voiceEnemiesForScene(sceneKey) || [])[0] : null);
+  const eclipseLine = eclipse ? `${eclipse.icon} ${eclipse.name}: “${eclipse.beats.encounter}”` : '';
   const lines = [
     'The ground answers them.',
     'A clean hit. They barely blink.',
@@ -389,26 +465,26 @@ function openGuardianGallery(sceneKey = null, options = {}) {
   if (typeof closeAllOverlays === 'function') closeAllOverlays();
   const shell = gameOverlayShell('guardian');
   const { board } = shell;
-  shell.wrap.querySelector('.game-top h2').textContent = `⚔️ ${guardian.name}`;
-  shell.wrap.querySelector('.game-top .muted').textContent = `${practice ? 'Practice bout' : 'Quest finale'} · ${scene.emoji} ${esc(scene.name)}`;
+  shell.wrap.querySelector('.game-top h2').textContent = `⚔️ ${opponentName}`;
+  shell.wrap.querySelector('.game-top .muted').textContent = `${boutLabel} · ${scene.emoji} ${esc(scene.name)}`;
   shell.wrap.querySelector('.gstat span').textContent = 'Resolve';
-  shell.hintEl.textContent = `${def && !practice ? esc(def.title) : 'Free guardian bout'} · tap Strike`;
+  shell.hintEl.textContent = `${def && !practice ? esc(def.title) : boutLabel} · tap Strike`;
   shell.timerBar.style.width = '100%';
   shell.timerEl.textContent = `${windowLeft}s`;
   board.classList.add('guardian-duel-board');
   board.innerHTML = `
     <div class="guardian-duel-stage" style="background:linear-gradient(180deg, ${tint.b2}, ${tint.b1})">
       <div class="scene-decor">${buildSceneDecor(sceneKey)}</div>
-      <span class="duel-guardian">${spriteSVG(guardianSample(guardianKey, 'ancient'), { expr: 'happy' })}<b>${esc(guardian.name)}</b></span>
+      <span class="duel-guardian">${spriteSVG(guardianSample(guardianKey, 'ancient'), { expr: 'happy' })}<b>${esc(opponentName)}</b></span>
       ${mine ? `<span class="duel-challenger">${spriteSVG(mine, { expr: 'happy' })}<b>${esc(displayName(mine))}</b></span>` : ''}
     </div>
     <div class="duel-bars">
-      <div class="duel-bar"><span>Guardian resolve</span><div class="bar"><i data-duel-hp style="width:100%"></i></div></div>
+      <div class="duel-bar"><span>${enemy ? 'Enemy resolve' : 'Guardian resolve'}</span><div class="bar"><i data-duel-hp style="width:100%"></i></div></div>
       <div class="duel-bar"><span>${mine ? esc(displayName(mine)) : 'Your sprite'}</span><div class="bar"><i data-duel-resolve style="width:100%"></i></div></div>
     </div>
     <div class="row" style="justify-content:center;gap:5px;margin:2px 0 0" data-duel-odds>${oddsHTML}</div>
     <div class="duel-effects" data-duel-statuses aria-live="polite"></div>
-    <div class="duel-line" data-duel-line aria-live="polite">${esc(greeting)}</div>
+    <div class="duel-line" data-duel-line aria-live="polite">${esc([greeting, eclipseLine].filter(Boolean).join(' '))}</div>
     <button class="btn btn-primary btn-block guardian-duel-strike" data-duel-strike>⚔️ Strike</button>
     <p class="tiny muted" style="margin:8px 2px 0;line-height:1.5">Free — no coins, no energy. Tap Strike a few times to wear the guardian down inside ${DUEL_WINDOW_SECONDS} seconds. Each win adds <b>1 Season Charge</b>, and three charges hatch an event egg. ${practice ? 'Practice bouts are unlimited and pay bond and joy.' : 'Win and the line pays out with a <b>150 coin guardian bonus</b>. If the clock runs out, they offer you another round.'}</p>`;
 
@@ -501,12 +577,16 @@ function openGuardianGallery(sceneKey = null, options = {}) {
     shell.timerEl.textContent = '0s';
     shell.timerBar.style.width = '0%';
     if (practice) {
-      const res = Actions.guardianWin(sceneKey, guardianKey);
+      /* Purifying an enemy is its own credit; only a guardian practice bout goes
+         through guardianWin. */
+      const res = enemy ? Actions.purifyEnemy(enemy.id) : Actions.guardianWin(sceneKey, guardianKey);
       if (!res || !res.ok) {
         Sfx.error();
         showResult({
           title: 'The bout fizzled',
-          blurb: 'That guardian cannot answer right now. Close the gallery and try again.',
+          blurb: enemy
+            ? 'That Hollow Eclipse enemy cannot answer right now. Close the gallery and try again.'
+            : 'That guardian cannot answer right now. Close the gallery and try again.',
           chips: [],
         });
         return;
@@ -514,17 +594,26 @@ function openGuardianGallery(sceneKey = null, options = {}) {
       Sfx.win();
       burstOn(strikeBtn, ['⚔️', '✨', '💗'], 10);
       showResult({
-        title: 'Bout won',
-        blurb: `${esc(guardian.name)} yields. A good bout in ${esc(scene.name)}.`,
+        title: enemy ? `${esc(enemy.name)} purified!` : 'Bout won',
+        blurb: enemy
+          ? `${esc(enemy.name)} goes quiet. ${esc(enemy.beats.defeated)}`
+          : `${esc(guardian.name)} yields. A good bout in ${esc(scene.name)}.`,
         chips: [
-          `💗 +${res.bond} bond`, `✨ +${res.xp} XP`, 'joy up', `bested ×${res.total}`,
-          ...(res.eventEggs || []).map((egg) => `🥚 ${esc(egg.name)} egg`),
-          `⚡ Season ${res.season?.have ?? 0}/${res.season?.need ?? 3}`,
+          `💗 +${res.bond} bond`, `✨ +${res.xp} XP`, 'joy up',
+          ...(enemy
+            ? [`🧿 purified ×${res.total}`]
+            : [
+                `bested ×${res.total}`,
+                ...(res.eventEggs || []).map((egg) => `🥚 ${esc(egg.name)} egg`),
+                `⚡ Season ${res.season?.have ?? 0}/${res.season?.need ?? 3}`,
+              ]),
         ],
         next: true,
       });
       const eventNote = res.eventEggs?.length ? ` · 🥚 ${res.eventEggs.map((egg) => egg.name).join(', ')}` : '';
-      toast(`${guardian.name} bested in ${scene.name} · bond +${res.bond}${eventNote}.`, '⚔️');
+      toast(enemy
+        ? `${enemy.name} purified in ${scene.name} · bond +${res.bond}${eventNote}.`
+        : `${guardian.name} bested in ${scene.name} · bond +${res.bond}${eventNote}.`, '⚔️');
       return;
     }
     const res = Actions.claimBiomeQuest(sceneKey, { won: true });
@@ -539,10 +628,19 @@ function openGuardianGallery(sceneKey = null, options = {}) {
     }
     const total = res.coins + res.bonus;
     Sfx.win();
+    /* The Worldheart line ends the story, so its guardian plays the finale
+       after the duel result has been read. */
+    if (res.finished && sceneKey === 'worldheart' && typeof openWorldheartFinale === 'function') {
+      setTimeout(openWorldheartFinale, 1200);
+    }
     burstOn(strikeBtn, ['⚔️', '✨', '🏆'], 12);
+    const closing = [
+      eclipse ? `${eclipse.icon} ${eclipse.beats.defeated}` : '',
+      regionLeaderLine(sceneKey, 'final'),
+    ].filter(Boolean).join(' ');
     showResult({
       title: 'Guardian bested!',
-      blurb: `${esc(guardian.name)} bows. ${esc(scene.name)} is yours.`,
+      blurb: `${esc(guardian.name)} bows. ${esc(scene.name)} is yours.${closing ? ` ${esc(closing)}` : ''}`,
       chips: [
         `🪙 +${total} coins`, `✨ +${res.xp} XP`, `+${res.bonus} guardian bonus`,
         ...(res.eventEggs || []).map((egg) => `🥚 ${esc(egg.name)} egg`),
@@ -560,7 +658,7 @@ function openGuardianGallery(sceneKey = null, options = {}) {
     windowLeft -= 1;
     shell.timerEl.textContent = `${Math.max(0, windowLeft)}s`;
     shell.timerBar.style.width = `${Math.max(0, windowLeft / DUEL_WINDOW_SECONDS) * 100}%`;
-    if (windowLeft <= 0) restart(`${guardian.name} lets the clock run out. They offer you another round.`);
+    if (windowLeft <= 0) restart(`${opponentName} lets the clock run out. They offer you another round.`);
   }, 1000);
   strikeBtn.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -597,7 +695,7 @@ function openGuardianGallery(sceneKey = null, options = {}) {
     Sfx.pop();
     burstOn(strikeBtn, ['⚔️', '✨'], 4);
     if (hp <= 0) win();
-    else if (resolve <= 0) restart(`${guardian.name} steadies you. Take a breath and strike again.`);
+    else if (resolve <= 0) restart('Take a breath and strike again.');
   });
   paintBars();
   return true;
@@ -612,6 +710,13 @@ function wireBiomeQuests(root) {
      claim, travel, and finale clicks still reach the quest handlers. */
   grid.addEventListener('click', (event) => {
     event.stopPropagation();
+    const foe = event.target.closest('[data-quest-enemy]');
+    if (foe) {
+      event.preventDefault();
+      Sfx.click();
+      openGuardianDuel(foe.dataset.questScene, paint, { enemyId: foe.dataset.questEnemy });
+      return;
+    }
     const travel = event.target.closest('[data-quest-travel]');
     if (travel) {
       event.preventDefault();
@@ -645,11 +750,21 @@ function wireBiomeQuests(root) {
         return;
       }
       Sfx.level();
-      burstOn(claim, ['🗺️', '🪙', '✨'], 9);
-      const paid = res.coins + (res.bonus || 0);
+      burstOn(claim, ['🗺️', '🪙', '✨', ...(res.relic ? ['🏺'] : [])], 9);
+      const paid = res.coins + (res.bonus || 0) + (res.relic ? res.relic.coins : 0);
       const eventNote = res.eventEggs?.length ? ` · 🥚 ${res.eventEggs.map((egg) => egg.name).join(', ')}` : '';
-      toast(`${res.title}${res.finished ? ' complete!' : ' step claimed.'} +${paid} coins${res.xp ? ` · +${res.xp} XP` : ''}${eventNote}`, '🗺️');
+      const relicNote = res.relic ? ` · 🏺 ${res.relic.item}` : '';
+      toast(`${res.title}${res.finished ? ' complete!' : ' step claimed.'} +${paid} coins${res.xp ? ` · +${res.xp} XP` : ''}${relicNote}${eventNote}`, '🗺️');
+      /* The finder says what it found, once the coin line has had its moment. */
+      if (res.relic) setTimeout(() => toast(`${res.relic.sprite}: “${res.relic.line}”`, '🏺'), 900);
       paint();
+      if (res.finished) {
+        const closing = regionLeaderLine(claim.dataset.questClaim, 'final');
+        if (closing) toast(closing, '👑');
+      }
+      if (res.finished && claim.dataset.questClaim === 'worldheart' && typeof openWorldheartFinale === 'function') {
+        setTimeout(openWorldheartFinale, 700);
+      }
     }
   });
 }

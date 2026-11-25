@@ -323,7 +323,14 @@ const CP_PUFFLE_SPECIES_KEY = 'cp_puffle';
   if (typeof TYPE_EGG_SPECIES !== 'undefined' && !TYPE_EGG_SPECIES.includes(CP_PUFFLE_SPECIES_KEY)) TYPE_EGG_SPECIES.push(CP_PUFFLE_SPECIES_KEY);
   if (typeof WILD_SPECIES !== 'undefined' && !WILD_SPECIES.includes(CP_PUFFLE_SPECIES_KEY)) WILD_SPECIES.push(CP_PUFFLE_SPECIES_KEY);
   if (typeof SCENES !== 'undefined' && SCENES) {
-    ['grove', 'tide', 'aurora'].forEach((sceneKey) => {
+    /* The twelve classic colours each name a Club Penguin habitat, so the breed
+       lives in every Hollow biome those habitats translate to (Snow Forts, the
+       Cove, the Puffle Wild, the Dance Club, the Stage, the Gold Mine and the
+       rest) instead of only the three it used to share. */
+    const cpHabitatScenes = typeof CP_PUFFLE_TYPES !== 'undefined'
+      ? Object.values(CP_PUFFLE_TYPES).flatMap((type) => (type.habitat && type.habitat.biomes) || [])
+      : [];
+    [...new Set(cpHabitatScenes)].forEach((sceneKey) => {
       if (SCENES[sceneKey] && Array.isArray(SCENES[sceneKey].species) && !SCENES[sceneKey].species.includes(CP_PUFFLE_SPECIES_KEY)) {
         SCENES[sceneKey].species.push(CP_PUFFLE_SPECIES_KEY);
       }

@@ -42,6 +42,7 @@ window.PUFFLE_FAMILY_LORE = {
   rainbow: { name: 'Rainbow', personality: ['Optimistic', 'Energetic', 'Compassionate', 'Imaginative'], likes: ['Creativity', 'Friendship', 'Discovery', 'Art'], signature: 'Brings harmony between different elemental families.', look: 'Bright prismatic rim, open arms, colours bleeding between fur patches.' },
   creator: { name: 'Creator', personality: ['Wise', 'Compassionate', 'Mysterious', 'Eternal'], likes: ['Balance', 'Creation', 'The Hollow itself'], signature: 'First puffle and guardian of balance.', look: 'Immense and serene, geometry orbiting the body, eyes holding whole constellations.' },
   secret: { name: 'Secret', personality: ['Mysterious', 'Powerful', 'Wise', 'Curious'], likes: ['Hidden places', 'Old magic', 'Constellations', 'Rare friends'], signature: 'Keeps the Hollow’s oldest secrets and shares them only with trusted friends.', look: 'A quiet shimmer at the edges, one knowing glance, colours that never sit still.' },
+  classic: { name: 'Classic', personality: ['Cheerful', 'Loyal', 'Playful', 'Adventurous'], likes: ['Propeller caps', 'Snowy days', 'New colours', 'Puffle parades'], signature: 'Wears a different classic colour at every stage and never loses its grin.', look: 'Round and bright, a little cap on top, fur shifting through the classic palette.' },
 };
 
 /* The four Creator forms read as four different rulers rather than one god. */
@@ -79,6 +80,7 @@ window.PUFFLE_FAMILY_TRAIT_POOLS = {
   rainbow: ['playful', 'energetic', 'caring', 'curious'],
   creator: ['wise', 'caring', 'curious', 'noble'],
   secret: ['curious', 'brave', 'wise', 'mischievous'],
+  classic: ['playful', 'loyal', 'caring', 'brave'],
 };
 
 window.PUFFLE_CREATOR_TRAIT_POOLS = {
@@ -94,6 +96,7 @@ window.PUFFLE_CREATOR_TRAIT_POOLS = {
    these names only pick from it. */
 window.PUFFLE_FAMILY_SKILL_POOLS = {
   nature: ['Quick Nose', 'Root Guard', 'Songbird', 'Spore Bloom'],
+  classic: ['Quick Nose', 'Lucky Tuft', 'Soft Step', 'Songbird'],
   fire: ['Ember Dash', 'Keen Eye', 'Sturdy Puff', 'Lucky Tuft'],
   water: ['Riptide Roll', 'Soft Step', 'Songbird', 'Deep Nap'],
   ice: ['Frost Focus', 'Deep Nap', 'Sturdy Puff', 'Keen Eye'],
@@ -151,6 +154,7 @@ window.PUFFLE_THEME_KEYS = Object.keys(window.PUFFLE_THEMES);
 
 window.PUFFLE_FAMILY_THEME_POOLS = {
   nature: ['grove', 'blossom', 'honey', 'mist'],
+  classic: ['frost', 'carnival', 'neon', 'sky'],
   fire: ['ember', 'ashen', 'forge', 'carnival'],
   water: ['tide', 'mist', 'coral', 'storm'],
   ice: ['frost', 'aurora', 'crystal', 'mist'],
@@ -302,4 +306,372 @@ window.spriteTraitMods = function spriteTraitMods(sprite) {
      so two Puffles of one species can be genuinely different builds. */
   if (typeof window.abilityPathMods === 'function') merge(window.abilityPathMods(sprite));
   return mods;
+};
+
+/* ---------------- Sprite Hollow voices ----------------
+   Eight role personalities give every Sprite Puffle a spoken voice: how it greets
+   you, what it mutters while it works, and what it says once it trusts you. The
+   mechanical traits pick the voice, four families lean creative by nature, and
+   every line is chosen from an id hash so one puffle keeps its own greeting. */
+
+window.PUFFLE_VOICE_TYPES = {
+  cheerful: {
+    key: 'cheerful', name: 'Cheerful', icon: '🌟',
+    loves: ['making friends', 'giving gifts', 'parties'],
+    lines: {
+      greet: ["Hi friend! Isn't today amazing? Let's go explore together!", 'You came! I planned our whole day. It is mostly snacks.'],
+      idle: ['I made a party in my head and you are invited.', 'I counted the clouds today. There were eleven. Then twelve.'],
+      friend: ['You came back! I saved you the best spot.', 'I told everyone you were coming. Everyone.'],
+      best: ['Best friends forever! I already told the whole village.', 'Being near you is my favourite hobby.'],
+      quest: ['Ooh, a quest! I already packed snacks.', 'We are going to be so good at this. Probably!'],
+      hatch: ["Hi! Is this the world? I love it already.", "Oh! You are my person? Excellent choice, both of us."],
+      grow: ["Look at me! I grew! Do I look taller? I feel taller!", "Every stage is my favourite stage. This one especially."],
+    },
+  },
+  clever: {
+    key: 'clever', name: 'Clever', icon: '🧠',
+    loves: ['puzzles', 'inventing gadgets', 'discovering secrets'],
+    lines: {
+      greet: ["Hmm... I think there's a hidden switch somewhere nearby.", 'Wait. Stand there. No — there. Perfect. You stepped on it.'],
+      idle: ['I am counting something. Do not distract me. Okay, distract me.', 'There is a pattern in the wind today. It is very inefficient.'],
+      friend: ['I solved it. Four seconds. I counted.', 'I built you a thing. It only sparks a little. Mostly.'],
+      best: ['I trust you with my prototypes. That is the highest honour I have.', 'Together we could take this whole valley apart and improve it.'],
+      quest: ['I read the whole quest board. Twice. There is a shortcut.', 'Give me a minute. I am solving it in my head first.'],
+      hatch: ["Fascinating. The air out here has texture.", "I have arrived. I have opinions about the nest already."],
+      grow: ["More of me to think with. Dangerous, honestly.", "Growth is just data in a nicer shape. Look at my data."],
+    },
+  },
+  brave: {
+    key: 'brave', name: 'Brave', icon: '🛡️',
+    loves: ['charging into danger', 'protecting others', 'leading adventures'],
+    lines: {
+      greet: ["Don't worry! I'll keep everyone safe.", 'Good. You are here. I was about to do something reckless alone.'],
+      idle: ['I scouted the path ahead. Twice. It is still there.', 'I am not scared. I am prepared. There is a difference.'],
+      friend: ['Stand behind me. I mean it.', 'If anything comes through that door, it deals with me first.'],
+      best: ['Wherever you go, I go first.', 'I would take a hit for you. I have, actually. You were asleep.'],
+      quest: ['Then we go. I will stand in front.', 'A guardian? Good. I was getting bored.'],
+      hatch: ["I am ready. Whatever it is, I am ready.", "The shell is gone. Good. It was getting tight."],
+      grow: ["Bigger. Stronger. Still not scared of anything.", "I grew into the job. I hope the job is ready."],
+    },
+  },
+  kind: {
+    key: 'kind', name: 'Kind', icon: '🌸',
+    loves: ['helping injured Puffles', 'gardening', 'encouragement'],
+    lines: {
+      greet: ['Every Puffle deserves a chance to grow and shine.', 'Come in. You look like you have been carrying something heavy.'],
+      idle: ['The garden is doing better today. So am I.', 'I left water out for the little ones. They know where it is.'],
+      friend: ['You look tired. Sit down, I will bring you something.', 'You did well today. You do not have to be told, but you did.'],
+      best: ['You are my favourite thing to take care of.', 'When you are happy, the whole valley looks greener to me.'],
+      quest: ['Someone needs help. That is all I needed to hear.', 'We will be gentle, and we will still win.'],
+      hatch: ["Hello. You look kind. I am glad it is you.", "I hope I am not too small for all this. I will grow."],
+      grow: ["I grew. I hope I grew kinder too.", "There is more of me now. More room for everyone."],
+    },
+  },
+  creative: {
+    key: 'creative', name: 'Creative', icon: '🎨',
+    loves: ['decorating homes', 'creating artwork', 'designing festivals'],
+    lines: {
+      greet: ['Imagine how beautiful this village could become!', 'I redid the square last night. Do not ask where the old bench went.'],
+      idle: ['I had an idea. It is mostly ribbons. It is perfect.', 'The colours are wrong today. I am fixing them. Politely.'],
+      friend: ['I made you something. Do not look at the back.', 'You are very good at standing still while I decorate you.'],
+      best: ['Everything I make has a little bit of you in it now.', 'One day I will design a festival just for you. It will have lanterns.'],
+      quest: ['I have an idea. It involves ribbons and possibly fire.', 'The plan is a work in progress. The confidence is final.'],
+      hatch: ["Oh, the colours out here! I have ideas already.", "I hatched with a whole song in my head. Give me a minute."],
+      grow: ["New shape, new colours, new ideas. This is my best work yet.", "I grew into a slightly better version of the song."],
+    },
+  },
+  playful: {
+    key: 'playful', name: 'Playful', icon: '🤪',
+    loves: ['pranks', 'starting games', 'making everyone laugh'],
+    lines: {
+      greet: ['Race you to the waterfall! Last one there buys berry juice!', 'I hid your favourite thing. You will find it. Eventually. Probably.'],
+      idle: ['Tag! You are it! No take-backs!', 'I put a tiny hat on something. You will see it later and laugh.'],
+      friend: ['You are my favourite person to annoy.', 'I saved you the seat next to the mud pit. On purpose.'],
+      best: ['You laugh at my worst jokes. That is real friendship.', 'Best friends get first pick of the pranks. You get the good ones.'],
+      quest: ['Last one to the guardian is a rotten berry!', 'I hid a shortcut somewhere. Possibly behind me.'],
+      hatch: ["Hello hello hello! What are we playing?", "I am out! Now what is the first game?"],
+      grow: ["I am bigger! Now I can win at even more games!", "New size, same nonsense. Some things never change."],
+    },
+  },
+  mysterious: {
+    key: 'mysterious', name: 'Mysterious', icon: '🌙',
+    loves: ['riddles', 'hidden lore', 'appearing unexpectedly'],
+    lines: {
+      greet: ['The shadows hide many secrets... if you know where to look.', 'I was here before you arrived. I may still be here after.'],
+      idle: ['Some doors only open when nobody is watching. So: look away.', 'The old stories are true. The new ones are truer.'],
+      friend: ['There is something I could tell you. Not today.', 'You ask better questions than you did last season.'],
+      best: ['You have earned the truth. Ask me anything.', 'I will tell you the last secret when the tree blooms again.'],
+      quest: ['The path already knows us. Walk quietly.', 'Some doors only open for the patient.'],
+      hatch: ["So this is the Hollow. It has been expecting me.", "I remember light. I do not remember anything else. Yet."],
+      grow: ["The Hollow gave me another shape. It keeps its secrets.", "I remember more now. I am not telling yet."],
+    },
+  },
+  noble: {
+    key: 'noble', name: 'Noble', icon: '👑',
+    loves: ['protecting villages', 'inspiring others', 'leadership'],
+    lines: {
+      greet: ['Together we stand stronger than any storm.', 'You arrive at a good moment. The village needs steady paws.'],
+      idle: ['The village is quiet. Good. Let it stay that way.', 'A leader listens first. I am practising.'],
+      friend: ['You have my word, and my shield.', 'Stand with me at the gate tonight. I would like the company.'],
+      best: ['When the story is told, your name stands beside mine.', 'Whatever the Hollow asks of us, we answer together.'],
+      quest: ['The Hollow asked. We answer.', 'Steady. We finish what we start.'],
+      hatch: ["I arrive. You may announce me. Or just hug me, that works.", "A fitting nest for someone of my potential, I think."],
+      grow: ["A new form suits me. I have decided.", "Growth is simply the world catching up to me."],
+    },
+  },
+};
+window.PUFFLE_VOICE_KEYS = Object.keys(window.PUFFLE_VOICE_TYPES);
+
+/* Mechanical traits speak as the role they resemble. */
+window.PUFFLE_VOICE_BY_TRAIT = {
+  brave: 'brave', energetic: 'cheerful', caring: 'kind', gentle: 'kind',
+  curious: 'clever', wise: 'mysterious', noble: 'noble', loyal: 'noble',
+  playful: 'playful', mischievous: 'playful',
+};
+
+/* Families whose whole craft is making things speak in the creative voice
+   before any trait is consulted. */
+window.PUFFLE_VOICE_FAMILIES = { music: 'creative', crystal: 'creative', rainbow: 'creative', mushroom: 'creative', aether: 'creative' };
+
+function puffleVoiceHash(seed) {
+  let h = 2166136261;
+  const text = String(seed == null ? '' : seed);
+  for (let i = 0; i < text.length; i += 1) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h >>> 0;
+}
+
+window.puffleVoiceOf = function puffleVoiceOf(sprite) {
+  const element = sprite && sprite.element;
+  const family = typeof window.puffleFamilyOf === 'function' ? window.puffleFamilyOf(element) : null;
+  const familyVoice = family && window.PUFFLE_VOICE_FAMILIES[family];
+  if (familyVoice && window.PUFFLE_VOICE_TYPES[familyVoice]) return window.PUFFLE_VOICE_TYPES[familyVoice];
+  const rolled = typeof window.pufflePersonalityFor === 'function' ? window.pufflePersonalityFor(sprite) : null;
+  const traits = [rolled && rolled.primary && rolled.primary.key, rolled && rolled.secondary && rolled.secondary.key]
+    .filter(Boolean);
+  for (let i = 0; i < traits.length; i += 1) {
+    const voice = window.PUFFLE_VOICE_BY_TRAIT[traits[i]];
+    if (voice && window.PUFFLE_VOICE_TYPES[voice]) return window.PUFFLE_VOICE_TYPES[voice];
+  }
+  return window.PUFFLE_VOICE_TYPES.cheerful;
+};
+
+window.puffleVoiceLine = function puffleVoiceLine(sprite, beat) {
+  const voice = window.puffleVoiceOf(sprite);
+  const lines = voice && voice.lines && voice.lines[beat || 'greet'];
+  if (!Array.isArray(lines) || !lines.length) return null;
+  const seed = `${(sprite && sprite.id) || (sprite && sprite.element) || 'puffle'}:${beat || 'greet'}`;
+  return lines[puffleVoiceHash(seed) % lines.length];
+};
+
+/* Relationship ladder. Bond runs 0-100 on a sprite, so each rung is a real
+   threshold a player can see move. */
+window.PUFFLE_RELATIONSHIP_TIERS = [
+  { key: 'stranger', name: 'Stranger', min: 0, line: 'Hello.' },
+  { key: 'acquaintance', name: 'Acquaintance', min: 10, line: 'Nice to see you again.' },
+  { key: 'friend', name: 'Friend', min: 25, line: "Let's hang out together!" },
+  { key: 'close', name: 'Close Friend', min: 45, line: "I'm always happy when you're around." },
+  { key: 'best', name: 'Best Friend', min: 70, line: "You'll always have a place beside me." },
+  { key: 'partner', name: 'Partner', min: 88, line: 'No adventure would be complete without you.' },
+  { key: 'family', name: 'Family', min: 97, line: 'Home is wherever we are together.' },
+];
+
+window.relationshipTierFor = function relationshipTierFor(bond) {
+  const value = Math.max(0, Math.min(100, Number(bond) || 0));
+  const tiers = window.PUFFLE_RELATIONSHIP_TIERS;
+  let tier = tiers[0];
+  tiers.forEach((entry) => { if (value >= entry.min) tier = entry; });
+  return tier;
+};
+
+/* The bond ladder in its own words. A puffle that has known you long enough
+   says so unprompted, so a tier chip is something the sprite can talk about
+   rather than a number only the sheet knows. */
+/* A trait is mechanical, but it should also be audible: two puffles sharing one
+   role voice still speak differently if their personalities differ. */
+window.PUFFLE_QUIRK_LINES = {
+  brave: ["I am not scared. I am just very awake.", "Stand behind me. Actually, stand beside me. We are both brave."],
+  caring: ["Did you eat? You always ask me that, so I am asking you.", "I kept a warm spot for you in case you came back."],
+  curious: ["I have three questions. The first one is about you.", "I found a new path today. It goes somewhere. That is all I know."],
+  loyal: ["I would follow you into the mycelium. I have said it before and I mean it.", "You came back. I never doubted it. I doubted it a little."],
+  playful: ["I hid something of yours. You will find it. Eventually. It is a game.", "Race you to the next sentence."],
+  wise: ["Every Hollow has an oldest story. I am still deciding which one is mine.", "Patience is just a very slow kind of speed."],
+  energetic: ["I have been awake for a while and I have SO much to say.", "Let us do three things at once. I will do the fourth."],
+  gentle: ["Mind the little ones today. They are smaller than they look.", "I am glad nothing is wrong. I like it when nothing is wrong."],
+  mischievous: ["Something moved. It was me. I am not sorry.", "I have a plan. You will like it. Probably."],
+  noble: ["A keeper should walk like the Hollow is watching. It is.", "I have decided we are doing great. The decision is final."],
+};
+
+window.puffleQuirkLine = function puffleQuirkLine(sprite) {
+  const p = typeof window.pufflePersonalityFor === 'function' ? window.pufflePersonalityFor(sprite) : null;
+  const key = p && p.primary && p.primary.key;
+  const bank = key && window.PUFFLE_QUIRK_LINES[key];
+  if (!Array.isArray(bank) || !bank.length) return null;
+  const seed = `${(sprite && sprite.id) || 'puffle'}:quirk:${key}`;
+  return bank[puffleVoiceHash(seed) % bank.length];
+};
+window.PUFFLE_TIER_LINES = {
+  stranger: ["You're the keeper, right? I have seen you around. I am watching. Politely.", 'I do not know you yet. Give it time. I am worth it.'],
+  acquaintance: ["Oh, it's you. Hello again.", 'I remembered your face. That is a good sign, I think.'],
+  friend: ['Hey! I was hoping you would come by.', 'Friends check on friends. You are doing great at it.'],
+  close: ['You are back. The day just got better.', 'I saved you a spot. I always save you a spot.'],
+  best: ['There you are, my favourite person.', 'You know me better than anyone. That is a big deal to me.'],
+  partner: ['No adventure is complete without you. I checked.', 'Where you go, I go. I made that a rule.'],
+  family: ['Home is wherever we are together.', 'You are not just my keeper. You are my family.'],
+};
+
+window.puffleTierLine = function puffleTierLine(sprite, tierKey) {
+  const key = tierKey
+    || (typeof window.relationshipTierFor === 'function' ? window.relationshipTierFor(sprite && sprite.bond).key : 'stranger');
+  const bank = window.PUFFLE_TIER_LINES[key];
+  if (!Array.isArray(bank) || !bank.length) return null;
+  const seed = `${(sprite && sprite.id) || 'puffle'}:tier:${key}`;
+  return bank[puffleVoiceHash(seed) % bank.length];
+};
+
+/* What a puffle says about what you have done together, the weather and the
+   hour. Context is picked by the caller, the line by a stable hash. */
+window.PUFFLE_VOICE_CONTEXT = {
+  helped: ['Thank you for helping our village yesterday!', 'You did not have to help. You did anyway. I noticed.'],
+  gifts: ['I still treasure the gift you gave me.', 'I keep it by my bed. Do not tell the others.'],
+  ignored: ["Oh... hello again. It's been a while.", "I saved you a seat. It got cold. I saved it anyway."],
+  festival: ['This is my favorite day of the year!', 'Festival day! I have been practising my parade walk.'],
+  rain: ['Perfect weather for puddle jumping!', 'Rain means the gardens are drinking. Listen to them.'],
+  snow: ["Let's build a snow-puffle!", 'Snow day. My paws are cold. I do not care.'],
+};
+
+window.contextVoiceLine = function contextVoiceLine(kind, seed) {
+  const lines = window.PUFFLE_VOICE_CONTEXT[kind];
+  if (!Array.isArray(lines) || !lines.length) return null;
+  return lines[puffleVoiceHash(`${seed || 'puffle'}:${kind}`) % lines.length];
+};
+
+/* The named cast of Sprite Hollow. `region` ties each voice to a travel scene, so
+   a region's leader speaks on that region's species pages. `leader` marks the
+   voice that speaks for a region; enemies carry encounter/defeated beats, and
+   both are read through voiceLeaderForScene and voiceEnemiesForScene. */
+window.SPRITE_HOLLOW_VOICES = [
+  {
+    id: 'lumora', name: 'Grand Guardian Lumora', icon: '👑', leader: true,
+    role: 'Keeper of the Worldheart Tree', region: 'worldheart', species: 'Omnitype Sprite Puffle', voice: 'noble',
+    about: 'Wise, gentle, ancient, loving.',
+    beats: {
+      greet: 'Welcome, little Sprite Keeper. The Worldheart has been expecting you.',
+      quest: 'Balance grows from kindness, courage, and friendship. Your journey begins now.',
+      friend: 'You are no longer a visitor to Sprite Hollow. You are family.',
+      final: 'Even the smallest spark can illuminate an entire world.',
+    },
+  },
+  {
+    id: 'thornroot', name: 'Elder Thornroot', icon: '🌳', leader: true, role: 'Leader of Bloomroot Valley',
+    region: 'bloomroot', species: 'Titanroot Puffle', voice: 'noble', about: 'Slow, rooted, patient.', companion: '{name} listens to the roots already. The Hollow notices that.',
+    beats: {
+      greet: 'Slow down, young one. Even mighty trees start as tiny seeds.',
+      done: 'Patience has rewarded your efforts.',
+    },
+  },
+  {
+    id: 'emberflare', name: 'Queen Emberflare', icon: '🔥', leader: true, role: 'Leader of Emberpeak Highlands',
+    region: 'emberpeak', species: 'Fire Puffle', voice: 'noble', about: 'Fierce, proud, protective.', companion: 'A {family} at your side, {name}? Then the mountain will behave.',
+    beats: {
+      greet: 'Show me your courage!',
+      challenge: 'True strength comes from protecting others.',
+    },
+  },
+  {
+    id: 'tidewhisk', name: 'Captain Tidewhisk', icon: '🌊', leader: true, role: 'Leader of Crystal Tide Coast',
+    region: 'crystaltide', species: 'Water Puffle', voice: 'kind', about: 'Steady, welcoming, salt-worn.', companion: '{name} keeps a steady tide. Do not lose that.',
+    beats: {
+      greet: 'Welcome, traveler. The tides have brought you here for a reason.',
+      done: 'Smooth sailing from here.',
+    },
+  },
+  {
+    id: 'aurorafrost', name: 'Lady Aurorafrost', icon: '❄️', leader: true, role: 'Leader of Aurora Glacier',
+    region: 'auroraglacier', species: 'Ice Puffle', voice: 'mysterious', about: 'Calm, precise, cold-voiced.', companion: 'Patience is a cold art. {name} is learning it.',
+    beats: {
+      greet: 'A calm mind sees what others miss.',
+      friend: 'Wisdom grows slowly, like ice crystals.',
+    },
+  },
+  {
+    id: 'stormbolt', name: 'Stormbolt Junior', icon: '⚡', leader: true, role: 'Leader of Thundercloud Heights',
+    region: 'thundercloud', species: 'Lightning Puffle', voice: 'cheerful', about: 'Fast-talking and always mid-race.', companion: 'Race you both to the ridge! {name} looks fast.',
+    beats: {
+      greet: 'Adventure waits for nobody!',
+      race: 'Ready, set, GO!',
+    },
+  },
+  {
+    id: 'breezetail', name: 'Breezetail', icon: '🌪️', leader: true, role: 'Leader of Whisperwind Plains',
+    region: 'whisperwind', species: 'Air Puffle', voice: 'playful', about: 'Light, curious, impossible to pin down.', companion: '{name} has the wind in their fur. I can tell.',
+    beats: {
+      greet: 'Have you ever chased a cloud?',
+      friend: 'Every breeze carries a new possibility.',
+    },
+  },
+  {
+    id: 'sunpetal', name: 'Sunpetal', icon: '☀️', leader: true, role: 'Leader of Celestial Meadows',
+    region: 'celestial', species: 'Light Puffle', voice: 'kind', about: 'Warm, hopeful, quietly certain.', companion: 'Keep {name} close. Some lights are meant to be shared.',
+    beats: {
+      greet: 'May today shine brightly for you.',
+      friend: 'Hope is the strongest light.',
+    },
+  },
+  {
+    id: 'umbrix', name: 'Umbrix', icon: '🌑', leader: true, role: 'Leader of Shadowveil Woods',
+    region: 'shadowveil', species: 'Shadow Puffle', voice: 'mysterious', about: 'Soft-spoken, watchful, kind under it.', companion: 'The dark does not frighten {name}. Good.',
+    beats: {
+      greet: 'Do not fear the shadows. Not all darkness is evil.',
+      friend: 'Thank you for seeing the good beneath the surface.',
+    },
+  },
+  {
+    id: 'prismatic', name: 'Princess Prismatic', icon: '💎', leader: true, role: 'Leader of Prism Caverns',
+    region: 'prismcaverns', species: 'Crystal Puffle', voice: 'creative', about: 'Bright, artistic, delighted by everything.', companion: '{name} has a facet I have not seen before. Lovely.',
+    beats: {
+      greet: 'Welcome to Prism Caverns, where every gem sparkles with possibility.',
+      friend: "Creativity is its own kind of magic.",
+    },
+  },
+  {
+    id: 'shadowwisp', name: 'Shadow Wisp', icon: '🌑', enemy: true, role: 'Hollow Eclipse', region: 'shadowveil', voice: 'mysterious', element: 'sp_shadow',
+    about: 'A shadow that only wanted to be seen.',
+    beats: { encounter: 'The Eclipse spreads...', defeated: 'Thank you... for freeing me...' },
+  },
+  {
+    id: 'cinderbeast', name: 'Cinder Beast', icon: '🔥', enemy: true, role: 'Hollow Eclipse', region: 'emberpeak', voice: 'brave', element: 'sp_fire',
+    about: 'A furnace wearing a temper.',
+    beats: { encounter: 'Burn... consume...', defeated: 'The fire feels warm again...' },
+  },
+  {
+    id: 'frostspecter', name: 'Frost Specter', icon: '❄️', enemy: true, role: 'Hollow Eclipse', region: 'auroraglacier', voice: 'mysterious', element: 'sp_ice',
+    about: 'A cold that forgot how to stop.',
+    beats: { encounter: 'Forever frozen...', defeated: 'The cold no longer controls me...' },
+  },
+  {
+    id: 'stormphantom', name: 'Storm Phantom', icon: '⚡', enemy: true, role: 'Hollow Eclipse', region: 'thundercloud', voice: 'cheerful', element: 'sp_lightning',
+    about: 'A storm with nowhere to put its noise.',
+    beats: { encounter: 'Chaos... chaos everywhere!', defeated: 'The storm has passed...' },
+  },
+];
+
+window.SPRITE_HOLLOW_FINAL_LINES = [
+  'You have crossed every biome, befriended every element, restored every heart, and protected every generation of Sprite Hollow.',
+  'The power that saved this world was never magic.',
+  'It was kindness.',
+  'Welcome home, Sprite Keeper.',
+];
+
+/* The leader who speaks for a scene, so a species page can quote its region. */
+window.voiceLeaderForScene = function voiceLeaderForScene(sceneKey) {
+  if (!sceneKey) return null;
+  return window.SPRITE_HOLLOW_VOICES.find((voice) => voice.leader && voice.region === sceneKey) || null;
+};
+
+window.voiceEnemiesForScene = function voiceEnemiesForScene(sceneKey) {
+  if (!sceneKey) return [];
+  return window.SPRITE_HOLLOW_VOICES.filter((voice) => voice.enemy && voice.region === sceneKey);
 };

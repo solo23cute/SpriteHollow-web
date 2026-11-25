@@ -67,6 +67,13 @@ function pufflePhotoText(value) {
     .replace(/"/g, '&quot;');
 }
 
+/* A Club Penguin puffle is photographed in its canon habitat, not the generic
+   Hollow label. One helper so the portrait SVG and the chip row agree. */
+function cpHabitatLabel(sprite, row) {
+  const profile = typeof cpPuffleProfileForSprite === 'function' ? cpPuffleProfileForSprite(sprite) : null;
+  return pufflePhotoText((profile && profile.habitat.label) || (row && row.habitatLabel) || 'Mosslight Hollow');
+}
+
 function pufflePhotoName(sprite) {
   return typeof displayName === 'function' ? displayName(sprite) : ((sprite && sprite.name) || 'Puffle');
 }
@@ -260,7 +267,7 @@ function pufflePhotoBuildSVG(sprite, options) {
     : { name: '', stars: 0, color: look.accent };
   const name = pufflePhotoText(pufflePhotoName(sprite));
   const family = pufflePhotoText(row ? row.name : 'Sprite Hollow Puffle');
-  const habitat = pufflePhotoText((row && row.habitatLabel) || 'Mosslight Hollow');
+  const habitat = cpHabitatLabel(sprite, row);
   const level = Math.max(1, Number(sprite.level) || 1);
   const bond = Math.max(0, Math.min(100, Math.round(Number(sprite.bond) || 0)));
   const stars = rarity && rarity.stars ? '★'.repeat(Math.min(8, rarity.stars)) : '';
@@ -414,7 +421,7 @@ function openPufflePhoto(sprite, options) {
         ${rarity ? `<span class="chip" style="border-color:${rarity.color}">${rarity.icon} ${esc(rarity.name)}</span>` : ''}
         <span class="chip">Lv ${Math.max(1, Number(sprite.level) || 1)}</span>
         <span class="chip">💗 ${Math.max(0, Math.min(100, Math.round(Number(sprite.bond) || 0)))} bond</span>
-        <span class="chip">${esc((row && row.habitatLabel) || 'Mosslight Hollow')}</span>
+        <span class="chip">${cpHabitatLabel(sprite, row)}</span>
         ${initialLook.accessory !== 'none' && typeof ACCESSORIES !== 'undefined' && ACCESSORIES[initialLook.accessory] ? `<span class="chip">${ACCESSORIES[initialLook.accessory].icon} ${esc(ACCESSORIES[initialLook.accessory].name)}</span>` : ''}
       </div>
       <div class="actions photo-actions">

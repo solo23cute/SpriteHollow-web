@@ -1,5 +1,14 @@
 /* Type Biome Atlas and the Secret Vault. */
 
+/* The region's leader speaks where the region itself is being chosen — the
+   travel atlas — rather than on a single puffle's collection profile. */
+function biomeLeaderQuote(sceneKey) {
+  const leader = typeof voiceLeaderForScene === 'function' ? voiceLeaderForScene(sceneKey) : null;
+  if (!leader) return '';
+  const line = (leader.beats && leader.beats.greet) || '';
+  return `<span class="biome-card-guardian">${leader.icon} ${esc(leader.name)} — “${esc(line)}”</span>`;
+}
+
 function extraBiomeCards(activeScene, focusScene = null) {
   if (typeof EXTRA_BIOME_KEYS === 'undefined') return '';
   return EXTRA_BIOME_KEYS.map((key) => {
@@ -16,7 +25,7 @@ function extraBiomeCards(activeScene, focusScene = null) {
       <span class="biome-card-art">${spriteSVG(sample, { expr: 'happy' })}</span>
       <b>${esc(scene.name)}</b>
       <span class="biome-card-meta">${(scene.species || []).length.toLocaleString()} species · +${Math.round((scene.bonus || 0.46) * 100)}% XP</span>
-      <span class="biome-card-guardian">Biome habitat</span>
+      ${biomeLeaderQuote(key) || '<span class="biome-card-guardian">Biome habitat</span>'}
     </button>`;
   }).join('');
 }
@@ -38,7 +47,7 @@ function exoticBiomeCards(activeScene, focusScene = null) {
       <span class="biome-card-art">${spriteSVG(sample, { expr: 'happy' })}</span>
       <b>${esc(scene.name)}</b>
       <span class="biome-card-meta">Hollow exotic · +${Math.round((scene.bonus || 0.55) * 100)}% XP</span>
-      <span class="biome-card-guardian">${esc(meta.name || 'Exotic')}’s own biome</span>
+      ${biomeLeaderQuote(key) || `<span class="biome-card-guardian">${esc(meta.name || 'Exotic')}’s own biome</span>`}
       ${typeof biomeQuestBadge === 'function' ? biomeQuestBadge(key) : ''}
     </button>`;
   }).join('');
@@ -58,7 +67,27 @@ function compassBiomeCard(sceneKey, activeScene) {
     <span class="biome-card-art">${spriteSVG(sample, { expr: 'happy' })}</span>
     <b>${esc(scene.name)}</b>
     <span class="biome-card-meta">${(scene.species || []).length.toLocaleString()} species · +${Math.round((scene.bonus || 0.46) * 100)}% XP</span>
-    <span class="biome-card-guardian">${esc(scene.habitat)}</span>
+    ${biomeLeaderQuote(sceneKey) || `<span class="biome-card-guardian">${esc(scene.habitat)}</span>`}
+  </button>`;
+}
+
+/* A Hollow region card carries its leader's greeting, so the region page is
+   where a leader speaks and a puffle's profile stays about the puffle. */
+function regionBiomeCard(sceneKey, activeScene) {
+  const scene = SCENES[sceneKey];
+  if (!scene) return '';
+  const tint = sceneTint(sceneKey);
+  const sampleKey = (scene.species || [])[0] || 'bloom';
+  const sample = {
+    id: `region-${sceneKey}`, element: sampleKey, breed: 'puff', stage: 'sprite',
+    palette: 'native', pattern: 'plain', accessory: 'none', name: scene.name, level: 3, size: 'standard',
+  };
+  return `<button class="biome-card ${activeScene === sceneKey ? 'on' : ''}" data-biome-travel="${sceneKey}" style="--biome:${tint.b1};--biome-deep:${tint.b2}">
+    <span class="biome-card-top"><span class="biome-icon">${scene.emoji}</span><span>${esc(scene.habitat)}</span></span>
+    <span class="biome-card-art">${spriteSVG(sample, { expr: 'happy' })}</span>
+    <b>${esc(scene.name)}</b>
+    <span class="biome-card-meta">${(scene.species || []).length.toLocaleString()} species · +${Math.round((scene.bonus || 0.46) * 100)}% XP</span>
+    ${biomeLeaderQuote(sceneKey)}
   </button>`;
 }
 
@@ -76,6 +105,8 @@ function openBiomeAtlas(focusScene = null) {
   const extraFocusCard = focusScene && SCENES[focusScene] && !listedScenes.has(focusScene)
     ? compassBiomeCard(focusScene, activeScene)
     : '';
+  const regionKeys = (typeof SCENE_KEYS !== 'undefined' ? SCENE_KEYS : [])
+    .filter((key) => SCENES[key] && typeof voiceLeaderForScene === 'function' && voiceLeaderForScene(key));
   const cards = BIOME_KEYS.map((type) => {
     const biome = TYPE_BIOMES[type];
     const palette = PDX_TYPES[type];
@@ -121,6 +152,8 @@ function openBiomeAtlas(focusScene = null) {
       </div>
       ${extraFocusCard ? `<div class="section-title" style="margin-top:14px"><h2>Compass habitat</h2><span>focused destination</span></div><div class="biome-grid">${extraFocusCard}</div>` : ''}
       <div class="biome-grid">${cards}</div>
+      <div class="section-title" style="margin-top:14px"><h2>🌍 Hollow regions</h2><span>${regionKeys.length} regions, each with a leader</span></div>
+      <div class="biome-grid">${regionKeys.map((key) => regionBiomeCard(key, activeScene)).join('')}</div>
       <div class="section-title" style="margin-top:14px"><h2>Biome habitats</h2><span>${typeof EXTRA_BIOME_KEYS !== 'undefined' ? EXTRA_BIOME_KEYS.length : 0} more built-in scenes</span></div>
       <div class="biome-grid">${extraBiomeCards(activeScene, focusScene)}</div>
       <div class="section-title" style="margin-top:14px"><h2>Hollow exotic biomes</h2><span>${typeof EXOTIC_BIOME_KEYS !== 'undefined' ? EXOTIC_BIOME_KEYS.length : 0} signature environments</span></div>

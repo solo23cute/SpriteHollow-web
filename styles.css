@@ -3010,6 +3010,25 @@ body.reduce-motion .scene-transition .st-motif { display: none; }
 .stage.event-starlight .event-wash { background: linear-gradient(180deg, rgba(143,182,255,.24), rgba(182,156,255,.18) 60%, transparent); }
 .stage.event-firstlight .event-wash { background: linear-gradient(180deg, rgba(255,209,102,.18), rgba(143,224,122,.22) 60%, rgba(143,224,122,.12)); }
 .event-chip { border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
+.tier-pin-panel:empty { display: none; }
+/* A pinned row carries three chips (Buy, Change, Clear). At phone width they
+   need their own line, or the species name they act on shrinks to an ellipsis. */
+.tier-pin-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 7px 9px; margin: 4px 0; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.12)); background: color-mix(in srgb, var(--gold) 7%, transparent); }
+.tier-pin-band { font-weight: 800; font-size: 12px; min-width: 84px; }
+.tier-pin-slot { flex: 1 1 160px; min-width: 0; font-size: 12px; opacity: .85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tier-pin-actions { display: flex; gap: 8px; margin-left: auto; }
+.pin-list { max-height: min(52vh, 420px); overflow-y: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.pin-species-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 9px 11px; border-radius: 11px; border: 1px solid var(--line, rgba(255,255,255,.1)); background: color-mix(in srgb, var(--gold) 5%, transparent); text-align: left; }
+.pin-species-row:active { transform: scale(.99); }
+.pin-species-name { font-weight: 700; font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.event-vigil-chip { border-color: color-mix(in srgb, var(--gold) 70%, transparent); background: color-mix(in srgb, var(--gold) 14%, transparent); font-weight: 800; }
+.event-vigil { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 10px 0 4px; }
+.event-vigil-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(320px, 78vw); }
+.vigil-mote { aspect-ratio: 1; display: grid; place-items: center; font-size: 26px; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--vigil, #8fb6ff) 32%, transparent); background: color-mix(in srgb, var(--vigil, #8fb6ff) 8%, transparent); opacity: .32; transition: opacity .14s ease, transform .14s ease, box-shadow .14s ease; }
+.vigil-mote.is-lit { opacity: 1; transform: scale(1.06); box-shadow: 0 0 20px color-mix(in srgb, var(--vigil-2, #b69cff) 55%, transparent); }
+.vigil-mote.is-hit { opacity: 1; transform: scale(.94); }
+.vigil-mote.is-miss { animation: vigil-miss .22s ease; }
+@keyframes vigil-miss { 50% { transform: translateX(-4px); } }
 /* Badge shelf: claimed event moments stay visible after the preset ends. */
 .event-shelf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 6px 0 2px; }
 .event-shelf-badge { position: relative; display: flex; align-items: center; gap: 6px; padding: 7px 8px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--line) 85%, transparent); background: rgba(255, 255, 255, .02); min-width: 0; }
@@ -3031,6 +3050,25 @@ body.reduce-motion .scene-transition .st-motif { display: none; }
 .ap-tier-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; }
 .ap-tier-head h3 { margin: 0; font-size: 13px; }
 .ap-tier-head span { font-size: 10px; color: var(--muted); }
+/* Mythical Puffle roster: same card language as the Animal Puffle
+   encyclopedia, one card per creature instead of a three-stage line. */
+.mp-legend-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
+.mp-legend { font-size: 10px; padding: 2px 8px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--mp-aura) 45%, var(--line)); color: var(--text); }
+.mp-group { margin: 14px 0 2px; }
+.mp-group-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 2px; }
+.mp-group-head h3 { font-size: 14px; line-height: 1.25; }
+.mp-group-head span { font-size: 10px; color: var(--muted); }
+.mp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.mp-card { padding: 10px 11px; border-radius: 14px; display: grid; gap: 6px; border: 1px solid color-mix(in srgb, var(--mp-aura) 45%, var(--line)); background: linear-gradient(165deg, color-mix(in srgb, var(--mp-aura) 12%, transparent), rgba(255, 255, 255, 0.02)); }
+.mp-head { display: flex; align-items: center; gap: 8px; }
+.mp-orb { width: 38px; height: 38px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; font-size: 16px; border: 1px solid color-mix(in srgb, var(--mp-aura) 62%, transparent); background: radial-gradient(circle at 35% 25%, #fff, color-mix(in srgb, var(--mp-aura) 45%, transparent)); box-shadow: 0 0 12px color-mix(in srgb, var(--mp-glow) 55%, transparent); }
+.mp-head-copy { display: grid; gap: 1px; min-width: 0; }
+.mp-name { font-size: 12.5px; line-height: 1.25; }
+.mp-habitat { font-size: 9.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.mp-powers { display: flex; flex-wrap: wrap; gap: 4px; }
+.mp-power { font-size: 9px; padding: 2px 7px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--mp-aura) 34%, var(--line)); background: color-mix(in srgb, var(--mp-aura) 14%, transparent); }
+.mp-design { margin: 0; font-size: 10.5px; line-height: 1.5; color: var(--muted); }
+
 .ap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
 .ap-card { position: relative; padding: 10px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--ap-aura) 45%, var(--line)); background: linear-gradient(165deg, color-mix(in srgb, var(--ap-aura) 12%, transparent), rgba(255, 255, 255, 0.02)); }
 .ap-card::after { content: ''; position: absolute; inset: 0; border-radius: 14px; box-shadow: 0 0 18px color-mix(in srgb, var(--ap-glow) 30%, transparent); pointer-events: none; }
@@ -3038,18 +3076,11 @@ body.reduce-motion .scene-transition .st-motif { display: none; }
 /* Every guardian portrait is the same round puffball frame. Family identity
    comes from the outline and the face marks, never a shaped crop. */
 .ap-portrait { position: relative; width: 72px; height: 72px; flex: 0 0 auto; border-radius: 50%; overflow: hidden; border: 1px solid color-mix(in srgb, var(--ap-aura) 62%, transparent); background: radial-gradient(circle at 35% 25%, #fff, color-mix(in srgb, var(--ap-aura) 42%, transparent)); box-shadow: 0 0 13px color-mix(in srgb, var(--ap-glow) 60%, transparent); }
-/* Families sharing one kit draw their own round-puffball outline behind and a
-   traced copy over the same art: ears, crest, wings and tail stay legible even
-   when the bitmap and the hue are close. */
-.ap-portrait-silhouette, .ap-portrait-trace { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ap-portrait-silhouette { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ap-portrait-silhouette { z-index: 0; color: color-mix(in srgb, var(--ap-aura) 70%, #fff 30%); opacity: .95; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--ap-glow, var(--ap-aura)) 80%, transparent)) drop-shadow(0 0 11px color-mix(in srgb, var(--ap-aura) 45%, transparent)); }
-.ap-portrait-trace { z-index: 3; color: color-mix(in srgb, var(--ap-aura) 76%, #fff 24%); opacity: .72; pointer-events: none; }
-.ap-portrait-trace g { fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linejoin: round; stroke-linecap: round; }
-.ap-portrait-art { z-index: 1; position: absolute; inset: 0; background-image: var(--ap-src); background-repeat: no-repeat; background-size: 600% 1800%; background-position: 0 0; transform: scale(.78); transform-origin: 50% 58%; filter: var(--ap-filter, hue-rotate(var(--ap-hue, 0deg)) saturate(var(--ap-sat, 1)) brightness(var(--ap-bright, 1))) drop-shadow(0 2px 3px rgba(0, 0, 0, .35)); }
-/* Family marks are drawn in the same 128 cell as the kit face, so the shared
-   painted eyes and muzzle stay put while each cosmic family gains its own
-   forehead, cheek and brow signature. */
-.ap-portrait-face { z-index: 2; position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(.78); transform-origin: 50% 58%; pointer-events: none; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .38)); }
+/* Portraits are the live game's own puffle body, so the art is a real SVG in the
+   shared 120-unit sprite space instead of a cropped kit bitmap. */
+.ap-puffle-art { z-index: 1; position: absolute; inset: 0; width: 100%; height: 100%; display: block; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .35)); }
 .ap-portrait-tag { z-index: 4; position: absolute; left: 0; right: 0; bottom: 1px; padding: 1px 0 2px; text-align: center; font-size: 5.5px; font-weight: 900; letter-spacing: .1em; color: var(--ap-aura); background: linear-gradient(180deg, transparent, rgba(8, 9, 15, .82) 45%); }
 .ap-family { min-width: 0; }
 .ap-family b { display: block; font-size: 12px; }
@@ -3058,12 +3089,10 @@ body.reduce-motion .scene-transition .st-motif { display: none; }
 .ap-stage { display: flex; gap: 6px; align-items: center; font-size: 10.5px; color: var(--muted); }
 .ap-stage.is-guardian { color: var(--text); font-weight: 700; }
 .ap-orb { width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; font-size: 8px; flex: 0 0 auto; border: 1px solid color-mix(in srgb, var(--ap-aura) 60%, transparent); color: var(--ap-aura); }
-.ap-orb-art { width: 18px; height: 18px; background-image: var(--ap-src); background-repeat: no-repeat; background-size: 600% 1800%; background-position: 0 0; background-color: #0e1018; filter: var(--ap-filter, hue-rotate(var(--ap-hue, 0deg)) saturate(var(--ap-sat, 1)) brightness(var(--ap-bright, 1))); }
 /* Stage medallions carry the same family silhouette as the guardian portrait,
    so the baby and sprite rows already outline the shape the guardian grows into. */
 .ap-orb-slot { position: relative; width: 18px; height: 18px; flex: 0 0 auto; display: grid; place-items: center; }
-.ap-orb-slot .ap-orb { width: 18px; height: 18px; position: relative; z-index: 1; }
-.ap-orb-sil { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); z-index: 0; color: color-mix(in srgb, var(--ap-aura) 60%, transparent); opacity: .7; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ap-glow, var(--ap-aura)) 70%, transparent)); pointer-events: none; }
+.ap-orb-slot .ap-puffle-art { inset: -3px; width: calc(100% + 6px); height: calc(100% + 6px); }
 .ap-note { font-size: 9.5px; color: var(--muted); margin: 0 0 6px; line-height: 1.45; }
 .ap-effect { font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ap-aura); }
 @media (max-width: 520px) { .ap-grid { grid-template-columns: 1fr 1fr; } .ap-stage { font-size: 9.5px; } }
@@ -3310,6 +3339,14 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.001ms !important;
+}
+
+/* A 320x720 phone has room for the stage's own 170px floor but not for the
+   200px wrapper floor on top of the care dock: the dock landed 25px under the
+   tab bar and had to be scrolled into view. Match the wrapper to the stage it
+   holds on these short, narrow screens. */
+@media (max-width: 360px) and (max-height: 760px) {
+  .stage-wrap { min-height: 170px; }
 }
 
 @media (max-width: 360px) {
@@ -6082,7 +6119,7 @@ body.reduce-motion .overlay.overlay-evo .evo-seq.is-morph .evo-seq-new { animati
 }
 @media (prefers-reduced-motion: reduce) {
   .sprite-motion, .starlit-wings, .starlit-crest, .starlit-sparkle, .starlit-fluff, .fur-coat, .puff-tufts, .puff-motes circle,
-  .fluff-shed, .sleep-props, .nap-blanket, .nap-z, .ultra-tail, .ultra-tail-tip, .tail-puff, .tail-heart, .tail-heart-core, .tail-blush ellipse, .ultra-forelock, .puff-magic,
+  .fluff-shed, .sleep-props, .nap-blanket, .nap-z, .care-prop, .care-prop *, .ultra-tail, .ultra-tail-tip, .tail-puff, .tail-heart, .tail-heart-core, .tail-blush ellipse, .ultra-forelock, .puff-magic,
   .dream-trail .dream-star, .dream-trail .trail-line, .constellation-dot { animation: none !important; }
 }
 
@@ -6105,6 +6142,87 @@ body.reduce-motion .overlay.overlay-evo .evo-seq.is-morph .evo-seq-new { animati
   100% { transform: rotate(0deg); }
 }
 
+/* ---------- per-sprite care animation identity ---------- */
+/* data-anim names the state and the inline custom properties carry this
+   sprite's own tempo, amplitude and lean, so two pets of one breed still move
+   differently. These rules outrank .motion-* so a state (sleep, walk, run,
+   drink, eat) replaces the idle cycle instead of layering on it. */
+svg.sprite-motion[data-anim] {
+  animation-duration: var(--anim-dur, 3.6s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+svg.sprite-motion[data-anim="idle"] { animation-name: spriteAnimIdle; }
+svg.sprite-motion[data-anim="sleep"] { animation-name: spriteAnimSleep; }
+svg.sprite-motion[data-anim="walk"] { animation-name: spriteAnimWalk; }
+svg.sprite-motion[data-anim="run"] { animation-name: spriteAnimRun; }
+svg.sprite-motion[data-anim="drink"] { animation-name: spriteAnimDrink; }
+svg.sprite-motion[data-anim="eat"] { animation-name: spriteAnimEat; }
+
+@keyframes spriteAnimIdle {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+  38% { transform: translateY(calc(-1 * var(--anim-lift, 4px))) rotate(var(--anim-tilt, 2deg)) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+  62% { transform: translateY(calc(-0.55 * var(--anim-lift, 4px))) rotate(calc(-0.4 * var(--anim-tilt, 2deg))) scale(calc(1 - var(--anim-squash, .02)), calc(1 + var(--anim-squash, .02))); }
+}
+@keyframes spriteAnimSleep {
+  0%, 100% { transform: translateY(var(--anim-drop, 2px)) translateX(calc(-0.4 * var(--anim-sway, 2px))) rotate(calc(-6deg + var(--anim-lean, 0deg))) scale(1, .995); }
+  50% { transform: translateY(calc(var(--anim-drop, 2px) + 1.6px)) translateX(var(--anim-sway, 2px)) rotate(calc(-6deg + var(--anim-lean, 0deg))) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+}
+@keyframes spriteAnimWalk {
+  0%, 100% { transform: translateY(0) rotate(var(--anim-lean, 0deg)) scale(1, 1); }
+  25% { transform: translateY(calc(-0.6 * var(--anim-lift, 4px))) rotate(calc(var(--anim-lean, 0deg) + 1.6deg)) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+  50% { transform: translateY(0) rotate(var(--anim-lean, 0deg)) scale(calc(1 - var(--anim-squash, .02)), calc(1 + var(--anim-squash, .02))); }
+  75% { transform: translateY(calc(-0.6 * var(--anim-lift, 4px))) rotate(calc(var(--anim-lean, 0deg) - 1.6deg)) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+}
+@keyframes spriteAnimRun {
+  0%, 100% { transform: translateY(0) translateX(0) rotate(calc(var(--anim-lean, 0deg) + 2deg)) scale(1, 1); }
+  30% { transform: translateY(calc(-1.1 * var(--anim-lift, 4px))) translateX(calc(0.5 * var(--anim-sway, 2px))) rotate(calc(var(--anim-lean, 0deg) + 4deg)) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+  60% { transform: translateY(0) translateX(0) rotate(calc(var(--anim-lean, 0deg) + 2deg)) scale(calc(1 - var(--anim-squash, .02)), calc(1 + var(--anim-squash, .02))); }
+  85% { transform: translateY(calc(-0.5 * var(--anim-lift, 4px))) translateX(calc(-0.3 * var(--anim-sway, 2px))) rotate(calc(var(--anim-lean, 0deg) + 3deg)); }
+}
+@keyframes spriteAnimDrink {
+  0%, 100% { transform: translateY(0) rotate(var(--anim-lean, 0deg)) scale(1, 1); }
+  35% { transform: translateY(calc(-0.35 * var(--anim-lift, 4px))) rotate(calc(var(--anim-lean, 0deg) - 3.5deg)) scale(1.01, .99); }
+  55% { transform: translateY(0) rotate(calc(var(--anim-lean, 0deg) - 1.5deg)) scale(.995, 1.005); }
+}
+@keyframes spriteAnimEat {
+  0%, 100% { transform: translateY(0) rotate(var(--anim-lean, 0deg)) scale(1, 1); }
+  20% { transform: translateY(calc(-0.2 * var(--anim-lift, 4px))) rotate(calc(var(--anim-lean, 0deg) + 1.5deg)) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+  40% { transform: translateY(0) rotate(calc(var(--anim-lean, 0deg) - 1deg)) scale(calc(1 - var(--anim-squash, .02)), calc(1 + var(--anim-squash, .02))); }
+  60% { transform: translateY(calc(-0.15 * var(--anim-lift, 4px))) rotate(calc(var(--anim-lean, 0deg) + 1deg)) scale(calc(1 + var(--anim-squash, .02)), calc(1 - var(--anim-squash, .02))); }
+}
+
+/* Care props ride along with their state: a blanket and Zs while asleep,
+   crumbs or sparkles while eating, a cup or fizz while drinking. */
+.care-prop { opacity: 0; transition: opacity .18s ease; }
+svg.sprite-motion[data-anim="sleep"] .care-prop-sleep,
+svg.sprite-motion[data-anim="eat"] .care-prop-eat,
+svg.sprite-motion[data-anim="drink"] .care-prop-drink { opacity: 1; }
+.care-z1 { animation: careZ 3.4s ease-in-out infinite; }
+.care-z2 { animation: careZ 3.4s ease-in-out .9s infinite; }
+.care-z3 { animation: careZ 4.2s ease-in-out .4s infinite; }
+.care-crumbs circle { animation: careCrumb 1.6s ease-out infinite; }
+.care-crumbs circle:nth-child(2) { animation-delay: .35s; }
+.care-crumbs circle:nth-child(3) { animation-delay: .7s; }
+.care-spark, .care-hearts, .care-bubble, .care-fizz { animation: careTwinkle 2.4s ease-in-out infinite; }
+.care-fizz circle { animation: careCrumb 1.9s ease-out infinite; }
+.care-fizz circle:nth-child(2) { animation-delay: .4s; }
+.care-fizz circle:nth-child(3) { animation-delay: .8s; }
+@keyframes careZ {
+  0% { opacity: 0; transform: translateY(3px); }
+  25% { opacity: .9; }
+  100% { opacity: 0; transform: translateY(-9px); }
+}
+@keyframes careCrumb {
+  0% { opacity: 0; transform: translateY(0); }
+  30% { opacity: .8; }
+  100% { opacity: 0; transform: translateY(6px); }
+}
+@keyframes careTwinkle {
+  0%, 100% { opacity: .55; transform: scale(.94); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
 /* ---------- dye wheel hex field ---------- */
 .wheel-hex { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 10.5px; color: var(--muted); }
 .wheel-hex > span { flex: 0 0 auto; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
@@ -6121,6 +6239,8 @@ body.reduce-motion .overlay.overlay-evo .evo-seq.is-morph .evo-seq-new { animati
    leaving gameplay animation (games, evolutions) untouched. */
 .reduce-motion .sprite-motion,
 .reduce-motion .sprite-motion *,
+.reduce-motion .care-prop,
+.reduce-motion .care-prop *,
 .reduce-motion .starlit-wings, .reduce-motion .starlit-crest,
 .reduce-motion .starlit-sparkle, .reduce-motion .starlit-fluff,
 .reduce-motion .puff-motes circle,
@@ -8854,3 +8974,18 @@ html.reduce-motion .med-marker { animation-duration: 2.8s; }
   .hsb-copy b { font-size: 13px; }
   .hsb-copy small { font-size: 8px; }
 }
+
+/* Puffle Hotel: in-residence desk and room-service courses. */
+.hotel-stay-card { display: grid; gap: 8px; }
+.hotel-stay-row { display: flex; gap: 9px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
+.hotel-stay-row:first-of-type { border-top: 0; }
+.hotel-stay-art { width: 52px; flex: none; }
+.hotel-stay-art svg { width: 52px; height: 52px; }
+.hotel-stay-copy { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.hotel-stay-copy small { font-size: 9.5px; color: var(--muted); }
+.hotel-stay-needs { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; margin-top: 3px; }
+.hotel-stay-needs .hotel-stat { font-size: 9px; }
+.hotel-course-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; }
+.hotel-course-tabs::-webkit-scrollbar { display: none; }
+.hotel-course-tab { flex: none; padding: 7px 11px; border-radius: 99px; border: 1px solid rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .05); color: var(--muted); font: inherit; font-size: 10px; font-weight: 700; cursor: pointer; }
+.hotel-course-tab.on { color: #111; background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 68%, var(--accent))); border-color: transparent; }

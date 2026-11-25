@@ -123,7 +123,7 @@ function openWalkGame(kind) {
       <div style="position:absolute;left:9%;bottom:9%;font-size:13px;opacity:.7">🌱</div>
       <div style="position:absolute;left:38%;bottom:9%;font-size:13px;opacity:.7">🌿</div>
       <div style="position:absolute;left:68%;bottom:9%;font-size:13px;opacity:.7">🌼</div>
-      <div data-walk-pet style="position:absolute;left:6%;bottom:12%;width:82px;height:82px;transition:left .28s ease;filter:drop-shadow(0 8px 12px rgba(0,0,0,.3))">${spriteSVG(s, { expr: 'happy' })}</div>
+      <div data-walk-pet style="position:absolute;left:6%;bottom:12%;width:82px;height:82px;transition:left .28s ease;filter:drop-shadow(0 8px 12px rgba(0,0,0,.3))">${spriteSVG(s, { expr: 'happy', anim: 'walk' })}</div>
       <div data-walk-targets style="position:absolute;inset:0"></div>
       <div style="position:absolute;left:10px;right:10px;bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:7px 9px;border-radius:12px;background:rgba(8,12,24,.52);backdrop-filter:blur(8px)">
         <b data-walk-message style="font-size:10.5px;line-height:1.35;flex:1">Tap pawprints, coins, and gifts. Puddles trip you.</b>

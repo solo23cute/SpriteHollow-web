@@ -44,10 +44,95 @@ function homeViewWikiBody() {
     <div class="wiki-footnote">Home and Decor mode are cosmetic. Furniture spots, tints and presets never change XP, bond, rarity, or a sprite's species.</div>`;
 }
 
+/* Quests, enemies, bosses, loot and achievements, printed from the same tables
+   the quest engine and the reward tiers read. */
+function adventureWikiBody() {
+  const quests = typeof SPRITE_HOLLOW_QUESTS !== 'undefined' ? SPRITE_HOLLOW_QUESTS : [];
+  const enemies = typeof SPRITE_HOLLOW_ENEMIES !== 'undefined' ? SPRITE_HOLLOW_ENEMIES : [];
+  const bosses = typeof SPRITE_HOLLOW_BOSSES !== 'undefined' ? SPRITE_HOLLOW_BOSSES : [];
+  const loot = typeof SPRITE_HOLLOW_LOOT_TIERS !== 'undefined' ? SPRITE_HOLLOW_LOOT_TIERS : [];
+  const achievements = typeof SPRITE_HOLLOW_ACHIEVEMENTS !== 'undefined' ? SPRITE_HOLLOW_ACHIEVEMENTS : [];
+  const sceneName = (key) => (typeof SCENES !== 'undefined' && SCENES[key] ? `${SCENES[key].emoji} ${esc(SCENES[key].name)}` : esc(key));
+  const chip = (text) => `<span class="chip">${esc(text)}</span>`;
+  const tiers = ['Beginner', 'Explorer', 'Guardian'];
+  const questBlocks = tiers.map((tier) => {
+    const rows = quests.filter((quest) => quest.tier === tier);
+    if (!rows.length) return '';
+    return `<h3>${tier} quests · ${rows.length}</h3>` + rows.map((quest) => `<div class="wiki-quest"><p><b>${quest.icon} ${esc(quest.title)}</b> — ${esc(quest.giver)} · ${sceneName(quest.region)}</p>
+      <p class="tiny muted">${quest.objectives.map((objective) => esc(objective)).join(' · ')}</p>
+      <p>${quest.rewards.map(chip).join('')}</p></div>`).join('');
+  }).join('');
+  const enemyRows = enemies.map((enemy) => `<div class="wiki-quest"><p><b>${enemy.icon} ${esc(enemy.name)}</b> · ${sceneName(enemy.region)}</p>
+    <p class="tiny muted">${esc(enemy.about)}</p>
+    <p class="tiny muted">Abilities: ${enemy.abilities.map((ability) => esc(ability)).join(' · ')}</p>
+    <p>${enemy.drops.map(chip).join('')}</p></div>`).join('');
+  const bossRows = bosses.map((boss) => boss.final
+    ? `<div class="wiki-quest"><p><b>${boss.icon} ${esc(boss.name)}</b> · ${sceneName(boss.region)} · final raid</p>
+        <p class="tiny muted">${esc(boss.about)}</p>
+        <p class="tiny muted">Phases: ${boss.phases.map((phase) => esc(phase)).join(' · ')}</p>
+        <p class="tiny muted">${esc(boss.battle)}</p>
+        <p>${boss.rewards.map(chip).join('')}</p></div>`
+    : `<div class="wiki-quest"><p><b>${boss.icon} ${esc(boss.name)}</b> · ${esc(boss.location)} · ${sceneName(boss.region)}</p>
+        <p>${boss.rewards.map(chip).join('')}</p></div>`).join('');
+  const lootRows = loot.map((tier) => `<div class="wiki-quest"><p><b>${tier.icon} ${esc(tier.name)} loot</b></p><p>${tier.items.map((item) => chip(item)).join('')}</p></div>`).join('');
+  return `<p class="wiki-lede">Sprite Hollow runs on three kinds of adventure: <b>${quests.length} named quests</b> spread across the regions, <b>${enemies.length} corrupted enemies</b> that can be purified, and <b>${bosses.length} bosses</b> guarding the deepest places. Every region quest is live as a three-step chain on its region page.</p>
+    <p>Enemies are not the point. A purified creature goes back to its biome, so a region's roster grows instead of thinning. Loot follows the seven rarity rungs, and achievements mark the long road to the Omnitype.</p>
+    ${questBlocks}
+    <h3>👾 Enemies · ${enemies.length}</h3>
+    ${enemyRows}
+    <h3>👑 Bosses · ${bosses.length}</h3>
+    ${bossRows}
+    <h3>📦 Loot tiers</h3>
+    ${lootRows}
+    <h3>🏆 Achievements · ${achievements.length}</h3>
+    <p>${achievements.map((achievement) => `<span class="chip">${achievement.icon} ${esc(achievement.name)}</span>`).join('')}</p>
+    <div class="wiki-footnote">Region quests advance one step at a time by travelling, playing and caring where the step asks. Boss and enemy tables are the canonical names, abilities and drops for the endgame arc.</div>`;
+}
+
+/* Every speaking voice, the traits and families that pick it, and the named cast
+   of leaders and Hollow Eclipse enemies — printed from the live tables. */
+function voicesWikiBody() {
+  const voices = typeof window.PUFFLE_VOICE_TYPES !== 'undefined' ? window.PUFFLE_VOICE_TYPES : {};
+  const traitMap = window.PUFFLE_VOICE_BY_TRAIT || {};
+  const familyMap = window.PUFFLE_VOICE_FAMILIES || {};
+  const cast = Array.isArray(window.SPRITE_HOLLOW_VOICES) ? window.SPRITE_HOLLOW_VOICES : [];
+  /* Chatting with a puffle records its role voice, so the eight voices are a
+     collection goal in their own right. */
+  const heard = typeof state !== 'undefined' && state.stats && state.stats.voiceHeard && typeof state.stats.voiceHeard === 'object'
+    ? state.stats.voiceHeard
+    : {};
+  const heardKeys = Object.keys(voices).filter((key) => heard[key]);
+  const sceneName = (key) => (typeof SCENES !== 'undefined' && SCENES[key] ? `${SCENES[key].emoji} ${esc(SCENES[key].name)}` : esc(key));
+  const voiceRows = Object.keys(voices).map((key) => {
+    const voice = voices[key];
+    const traits = Object.keys(traitMap).filter((trait) => traitMap[trait] === key);
+    const families = Object.keys(familyMap).filter((family) => familyMap[family] === key);
+    const says = (beat) => (voice.lines && voice.lines[beat] && voice.lines[beat][0]) || '';
+    const heardMark = heard[key]
+      ? ' <span style="color:var(--accent);font-weight:800">✓ heard</span>'
+      : ' <span class="muted">not heard yet</span>';
+    return `<div class="wiki-quest"><p><b>${voice.icon} ${esc(voice.name)}</b>${traits.length ? ` — traits: ${traits.map(esc).join(', ')}` : ''}${families.length ? ` · families: ${families.map(esc).join(', ')}` : ''}${heardMark}</p>
+      <p class="tiny muted">Greets: “${esc(says('greet'))}”</p>
+      <p class="tiny muted">On a quest: “${esc(says('quest'))}”</p></div>`;
+  }).join('');
+  const leaders = cast.filter((entry) => entry.leader).map((entry) => `<div class="wiki-quest"><p><b>${entry.icon} ${esc(entry.name)}</b> · ${sceneName(entry.region)}</p><p class="tiny muted">“${esc(entry.beats.greet)}”</p></div>`).join('');
+  const enemies = cast.filter((entry) => entry.enemy).map((entry) => `<div class="wiki-quest"><p><b>${entry.icon} ${esc(entry.name)}</b> · ${esc(entry.role || 'Hollow Eclipse')} · ${sceneName(entry.region)}</p><p class="tiny muted">${esc(entry.about || '')}</p><p class="tiny muted">“${esc(entry.beats.encounter)}” → “${esc(entry.beats.defeated || '')}”</p></div>`).join('');
+  return `<p class="wiki-lede">Every puffle speaks in one of <b>${Object.keys(voices).length} role voices</b>, chosen by its rolled traits or its family. The same voice answers in chat, on the idle tick, on a quest, and in a guardian bout — and the region leaders and Hollow Eclipse enemies speak on their own regions. Chat with a puffle to hear its voice: <b>${heardKeys.length} of ${Object.keys(voices).length}</b> have spoken so far.</p>
+    <h3>🗣️ Voices · ${heardKeys.length} of ${Object.keys(voices).length} heard</h3>
+    ${voiceRows}
+    <h3>👑 Region leaders · ${cast.filter((entry) => entry.leader).length}</h3>
+    ${leaders}
+    <h3>🌑 Hollow Eclipse enemies · ${cast.filter((entry) => entry.enemy).length}</h3>
+    ${enemies}
+    <div class="wiki-footnote">Voices answer greetings, idle chatter, affection, agreement and quest questions in chat, and a puffle picks a conversation back up from the last thing you asked it. Once bond reaches Close Friend it starts saying how it feels about you, and every rung you cross is announced. Leaders greet you in their region and close their quest line; enemies speak on their region's quest card and in that region's guardian bout.</div>`;
+}
+
 if (typeof WIKI_GUIDES !== 'undefined') {
   WIKI_GUIDES.push(
     { id: 'gta', icon: '🚗', title: 'Grand Theft Auto districts', summary: 'Every GTA group, district home, gene, and named hybrid.', body: gtaWaveBody },
     { id: 'homes', icon: '🪟', title: 'Homes, Hollow & biomes', summary: 'How the at-home roster, the shared Hollow, and the biome windows work.', body: homesWikiBody },
     { id: 'homeview', icon: '🏡', title: 'Home View & Decor mode', summary: 'Walk into your room, move furniture in place, and tune a shared house tint and Stage.', body: homeViewWikiBody },
+    { id: 'voices', icon: '🗣️', title: 'Voices & cast', summary: 'The eight role voices, what picks them, and every region leader and Hollow Eclipse enemy.', body: voicesWikiBody },
+    { id: 'adventure', icon: '⚔️', title: 'Quests, enemies & rewards', summary: 'Every region quest, the corrupted enemies and bosses, loot tiers and achievements.', body: adventureWikiBody },
   );
 }

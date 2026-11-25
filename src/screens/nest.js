@@ -6,8 +6,8 @@
    focus until the player clears the pin. */
 const NEST_FOCUS_KEY = 'sprite-hollow.nest-focus.v1';
 /* A 'base' focus means the species' ordinary band egg rather than an apex
-   premium egg, so one deep link can point at either the plain card or a
-   Celestial/Divine/Eternal one. */
+   premium egg, so one deep link can point at either the plain card or an
+   apex-rank one. */
 const BASE_EGG_FOCUS_RANK = 'base';
 const TYPE_EGG_STARTER_PATH = ['normal', 'splash', 'rock', 'mushroom', 'snow', 'pc_breeze', 'evo_spark', 'pa_shadow_dusky_puffle'];
 /* The type shelf's Owned badge and filter mean a species has a hatched,
@@ -293,6 +293,7 @@ function nestScreen(root) {
     <div class="section-title" style="margin-top:14px"><h2>Tier eggs</h2><span>all ${RARITY_TIER_ORDER.length} tiers</span></div>
     <p class="tiny muted" style="margin:0 2px 8px">Every rank of the ladder, Common → Eternal. A tier egg hatches a random type raised to exactly that rank.</p>
     <div id="nest-tier-shop" class="tier-egg-grid"></div>
+    <div id="nest-tier-pins" class="tier-pin-panel" data-tier-pins></div>
     <div id="nest-eggs" style="margin-top:14px"></div>
     <div class="section-title"><h2>Merge sprites &amp; eggs</h2><span>genes, colors &amp; new breeds</span></div>
     <div id="nest-merge"></div>
@@ -870,13 +871,30 @@ function nestScreen(root) {
   function paintTierShop() {
     const box = root.querySelector('#nest-tier-shop');
     if (!box) return;
+    const owned = new Set(state.sprites.map((sprite) => sprite.element).filter(Boolean));
     box.innerHTML = RARITY_TIER_ORDER.map((key) => {
       const meta = TIER_EGG_META[key];
       const tier = TYPE_EGG_RARITIES[key];
-      const affordable = state.coins >= meta.price;
-      return `<button class="tier-egg-card${tier.animated ? ' animated-rarity' : ''}" data-buy-tier="${key}" style="--tier:${tier.color};--tier-gradient:${tier.gradient || tier.color};--tier-glow:${tier.frameGlow || tier.color};--sh-rim-a:${tier.color};--sh-rim-b:var(--gold);--sh-rim-c:var(--sh-frame-b, var(--accent-2))" ${affordable ? '' : 'disabled'} title="${tier.eggName || `${tier.name} egg`} — ${meta.desc}">
+      const pool = typeof tierEggBandPool === 'function' ? tierEggBandPool(key) : [];
+      const soldOut = pool.length === 0;
+      const pinnedKey = typeof bandPinFor === 'function' ? bandPinFor(key) : null;
+      const windowPool = typeof tierEggFeaturedPool === 'function' ? tierEggFeaturedPool(key, new Date(), pinnedKey) : pool;
+      const pinnedLabel = pinnedKey && windowPool.length < pool.length && ELEMENTS[pinnedKey]
+        ? ` · 📌 ${esc(ELEMENTS[pinnedKey].name)}` : '';
+      const rotating = windowPool.length < pool.length;
+      const left = windowPool.reduce((count, member) => count + (owned.has(member) ? 0 : 1), 0);
+      /* An empty band is a content bug the gate catches before it ships, so the
+         card only has to say so; buying it refuses without charging. */
+      const disabled = soldOut || state.coins < meta.price ? ' disabled' : '';
+      const windowLabel = rotating ? 'Featured · ' : '';
+      const label = soldOut ? 'No species yet'
+        : `${windowLabel}${meta.price.toLocaleString()} 🪙 · ${left ? `${left} of ${windowPool.length} ${rotating ? 'featured today' : 'still unowned'}` : `${rotating ? 'window complete' : 'band complete'} · dupes only`}${pinnedLabel}`;
+      const hint = soldOut
+        ? `No species owns ${tier.name} rank yet`
+        : `${tier.eggName || `${tier.name} egg`} — ${meta.desc} · any of ${pool.length} ${tier.name} species`;
+      return `<button class="tier-egg-card${tier.animated ? ' animated-rarity' : ''}" data-buy-tier="${key}" style="--tier:${tier.color};--tier-gradient:${tier.gradient || tier.color};--tier-glow:${tier.frameGlow || tier.color};--sh-rim-a:${tier.color};--sh-rim-b:var(--gold);--sh-rim-c:var(--sh-frame-b, var(--accent-2))" ${disabled} title="${hint}">
         <span class="tegg-art">${tierEggArt(key, tier)}</span>
-        <span class="tegg-copy"><b>${tier.name}</b><span>${meta.price.toLocaleString()} 🪙</span></span>
+        <span class="tegg-copy"><b>${tier.name}</b><span>${label}</span></span>
       </button>`;
     }).join('');
     box.querySelectorAll('[data-buy-tier]').forEach((btn) => {
@@ -890,6 +908,111 @@ function nestScreen(root) {
           `A ${name} tier egg joined the Nest!`,
         );
       });
+    });
+    paintTierPins();
+  }
+
+  /* A pinned species is in its band's window every day, so the one Secret you
+     want does not wait out a 118-day rotation. The window keeps its slots, so
+     the ceiling on a named species does not move. */
+  function paintTierPins() {
+    const box = root.querySelector('#nest-tier-pins');
+    if (!box) return;
+    const owned = new Set(state.sprites.map((sprite) => sprite.element).filter(Boolean));
+    const rows = RARITY_TIER_ORDER.map((key) => {
+      const pool = typeof tierEggBandPool === 'function' ? tierEggBandPool(key) : [];
+      if (pool.length <= 1) return '';
+      const plain = typeof tierEggFeaturedPool === 'function' ? tierEggFeaturedPool(key, new Date(), null) : pool;
+      if (plain.length >= pool.length) return '';
+      const pinned = typeof bandPinFor === 'function' ? bandPinFor(key) : null;
+      const pinName = pinned && ELEMENTS[pinned] ? ELEMENTS[pinned].name : '';
+      /* On sale is not the same as yours: the window draw is uniform, so the
+         pinned species can also be bought outright for what rolling what is
+         left of the window averages, which falls as the band fills. */
+      const namedPrice = pinned && !owned.has(pinned) ? tierBandNamedPrice(key) : 0;
+      return `<div class="tier-pin-row" data-pin-band="${key}">
+        <span class="tier-pin-band">${esc(TYPE_EGG_RARITIES[key].name)}</span>
+        <span class="tier-pin-slot">${pinned ? `📌 ${esc(pinName)}${owned.has(pinned) ? ' · owned' : ''}` : 'No pin — the window rotates'}</span>
+        <span class="tier-pin-actions">
+          ${namedPrice ? `<button class="chip" type="button" data-pin-buy="${key}">Buy ${namedPrice.toLocaleString()} 🪙</button>` : ''}
+          <button class="chip" type="button" data-pin-open="${key}">${pinned ? 'Change' : 'Pin'}</button>
+          ${pinned ? `<button class="chip" type="button" data-pin-clear="${key}">Clear</button>` : ''}
+        </span>
+      </div>`;
+    }).filter(Boolean).join('');
+    box.innerHTML = rows
+      ? `<div class="tiny muted" style="font-weight:800;letter-spacing:.08em;margin:12px 2px 6px">PIN A SPECIES</div>${rows}
+        <p class="tiny muted" style="margin:6px 2px 0;line-height:1.5">A pinned species takes one of its band's featured slots, so it is on sale every day. The window roll is still a roll: buy it outright for what rolling what is left averages, so it gets cheaper as you fill the band.</p>`
+      : '';
+    box.querySelectorAll('[data-pin-open]').forEach((button) => {
+      button.addEventListener('click', () => { Sfx.click(); openBandPinSheet(button.dataset.pinOpen); });
+    });
+    box.querySelectorAll('[data-pin-buy]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const tierKey = button.dataset.pinBuy;
+        const species = typeof bandPinFor === 'function' ? bandPinFor(tierKey) : null;
+        if (!species) return;
+        const name = (ELEMENTS[species] && ELEMENTS[species].name) || species;
+        await buyEggAndOpen(
+          `${name} ${TYPE_EGG_RARITIES[tierKey].name} egg`,
+          tierBandNamedPrice(tierKey),
+          () => Actions.buyBandNamed(tierKey),
+          `${name} joined the Nest!`,
+        );
+      });
+    });
+    box.querySelectorAll('[data-pin-clear]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const tierKey = button.dataset.pinClear;
+        Actions.unpinBandSpecies(tierKey);
+        Sfx.click();
+        toast(`${TYPE_EGG_RARITIES[tierKey].name} window follows its rotation again.`, '📌');
+      });
+    });
+  }
+
+  function openBandPinSheet(tierKey) {
+    const pool = typeof tierEggBandPool === 'function' ? tierEggBandPool(tierKey) : [];
+    if (!pool.length) { toast('No species owns that rank yet.', '🥚'); return; }
+    const owned = new Set(state.sprites.map((sprite) => sprite.element).filter(Boolean));
+    const nameOf = (key) => (ELEMENTS[key] && ELEMENTS[key].name) || key;
+    const rowsFor = (query) => {
+      const needle = String(query || '').trim().toLowerCase();
+      const matches = pool
+        .filter((key) => !needle || `${nameOf(key)} ${key}`.toLowerCase().includes(needle))
+        .slice(0, 60);
+      if (!matches.length) return '<p class="tiny muted" style="margin:8px 2px">No species match that name.</p>';
+      return matches.map((key) => `<button class="pin-species-row" type="button" data-pin-pick="${esc(key)}">
+          <span class="pin-species-name">${esc(nameOf(key))}</span>
+          <span class="tiny muted">${owned.has(key) ? 'owned' : 'not owned'}</span>
+        </button>`).join('');
+    };
+    const { close } = openSheet({
+      title: `Pin a ${TYPE_EGG_RARITIES[tierKey].name}`,
+      sub: `The pinned species is featured every day and can be bought outright for the average cost of rolling what is left of the window. The window keeps its slots, so one named species never costs more than the band allows. ${pool.length} species to choose from.`,
+      body: `<input class="type-search" type="search" data-pin-search placeholder="Search ${pool.length} species…" aria-label="Search species to pin" autocomplete="off">
+        <div class="pin-list" data-pin-list>${rowsFor('')}</div>`,
+      onMount: (sheetRoot) => {
+        const list = sheetRoot.querySelector('[data-pin-list]');
+        const search = sheetRoot.querySelector('[data-pin-search]');
+        if (search && list) {
+          search.addEventListener('input', () => { list.innerHTML = rowsFor(search.value); });
+        }
+        if (!list) return;
+        list.addEventListener('click', (event) => {
+          const pick = event.target.closest('[data-pin-pick]');
+          if (!pick) return;
+          const res = Actions.pinBandSpecies(tierKey, pick.dataset.pinPick);
+          if (!res.ok) {
+            toast('That species cannot be pinned to this band.', '📌');
+            Sfx.error();
+            return;
+          }
+          Sfx.click();
+          close();
+          toast(`📌 ${nameOf(res.species)} is featured every day.`, '📌');
+        });
+      },
     });
   }
 

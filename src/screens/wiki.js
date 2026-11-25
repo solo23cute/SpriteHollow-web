@@ -296,6 +296,13 @@ const WIKI_GUIDES = [
     body: () => wikiAnimalPufflesMarkup(),
   },
   {
+    id: 'mythpuffles',
+    icon: '🌟',
+    title: 'Mythical Sprite Puffle Roster',
+    summary: 'Twelve wings and 44 mythic creatures, every one rewritten as a round Sprite Puffle with habitat, powers and design notes.',
+    body: () => wikiMythicalPufflesMarkup(),
+  },
+  {
     id: 'turtles',
     icon: '🐢',
     title: 'Sprite Puffle Turtle Collection',
@@ -570,16 +577,16 @@ const WIKI_GUIDES = [
     id: 'types',
     icon: '📚',
     title: 'Types & rarity',
-    summary: 'How the twelve rarity tiers, gene powers, and type eggs work.',
+    summary: `How the ${RARITY_TIER_ORDER.length} rarity tiers, gene powers, and type eggs work.`,
     body: () => `<p class="wiki-lede">Every sprite belongs to one of <b>${ELEMENT_KEYS.length} species</b>. A species is more than a colour: it carries a gene power, a Titan name, an egg price, a habitat family, and its own hybrid list.</p>
       <h3>Rarity bands</h3>
       <div class="wiki-rarity-list">
         ${RARITY_TIER_ORDER.map((key) => {
-          const band = key === 'common' ? 'under 75 coins' : key === 'uncommon' ? '75–97 coins' : key === 'rare' ? '98–116 coins' : key === 'epic' ? '117–164 coins' : key === 'legendary' ? '165–209 coins' : key === 'mythic' ? '210+ coins' : key === 'secret' ? 'Secret tier · Vault keepers and Secret variants, above Mythic' : key === 'exotic' ? 'Hollow exotics · above Secret' : key === 'master' ? 'The Master secret · above Exotic' : 'Trail-only apex rank · above Master';
+          const band = (RARITY_SPEC[key] && RARITY_SPEC[key].wikiBand) || 'Ranked on the tier ladder';
           return `<div><span class="te-dot" style="background:${TYPE_EGG_RARITIES[key].color}"></span><b>${TYPE_EGG_RARITIES[key].name}</b><span>${band}</span></div>`;
         }).join('')}
       </div>
-      <p class="tiny muted">The ladder has <b>${RARITY_TIER_ORDER.length} tiers</b>. The final three — <b>Celestial</b>, <b>Divine</b>, and <b>Eternal</b> — are sold as type eggs in the Nest at an apex premium, their tier eggs hatch any type at that rank, and Trail Upgrades still push an owned sprite upward.</p>
+      <p class="tiny muted">The ladder has <b>${RARITY_TIER_ORDER.length} tiers</b>. The final <b>${RARITY_APEX_KEYS.length}</b> — <b>${RARITY_APEX_PHRASE}</b> — are sold as type eggs in the Nest at an apex premium, their tier eggs hatch any type at that rank, and Trail Upgrades still push an owned sprite upward.</p>
       <h3>Gene powers</h3>
       <p>Every species has one gene power. It is always active while that sprite lives in the Hollow, stacking with its breed habit, finish, combo, and evolution. A Fire sprite might add game coins; a Mother Earth adds slower need decay and a bigger XP gain.</p>
       <h3>Type eggs</h3>
@@ -1086,7 +1093,7 @@ const WIKI_GUIDES = [
       <p>Every <b>5,000 coins</b> earned in the three Arcade challenges fills a bonus gift. Gifts contain coins, a pantry food, and a snack; every third one also includes a <b>Starpath Feast</b>. The monthly track has three tiers at <b>5,000 / 12,000 / 25,000 arcade coins</b>, resetting on the first of the month. Higher tiers include one or two Starpath Feasts.</p>
       <p>A <b>Starpath Feast</b> is a gift-only food that advances the active sprite to its next growth milestone: level 5, 10, 100, 250, 500, or 1,000. It cannot be bought in the market and is never consumed by a max-level sprite.</p>
       <h3>Rarity play payouts</h3>
-      <p>Every completed game pays <b>${GAME_COIN_BASE} coins + ${GAME_COIN_SCORE_VALUE} per point</b>, and the whole payout is capped at <b>${GAME_COIN_CAP} coins</b>. The active sprite's rarity bonus (<b>Common 1,500</b> through <b>Master 25,000</b>, up to <b>Creator 100,000</b>) is added before that cap, so today every tier pays <b>${GAME_COIN_CAP} coins</b>. The rarity number is a table value, not extra on top of the cap. The live fortnight's event is the one exception: its boost lands after the cap, and only on the challenge's own game.</p>
+      <p>Every completed game pays <b>${GAME_COIN_BASE} coins + ${GAME_COIN_SCORE_VALUE} per point</b>, and the whole payout is capped at <b>${GAME_COIN_CAP} coins</b>. The active sprite's rarity bonus (<b>Common 1,500</b> through <b>Master 25,000</b>, up to <b>God 150,000</b>) is added before that cap, so today every tier pays <b>${GAME_COIN_CAP} coins</b>. The rarity number is a table value, not extra on top of the cap. The live fortnight's event is the one exception: its boost lands after the cap, and only on the challenge's own game.</p>
       <p><b>Common and Uncommon</b> sprites get a <b>25% gift-speed bonus</b>, which is not capped. <b>Special</b> combos, mutations, and shinies keep their normal payout, and gene, habit, finish, phase, and holiday bonuses are all folded in before the coin cap.</p>
       <h3>Gifts</h3>
       <p>Your active sprite wraps a gift every few minutes. Open it in the Hollow for XP, coins, snacks, or a brand-new environment. Gale sprites and some combos speed the timer up.</p>
@@ -1443,6 +1450,7 @@ function wikiScreen(root) {
       <button class="chip" data-wiki-guide="raritycues">🎵 Rarity cues</button>
       <button class="chip" data-wiki-guide="rarityframes">💠 Rarity frames</button>
       <button class="chip" data-wiki-guide="animalpuffles">🐾 Animal Puffles</button>
+      <button class="chip" data-wiki-guide="mythpuffles">🌟 Mythical Puffles</button>
       <button class="chip" data-wiki-guide="fashion">👗 Matching fashion</button>
       <button class="chip" data-wiki-guide="multiversewave">🌀 Multiverse</button>
       <button class="chip" data-wiki-action="breeder">🧬 Breeder</button>

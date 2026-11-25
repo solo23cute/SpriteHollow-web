@@ -373,3 +373,18 @@
 .slot-badge { background:color-mix(in srgb, var(--accent) 30%, transparent); }
 .slot-actions { gap:6px; flex-wrap:wrap; margin-top:8px; }
 .slot-new { margin-top:8px; }
+
+/* Room Service Rush: the hotel floor as a tray game. */
+.hru { position: relative; display: grid; gap: 9px; padding: 2px; }
+.hru-ticket { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: 14px; border: 1px dashed color-mix(in srgb, var(--gold) 40%, transparent); background: color-mix(in srgb, var(--gold) 8%, transparent); }
+.hru-emoji { font-size: 26px; }
+.hru-copy { display: grid; gap: 1px; flex: 1; }
+.hru-copy b { font-size: 13px; }
+.hru-copy i { font-style: normal; font-size: 9.5px; color: var(--muted); letter-spacing: .03em; }
+.hru-count { font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.hru-tray { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hru-dish { display: grid; gap: 3px; place-items: center; padding: 12px 6px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .05); color: inherit; font: inherit; cursor: pointer; }
+.hru-dish span { font-size: 28px; }
+.hru-dish small { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.2; }
+.hru-dish:active { transform: scale(.97); }
+.hru-status { font-size: 10px; color: var(--muted); text-align: center; }

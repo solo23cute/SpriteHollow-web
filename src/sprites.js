@@ -157,15 +157,22 @@ function nativePalette(sprite) {
   /* Classic Sprite Puffle colourways repaint the whole round body, not only a
      headpiece. Finished/custom/named palettes above still win, so a dye or a
      finish keeps its own colours. */
-  const variant = sprite.puffleVariant && typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS
-    ? window.LUMI_PUFFLE_VARIANTS[sprite.puffleVariant]
+  /* A Club Penguin puffle with no colour of its own reads the colourway stored
+     in its body type, so the family always paints in classic colours. */
+  const variantKey = sprite.puffleVariant
+    || (typeof cpPuffleStyleForSprite === 'function' ? cpPuffleStyleForSprite(sprite) : null);
+  const variant = variantKey
+    ? (typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS ? window.LUMI_PUFFLE_VARIANTS[variantKey] : null)
+      || (typeof cpCreatureStylePalette === 'function' ? cpCreatureStylePalette(variantKey) : null)
     : null;
   if (variant && (variant.classic || String(sprite.breed || '').startsWith('cp_penguin_') || sprite.breed === 'cp_puffle')) {
     return {
       body: variant.primary,
       light: variant.secondary || variant.primary,
       deep: variant.eyeShadow || variant.primary,
-      accent: variant.leafGlow || variant.leaf || variant.secondary || variant.primary,
+      /* A creature style carries a coat-tinted accent; leaves are the puffle
+         fallback. */
+      accent: variant.accent || variant.leafGlow || variant.leaf || variant.secondary || variant.primary,
       belly: variant.belly || lighten(variant.primary, 0.55),
     };
   }
@@ -235,7 +242,9 @@ function bodyPath(breed) {
    Sprite, Sprite Puffle and guardian wears this exact path. */
 const PUFFLE_BODY_PATH = 'M60 20c22 0 40 18 40 41s-18 41-40 41-40-18-40-41 18-41 40-41Z';
 
-const STAGE_SCALE = { baby: 0.78, juvenile: 0.9, sprite: 1, youngadult: 1.025, midadult: 1.045, highadult: 1.06, elder: 1.07, ancient: 1.12, sensei: 1.12 };
+/* Toddler and child sit between the swaddled baby and the teen, so the early
+   years read as four sizes instead of one jump. */
+const STAGE_SCALE = { baby: 0.78, toddler: 0.82, child: 0.86, juvenile: 0.9, sprite: 1, youngadult: 1.025, midadult: 1.045, highadult: 1.06, elder: 1.07, ancient: 1.12, sensei: 1.12 };
 
 /* Optional silhouette shaping, extra ears, and eye styles. All three are
    per-sprite and default to the breed's own art. */
@@ -407,6 +416,14 @@ function bodyPathFor(sprite) {
   const key = sprite && sprite.shape;
   if (key && CP_PUFFLE_SHAPE_KEYS.includes(key)) {
     return BODY_SHAPES[key]?.path || PUFFLE_BODY_PATH;
+  }
+  /* A Club Penguin puffle's body type carries its Club Penguin silhouette, so
+     the family hatches on a classic body without the Studio shape picker. */
+  if (typeof cpPuffleShapeForSprite === 'function') {
+    const cpShape = cpPuffleShapeForSprite(sprite);
+    if (cpShape && CP_PUFFLE_SHAPE_KEYS.includes(cpShape) && BODY_SHAPES[cpShape]) {
+      return BODY_SHAPES[cpShape].path;
+    }
   }
   /* Every ordinary Sprite, Sprite Puffle and guardian keeps the shared round
      silhouette. Breed, family, dye, fur and markings still supply the colours
@@ -4025,73 +4042,216 @@ function puffleFormMarkup(type, layer) {
   </g>`;
 }
 
+/* Paired features are drawn once and mirrored about x=60, so a left ear and a
+   right ear can never drift apart in the numbers. */
+function mirroredFeature(path, fill, stroke, width = 1.2) {
+  const paint = `fill="${fill}" stroke="${stroke}" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round"`;
+  return `<path d="${path}" ${paint}/><path d="${path}" transform="translate(120 0) scale(-1 1)" ${paint}/>`;
+}
+
+/* Species that draw their own mouth. The shared puffle mouth would otherwise
+   show through above a snout, a jaw or a beak. */
+const CP_CREATURE_OWN_MOUTH = ['dog', 'collie', 'dragon', 'trex', 'triceratops', 'stegosaurus'];
+
+/* Species whose own ears are the ears. The rolled puffle ears at the crown
+   would otherwise give a dog four ears, and half of them would read as paws. */
+const CP_CREATURE_OWN_EARS = ['cat', 'crystal', 'dog', 'collie', 'rabbit'];
+
+/* The species a form belongs to, or '' for everything that is not a Puffle
+   Creature. Mouth and ears both need it, so it is resolved once. */
+function cpCreatureSpeciesOf(sprite) {
+  const form = sprite && sprite.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[sprite.form] : null;
+  return (form && form.creature) || '';
+}
+
+/* A species that draws its own mouth has to carry its own expressions: the
+   shared puffle mouth is hidden for it, so a fixed smile would leave a sleeping
+   or eating creature looking pleased with itself. Each species passes its own
+   line position, curve, colour and tongue, and the shape changes per mood. */
+function creatureMouth(expr, spec) {
+  const s = spec || {};
+  const cx = s.cx === undefined ? 60 : s.cx;
+  const cy = s.cy === undefined ? 84 : s.cy;
+  const width = s.width === undefined ? 12 : s.width;
+  const sag = s.sag === undefined ? 3 : s.sag;
+  const color = s.color || '#1d1734';
+  const weight = s.weight === undefined ? 1.8 : s.weight;
+  const half = width / 2;
+  const curve = (depth) => `<path d="M${cx - half + 1} ${cy}q${half - 1} ${depth} ${width - 2} 0" stroke="${color}" stroke-width="${weight}" fill="none" stroke-linecap="round"/>`;
+  const open = (depth) => `<path d="M${cx - half} ${cy}q${half} ${depth} ${width} 0z" fill="${color}"/>`;
+  let mark;
+  if (expr === 'sleep') {
+    mark = `<ellipse cx="${cx}" cy="${cy + 1}" rx="2.6" ry="2.8" fill="${color}" opacity=".75"/>`;
+  } else if (expr === 'eat') {
+    mark = open(half * 1.4);
+  } else if (expr === 'happy' || expr === 'love') {
+    mark = open(half * 1.1);
+  } else if (expr === 'sad') {
+    mark = curve(-sag);
+  } else if (expr === 'grump') {
+    mark = `<path d="M${cx - half + 1} ${cy}h${width - 2}" stroke="${color}" stroke-width="${weight + 0.4}" stroke-linecap="round"/>`;
+  } else if (expr === 'dirty') {
+    mark = `<path d="M${cx - half} ${cy}q${half / 2} 3 ${half} 0q${half / 2} 3 ${half} 0" stroke="${color}" stroke-width="${weight}" fill="none" stroke-linecap="round"/>`;
+  } else {
+    mark = curve(sag);
+  }
+  /* A tongue belongs to a resting or open face, not to sleep or a sulk. */
+  const tongue = ['idle', 'happy', 'love', 'eat'].includes(expr) ? (s.tongue || '') : '';
+  return mark + tongue;
+}
+
 /* Puffle Creatures keep the same Sprite Puffle body as the colour forms, then
    add species ears, tails, horns, masks, and antlers so each one reads as its
    own creature rather than a recolour. */
-function puffleCreatureFormMarkup(type, layer) {
+function puffleCreatureFormMarkup(type, layer, coat, expr = 'idle') {
   const meta = typeof CP_PUFFLE_CREATURES !== 'undefined' ? CP_PUFFLE_CREATURES[type] : null;
   if (!meta) return '';
-  const p = meta.primary, l = meta.light, d = meta.deep, b = meta.belly, a = meta.accent || l;
-  const bands = Array.isArray(meta.bands) ? meta.bands : [p, l, b];
+  /* A canon colourway repaints the species' features; with no coat the species'
+     own hand-tuned palette is used. */
+  const pal = coat || meta;
+  const p = pal.primary, l = pal.light, d = pal.deep, b = pal.belly, a = pal.accent || l;
+  /* The mane bands are the species' own colours unless a colourway repaints the
+     puffle, in which case they follow the coat too. */
+  const bands = Array.isArray(meta.bands) && !coat ? meta.bands : [p, l, a];
+  /* The three prehistoric species differ in their heads, frills and plates, but
+     they share a mouth, so it is written once. */
+  const dinoMouth = (stroke = d) => creatureMouth(expr, { cx: 60, cy: 84, width: 12, sag: 3, color: stroke, weight: 1.8 });
   let back = '';
   let front = '';
 
   if (type === 'cat') {
-    back = `<path d="M37 35L43 11l16 14M83 35L77 11 61 25" fill="${p}" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/>
+    back = `${mirroredFeature('M37 35 43 11 59 25', p, d, 1.5)}
       <path d="M31 81c-11-2-18 5-16 13 2 8 12 8 17 2 4-5 3-11-1-15Z" fill="${p}" stroke="${d}" stroke-width="1.2"/>
       <path d="M86 95c12-3 16-12 10-18-5-5-13-1-11 5 2 4 7 4 9 1" fill="none" stroke="${p}" stroke-width="5" stroke-linecap="round"/>`;
     front = `<path d="M41 31l4-13 10 9M79 31l-4-13-10 9" fill="${a}" opacity=".65"/>
       <path d="M31 68h16M31 74h14M89 68H73M89 74H75" stroke="${d}" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>`;
   } else if (type === 'dog') {
-    back = `<path d="M37 34c-9 3-13 15-9 26 3 9 12 9 15 1 2-7 0-17-6-27Z" fill="${p}" stroke="${d}" stroke-width="1.2"/>
-      <path d="M83 34c9 3 13 15 9 26-3 9-12 9-15 1-2-7 0-17 6-27Z" fill="${p}" stroke="${d}" stroke-width="1.2"/>
-      <path d="M86 96c10-2 15-8 12-13-3-4-9-3-10 2-1 3 2 5 5 4" fill="none" stroke="${p}" stroke-width="4" stroke-linecap="round"/>`;
-    front = `<path d="M34 41c4 5 6 10 7 15M86 41c-4 5-6 10-7 15" stroke="${a}" stroke-width="2" fill="none" opacity=".7"/>
+    /* Floppy ears hang at the cheeks. Behind the body they were buried under
+       the fur ruff, so they sit on the front layer and stop above the cheek
+       blush instead of painting over it. */
+    back = `<path d="M86 96c10-2 15-8 12-13-3-4-9-3-10 2-1 3 2 5 5 4" fill="none" stroke="${p}" stroke-width="4" stroke-linecap="round"/>`;
+    front = `${mirroredFeature('M45 34c-12 3-23 12-28 22-3 6 0 12 5 13 6 1 10-5 12-13 2-9 6-17 11-22Z', p, d)}
+      ${mirroredFeature('M38 41c-7 3-13 9-15 16-1 4 1 7 5 7 4 0 6-4 7-9 1-6 2-11 3-14Z', l, d, 0.6)}
+      <path d="M41 38c-5 4-9 9-11 15" stroke="${d}" stroke-width="1" fill="none" opacity=".38" stroke-linecap="round"/>
       <ellipse cx="60" cy="75" rx="14" ry="9" fill="${b}" opacity=".65"/>
-      <path d="M56 82c2 4 6 4 8 0" stroke="${a}" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M51 87c-3-2-6 0-5 3 1 3 5 3 7 1 2 2 6 2 7-1 1-3-2-5-5-3-1 1-3 1-4 0Z" fill="${b}" stroke="${d}" stroke-width="1"/>`;
-  } else if (type === 'dinosaur') {
-    back = `<path d="M87 96c12 1 19-5 18-13-1-7-8-8-10-2-1 4 2 7 6 6" fill="none" stroke="${p}" stroke-width="7" stroke-linecap="round"/>
-      <path d="M92 86l8-4M97 80l7 1M91 91l7 3" stroke="${d}" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>`;
-    front = `<path d="M46 31l6-14 7 12 7-14 7 16" fill="${p}" stroke="${d}" stroke-width="1.2" stroke-linejoin="round"/>
-      <path d="M39 51l-7 6 8 3M81 51l7 6-8 3" fill="${a}" stroke="${d}" stroke-width="1"/>
-      <path d="M52 70l4 3 5-2M62 70l5 2 4-3" stroke="${a}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".8"/>`;
+      ${creatureMouth(expr, { cx: 60, cy: 82, width: 8, sag: 4, color: a, weight: 2,
+        tongue: `<path d="M58 87c-3-2-6 0-5 3 1 3 5 3 7 1 2 2 6 2 7-1 1-3-2-5-5-3-1 1-3 1-4 0Z" fill="${b}" stroke="${d}" stroke-width="1"/>` })}`;
+  } else if (type === 'dragon') {
+    /* The wings used to tuck behind the fur ruff, where only two pale slivers
+       survived, and the horns were upright triangles that read as cat ears. The
+       wings now spread past the fur on both sides, and the horns are short,
+       swept back from the temples, so the head reads as a dragon. */
+    back = `<path d="M46 52C33 48 19 41 13 30C22 32 27 36 31 42C31 54 36 64 46 72Z" fill="${p}" stroke="${d}" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M74 52c16-4 32-11 39-22-10 2-17 6-23 12 0 12-6 22-16 30Z" fill="${p}" stroke="${d}" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M42 50C32 44 22 37 14 31M78 50c10-6 20-13 28-19" stroke="${l}" stroke-width="1" opacity=".55" fill="none" stroke-linecap="round"/>
+      <path d="M84 96c12 2 17 6 17 10-9 1-16-3-22-9Z" fill="${p}" stroke="${d}" stroke-width="1.2"/>`;
+    front = `${mirroredFeature('M42 34c-8-4-14-12-16-22 7 6 12 12 15 17 1 2 2 4 1 5Z', a, d)}
+      <g opacity=".85">${creatureMouth(expr, { cx: 60, cy: 76, width: 16, sag: 3, color: l, weight: 1.6 })}</g>`;
+  } else if (type === 'crystal') {
+    /* Flat, near-white panes read as glass. The left pair sits well outside the
+       ear (see the front layer, which draws that ear from the same crystal), so
+       the head keeps an ear shape instead of one crystal mass at 44px. */
+    back = `<path d="M14 44 18 16 22 24 21 46Z" fill="${l}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M14 16 21 24 20 47 17 46Z" fill="${a}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M38 50 45 40 49 46 44 54Z" fill="${p}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M86 64 92 40 97 48 94 66Z" fill="${a}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M92 40 99 50 96 68 94 66Z" fill="${p}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M84 98c12-1 18-7 20-16-9 2-15 8-20 16Z" fill="${a}" stroke="${d}" stroke-width="1.2"/>`;
+    front = `${mirroredFeature('M43 31 25 11 22 28 34 36Z', l, d, 1.4)}
+      ${mirroredFeature('M37 27 27 14 26 24 32 29Z', a, d, 0.6)}
+      <path d="M20 57 23 43 28 49 26 60Z" fill="${l}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M23 43 30 50 28 61 26 60Z" fill="${a}" stroke="${d}" stroke-width="1.45" stroke-linejoin="round"/>
+      <path d="M94 22l1.8 4.4 4.4 1.8-4.4 1.8L94 34l-1.8-4.4-4.4-1.8 4.4-1.8Z" fill="${a}"/>`;
   } else if (type === 'ghost') {
-    back = `<path d="M76 92c9 7 14 13 11 19-3 6-12 3-10-3 1-4 5-5 8-3" fill="none" stroke="${p}" stroke-width="7" stroke-linecap="round" opacity=".8"/>
-      <circle cx="88" cy="36" r="4" fill="${a}" opacity=".7"/><circle cx="32" cy="90" r="2.6" fill="${a}" opacity=".6"/>`;
-    front = `<path d="M34 58c-7 5-7 13 0 18 5 4 10 1 9-5-1-5-5-8-9-7M86 58c7 5 7 13 0 18-5 4-10 1-9-5 1-5 5-8 9-7" fill="${p}" opacity=".45"/>
-      <circle cx="89" cy="34" r="3.2" fill="${a}" opacity=".85"/>
-      <path d="M55 88c2-3 8-3 10 0" stroke="${a}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".65"/>`;
+    /* The sheet tail used to curl behind the hem where the fur ruff hid it.
+       Three tatters now hang in front of the body, and the drifting orbs stay
+       outside the silhouette, so the species reads at 44px. */
+    back = `<path d="M84 96c8 4 12 10 9 16-3 5-11 2-9-3 1-3 5-4 8-2" fill="none" stroke="${p}" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+      <circle cx="26" cy="76" r="2.6" fill="${a}" opacity=".6"/>`;
+    front = `<g transform="translate(0 4)" opacity=".45">${mirroredFeature('M34 58c-7 5-7 13 0 18 5 4 10 1 9-5-1-5-5-8-9-7', p, 'none')}</g>
+      <path d="M43 96c-3 7 0 12 6 15 5-3 7-8 4-16ZM59 98c-3 7 0 13 6 15 5-3 7-9 3-16ZM75 96c-3 7 0 12 5 15 5-3 7-8 3-15Z" fill="${p}" stroke="${d}" stroke-width="1" stroke-linejoin="round" opacity=".9"/>
+      <circle cx="89" cy="34" r="3.2" fill="${a}" opacity=".85"/>`;
   } else if (type === 'raccoon') {
-    back = `<path d="M34 36L42 18l16 12M86 36L78 18 62 30" fill="${p}" stroke="${d}" stroke-width="1.3" stroke-linejoin="round"/>
-      <path d="M24 98c-11-2-15-10-9-16 5-5 13-2 12 4-1 4-5 6-8 4" fill="none" stroke="${p}" stroke-width="7" stroke-linecap="round"/>
+    /* The ear triangles were hidden behind the fur ruff and nothing replaced
+       them, so the raccoon keeps the shared ears and the ringed tail carries
+       the species on its own. */
+    back = `<path d="M24 98c-11-2-15-10-9-16 5-5 13-2 12 4-1 4-5 6-8 4" fill="none" stroke="${p}" stroke-width="7" stroke-linecap="round"/>
       <path d="M13 87c3 2 6 2 9 0M14 92c3 2 6 2 9 0M15 97c3 2 6 2 9 0" stroke="${a}" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>`;
-    front = `<path d="M43 31l3-10 8 8M77 31l-3-10-8 8" fill="${a}" opacity=".55"/>
-      <ellipse cx="47" cy="60" rx="13" ry="9" fill="none" stroke="${a}" stroke-width="4" opacity=".6"/>
-      <ellipse cx="73" cy="60" rx="13" ry="9" fill="none" stroke="${a}" stroke-width="4" opacity=".6"/>
-      <path d="M56 74l4 3 4-3-4-2Z" fill="${d}" opacity=".8"/>`;
   } else if (type === 'deer') {
-    back = `<path d="M45 31c-7-9-6-20 1-26 2 6 5 10 9 13M75 31c7-9 6-20-1-26-2 6-5 10-9 13" fill="none" stroke="${d}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M46 14l-8-5M48 8l-1-7M74 14l8-5M72 8l1-7" stroke="${d}" stroke-width="2.2" stroke-linecap="round"/>
-      <path d="M33 39c-9 2-13 10-10 17 2 6 9 5 11 0 2-5 1-11-1-17ZM87 39c9 2 13 10 10 17-2 6-9 5-11 0-2-5-1-11 1-17Z" fill="${p}" stroke="${d}" stroke-width="1.2"/>`;
-    front = `<path d="M35 45c5 3 8 7 9 11M85 45c-5 3-8 7-9 11" stroke="${a}" stroke-width="2" fill="none" opacity=".65"/>
-      <circle cx="50" cy="40" r="2" fill="${l}" opacity=".8"/><circle cx="60" cy="37" r="1.7" fill="${l}" opacity=".8"/><circle cx="70" cy="40" r="2" fill="${l}" opacity=".8"/>`;
+    /* The cheek patches sat under the ruff and never showed, so the antlers
+       alone carry the species. */
+    back = `${mirroredFeature('M45 36c-7-9-6-20 1-26 2 6 5 10 9 13', 'none', d, 2.6)}
+      ${mirroredFeature('M46 24l-8-6M48 18l-1-7', 'none', d, 2.2)}`;
   } else if (type === 'rabbit') {
-    back = `<ellipse cx="45" cy="19" rx="8" ry="18" fill="${p}" stroke="${d}" stroke-width="1.3" transform="rotate(-8 45 19)"/>
-      <ellipse cx="75" cy="19" rx="8" ry="18" fill="${p}" stroke="${d}" stroke-width="1.3" transform="rotate(8 75 19)"/>
+    back = `<ellipse cx="45" cy="24" rx="8" ry="15" fill="${p}" stroke="${d}" stroke-width="1.3" transform="rotate(-8 45 24)"/>
+      <ellipse cx="75" cy="24" rx="8" ry="15" fill="${p}" stroke="${d}" stroke-width="1.3" transform="rotate(8 75 24)"/>
       <path d="M89 96c10-1 14-7 12-12-2-5-8-4-10 0" fill="none" stroke="${p}" stroke-width="4" stroke-linecap="round"/>`;
-    front = `<ellipse cx="45" cy="20" rx="4" ry="13" fill="${a}" opacity=".55" transform="rotate(-8 45 20)"/>
-      <ellipse cx="75" cy="20" rx="4" ry="13" fill="${a}" opacity=".55" transform="rotate(8 75 20)"/>
+    front = `<ellipse cx="45" cy="25" rx="4" ry="11" fill="${a}" opacity=".55" transform="rotate(-8 45 25)"/>
+      <ellipse cx="75" cy="25" rx="4" ry="11" fill="${a}" opacity=".55" transform="rotate(8 75 25)"/>
       <path d="M56 73l4 3 4-3-4-2Z" fill="${a}" opacity=".9"/>`;
   } else if (type === 'unicorn') {
     back = `<path d="M83 38c15 0 22 8 19 18-3 9-13 11-17 4" fill="none" stroke="${p}" stroke-width="6" stroke-linecap="round"/>
       ${bands.map((color, index) => `<path d="M80 ${38 + index * 5}c10 1 15 5 14 11" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" opacity=".8"/>`).join('')}
       <path d="M87 94c10-1 15-6 13-12-2-5-8-4-10 0" fill="none" stroke="${p}" stroke-width="4" stroke-linecap="round"/>`;
-    front = `<path d="M60 3l5 22-5 5-5-5Z" fill="${a}" stroke="${d}" stroke-width="1.2"/>
-      <path d="M60 7v18" stroke="#FFFFFF" stroke-width="1.6" opacity=".8"/>
+    front = `<path d="M60 8l5 22-5 5-5-5Z" fill="${a}" stroke="${d}" stroke-width="1.2"/>
+      <path d="M60 12v18" stroke="#FFFFFF" stroke-width="1.6" opacity=".8"/>
       <path d="M83 38c9-1 13 4 12 10" stroke="${p}" stroke-width="4" fill="none" stroke-linecap="round"/>
       ${bands.map((color, index) => `<path d="M84 ${40 + index * 4}c5 1 7 3 7 6" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>`).join('')}
       <path d="M88 28l1.8 4 4.4.4-3.3 3 .9 4.2-3.8-2.2-3.8 2.2.9-4.2-3.3-3 4.4-.4Z" fill="${a}" stroke="${d}" stroke-width=".8"/>`;
+  } else if (type === 'alien') {
+    back = `<ellipse cx="60" cy="112" rx="30" ry="6" fill="${a}" opacity=".22"/>
+      ${mirroredFeature('M45 34c-3-12 0-21 5-26', 'none', d, 2.2)}
+      <circle cx="49" cy="12" r="4" fill="${a}" stroke="${d}" stroke-width="1"/>
+      <circle cx="71" cy="12" r="4" fill="${a}" stroke="${d}" stroke-width="1"/>`;
+    front = `<path d="M34 46c8-18 44-18 52 0" fill="none" stroke="${l}" stroke-width="3" opacity=".85" stroke-linecap="round"/>
+      <path d="M36 51c14 6 34 6 48 0" fill="none" stroke="${a}" stroke-width="1.6" opacity=".55"/>
+      <path d="M53 84c4 3 10 3 14 0" stroke="${a}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="88" cy="30" r="2.4" fill="${a}" opacity=".8"/>`;
+  } else if (type === 'snowman') {
+    back = `<path d="M34 62L16 50M22 55l-6 3M86 62l18-12M98 55l6 3" stroke="${d}" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M40 96c-6 6-6 12 0 15 5 3 10-1 8-6-1-3-4-4-7-3M80 96c6 6 6 12 0 15-5 3-10-1-8-6 1-3 4-4 7-3" fill="${l}" opacity=".85"/>`;
+    front = `<path d="M60 58l13-4-13-4Z" fill="${a}" stroke="${d}" stroke-width=".9" stroke-linejoin="round"/>
+      <circle cx="60" cy="79" r="2.6" fill="${d}"/>
+      <circle cx="60" cy="89" r="2.6" fill="${d}"/>
+      <path d="M52 86c4 3 12 3 16 0" stroke="${d}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".45"/>`;
+  } else if (type === 'trex') {
+    /* The T-Rex keeps its tail, its right brow crest and its teeth. The old
+       crown fin sat entirely under the fur ruff and never showed. */
+    back = `<path d="M88 96c12-2 20-9 20-16" fill="none" stroke="${p}" stroke-width="9" stroke-linecap="round"/>`;
+    /* The crest starts on the brow and ends past the head outline, so the
+       silhouette keeps a spike at collection size instead of a patch that reads
+       as part of the skull. */
+    front = `<path d="M80 44 97 17 105 30 92 49Z" fill="${a}" stroke="${d}" stroke-width="1.3" stroke-linejoin="round"/>
+      ${dinoMouth()}
+      <path d="M52 90l2-4M60 90l2-4M68 90l2-4" stroke="${l}" stroke-width="1.4" stroke-linecap="round" opacity=".8"/>`;
+  } else if (type === 'triceratops') {
+    /* The frill fans out at the sides instead of across the face: the body's fur
+       ruff hides anything drawn on the head behind it, and a fan over the eyes
+       stops the puffle reading. The nose horn sat under the head crest, so it
+       is gone and the two brow horns carry the species. */
+    back = `<path d="M88 96c12 0 20-6 22-14" fill="none" stroke="${p}" stroke-width="7" stroke-linecap="round"/>`;
+    front = `${mirroredFeature('M31 60c-9-13-7-29 4-37-4 13-2 26 3 37Z', l, d)}
+      ${mirroredFeature('M31 40 20 12l20 11Z', a, d, 1.3)}
+      ${dinoMouth(a)}`;
+  } else if (type === 'stegosaurus') {
+    /* Three plates ride the right shoulder on the silhouette itself. Plates
+       across the crown read as a coronet and fought the head crest, and plates
+       inside the outline were swallowed by the fur. */
+    back = `<path d="M86 94c12 2 18 8 20 14-8 1-15-2-21-7" fill="${p}" stroke="${d}" stroke-width="1.2"/>`;
+    front = `<path d="M79 26 94 16 91 33Z" fill="${a}" stroke="${d}" stroke-width="1" stroke-linejoin="round"/>
+      <path d="M94 38 112 36 100 52Z" fill="${a}" stroke="${d}" stroke-width="1" stroke-linejoin="round"/>
+      <path d="M101 52 112 56 101 66Z" fill="${a}" stroke="${d}" stroke-width="1" stroke-linejoin="round"/>
+      ${dinoMouth(d)}`;
+  } else if (type === 'collie') {
+    /* The collie's ears were buried behind the ruff; they now sit at the front
+       of the brow where they clear the eyes. */
+    back = `<path d="M88 94c12 1 18-4 18-11 0-6-6-8-9-3-2 4 0 8 3 8" fill="none" stroke="${p}" stroke-width="5" stroke-linecap="round"/>`;
+    front = `${mirroredFeature('M34 35 39 9 53 29Z', p, d, 1.3)}
+      ${mirroredFeature('M38 31 41 16 48 27Z', l, d, 0.6)}
+      <path d="M52 36c6 8 10 9 16 0" fill="${b}" opacity=".8"/>
+      ${creatureMouth(expr, { cx: 61, cy: 84, width: 11, sag: 4, color: d, weight: 1.6,
+        tongue: `<path d="M62 86c3 3 3 6 0 7" stroke="${a}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".9"/>` })}`;
+
   }
 
   if (layer === 'back') {
@@ -4107,12 +4267,15 @@ function puffleCreatureFormMarkup(type, layer) {
   </g>`;
 }
 
-function formMarkup(sprite, c, layer) {
+function formMarkup(sprite, c, layer, expr = 'idle') {
   const form = sprite.form;
   if (!form) return '';
   const formMeta = typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[form] : null;
   if (formMeta?.puffle) return puffleFormMarkup(formMeta.puffle, layer);
-  if (formMeta?.creature) return puffleCreatureFormMarkup(formMeta.creature, layer);
+  if (formMeta?.creature) {
+    const coat = typeof cpCreatureArtPalette === 'function' ? cpCreatureArtPalette(sprite) : null;
+    return puffleCreatureFormMarkup(formMeta.creature, layer, coat, expr);
+  }
   if (formMeta?.cuisine) return cuisineFormMarkup(formMeta.cuisine, c, layer);
   if (layer === 'back') {
     if (form === 'dragon') {
@@ -4288,6 +4451,190 @@ function spriteMotionFor(sprite, expr) {
   return SPRITE_MOTION_BY_BREED[breed] || spriteMotionHash(breed);
 }
 
+/* ---------- per-sprite care animations ----------
+   Six states drive a pet's body: idle, sleep, walk, run, drink and eat. Every
+   sprite draws its own rhythm for all six out of a stable hash of its identity
+   (id, breed, gene, palette, coat, eyes), so two pets of the same breed still
+   move differently. The hash picks a motion family, a tempo band inside that
+   state's range, an amplitude, a lean and a prop set; the CSS reads them back
+   as custom properties, so the animation lives in one place and the variety
+   lives on the sprite. */
+const SPRITE_ANIM_STATES = ['idle', 'sleep', 'walk', 'run', 'drink', 'eat'];
+
+/* lift/drop/sway are in the 120-unit portrait space; squash is a scale delta. */
+/* Amplitudes are in the 120-unit portrait space. A stage pet is drawn around 90
+   CSS px, so these are sized to land as several device pixels of travel: at the
+   old values the idle bob was under a pixel and read as a still image. */
+const SPRITE_ANIM_FAMILIES = {
+  hover: { lift: 8.4, drop: 0.6, sway: 2.0, squash: 0.03 },
+  float: { lift: 6.4, drop: 2.2, sway: 3.8, squash: 0.04 },
+  bob: { lift: 4.6, drop: 4.0, sway: 1.4, squash: 0.025 },
+  bounce: { lift: 11.0, drop: 4.6, sway: 0.8, squash: 0.07 },
+  sway: { lift: 3.0, drop: 1.6, sway: 5.2, squash: 0.02 },
+  spin: { lift: 4.4, drop: 2.0, sway: 2.8, squash: 0.04 },
+};
+
+/* Seconds per cycle. Walk and run are step tempos, so their bands are tight
+   enough to read as footsteps rather than as floating. */
+const SPRITE_ANIM_TEMPO = {
+  idle: [2.8, 5.4], sleep: [4.4, 7.6], walk: [0.66, 0.98],
+  run: [0.36, 0.54], drink: [0.92, 1.4], eat: [0.74, 1.12],
+};
+
+const SPRITE_ANIM_PROP_SETS = {
+  sleep: ['blanket', 'cloud', 'moon', 'bubble'],
+  eat: ['crumbs', 'sparkle', 'chew', 'hearts'],
+  drink: ['straw', 'fizz', 'slurp', 'cup'],
+};
+
+function spriteAnimSeed(sprite) {
+  const parts = [sprite && sprite.id, sprite && sprite.breed, sprite && sprite.gene,
+    sprite && sprite.palette, sprite && sprite.fur, sprite && sprite.eyes, sprite && sprite.stage];
+  const text = parts.map((value) => (value == null ? '' : String(value))).join('|');
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) hash = (hash * 31 + text.charCodeAt(i)) % 100003;
+  return hash;
+}
+
+function spriteAnimStateFor(sprite, expr, override) {
+  if (override && SPRITE_ANIM_STATES.includes(override)) return override;
+  /* A care action parks its state on the sprite for a beat. The stage repaints
+     on its own schedule, so a state kept only on the DOM node would be wiped by
+     the next render; the sprite is the one thing every render reads. */
+  if (sprite && sprite.careAnim && SPRITE_ANIM_STATES.includes(sprite.careAnim)
+    && (!sprite.careAnimUntil || Date.now() < sprite.careAnimUntil)) return sprite.careAnim;
+  if (sprite && sprite.stage === 'egg') return 'idle';
+  if (expr === 'sleep') return 'sleep';
+  if (expr === 'eat') return 'eat';
+  return 'idle';
+}
+
+function spriteAnimFamilyFor(sprite) {
+  /* Read the family from the breed, not from the expression: a sleeping pet
+     keeps its own body rhythm underneath the sleep cycle. */
+  const base = spriteMotionFor({ ...(sprite || {}), stage: 'adult' }, 'idle');
+  return SPRITE_ANIM_FAMILIES[base] ? base : 'bob';
+}
+
+function spriteAnimProfile(sprite, expr, override) {
+  const state = spriteAnimStateFor(sprite, expr, override);
+  const seed = spriteAnimSeed(sprite);
+  const family = spriteAnimFamilyFor(sprite);
+  const tune = SPRITE_ANIM_FAMILIES[family];
+  const [min, max] = SPRITE_ANIM_TEMPO[state];
+  const band = (seed >> 2) % 5;
+  const ramp = min + ((max - min) * band) / 4;
+  const dur = Number((ramp * (0.94 + ((seed >> 5) % 7) * 0.02)).toFixed(2));
+  const amp = Number((0.78 + ((seed >> 7) % 9) * 0.055).toFixed(2));
+  const tilt = Number((((seed >> 11) % 11) - 5) * 0.6).toFixed(1);
+  const lean = Number((((seed >> 13) % 9) - 4) * 0.5).toFixed(1);
+  /* Every state's prop set is chosen up front, so a sprite rendered while
+     idling still has its eat and drink props ready when the feed action
+     switches the state on the live node. */
+  const propsByState = {};
+  Object.keys(SPRITE_ANIM_PROP_SETS).forEach((key) => {
+    const set = SPRITE_ANIM_PROP_SETS[key];
+    propsByState[key] = set[seed % set.length];
+  });
+  const props = propsByState[state] || '';
+  return {
+    state, family, tune, seed, dur, amp, tilt, lean, props, propsByState, band,
+    lift: Number((tune.lift * amp).toFixed(2)),
+    drop: Number((tune.drop * amp).toFixed(2)),
+    sway: Number((tune.sway * amp).toFixed(2)),
+    squash: Number((tune.squash * amp).toFixed(3)),
+    key: `${family}-${band}-${Math.round(amp * 100)}-${props || 'none'}`,
+  };
+}
+
+function spriteAnimAttrs(profile) {
+  return `data-anim="${profile.state}" data-anim-key="${profile.key}" data-anim-family="${profile.family}" data-anim-prop="${profile.props || 'none'}"
+    style="--anim-dur:${profile.dur}s;--anim-amp:${profile.amp};--anim-lift:${profile.lift}px;--anim-drop:${profile.drop}px;--anim-sway:${profile.sway}px;--anim-squash:${profile.squash};--anim-tilt:${profile.tilt}deg;--anim-lean:${profile.lean}deg"`;
+}
+
+/* Care props are drawn for every pet but only shown in their own state, so the
+   feed action can switch data-anim on a live sprite without re-rendering it.
+   The variant itself comes from the sprite's hash. */
+function carePropsMarkup(profile, c) {
+  const light = c.light;
+  const accent = c.accent;
+  const deep = c.deep;
+  const zs = `<g class="care-z">
+      <path class="care-z1" d="M86 40h9l-9 8h9" stroke="${light}" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="care-z2" d="M98 29h6.5l-6.5 5.6h6.5" stroke="${light}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
+      <circle class="care-z3" cx="28" cy="40" r="1.6" fill="${light}" opacity=".8"/>
+    </g>`;
+  const sleepArt = {
+    /* The blanket keeps the original nap art, so its breath and Z cycles still
+       apply underneath the per-sprite sleep state. */
+    blanket: napPropsMarkup(c),
+    cloud: `<g class="care-pillow"><ellipse cx="60" cy="98" rx="38" ry="12" fill="${mix(light, '#ffffff', 0.4)}" opacity=".9"/>
+        <ellipse cx="44" cy="96" rx="13" ry="9" fill="${mix(light, '#ffffff', 0.7)}" opacity=".85"/>
+        <ellipse cx="74" cy="97" rx="15" ry="9" fill="${mix(accent, '#ffffff', 0.6)}" opacity=".8"/></g>`,
+    moon: `<path class="care-moon" d="M92 34a11 11 0 1 0 0 20 13 13 0 1 1 0-20Z" fill="${light}" opacity=".8"/>
+      <circle cx="84" cy="58" r="1.3" fill="${light}" opacity=".7"/>`,
+    bubble: `<g class="care-bubble"><circle cx="88" cy="40" r="7" fill="none" stroke="${light}" stroke-width="1.6" opacity=".7"/>
+        <circle cx="80" cy="54" r="4" fill="none" stroke="${accent}" stroke-width="1.3" opacity=".8"/>
+        <circle cx="92" cy="26" r="2.6" fill="${light}" opacity=".55"/></g>`,
+  };
+  const eatArt = {
+    crumbs: `<g class="care-crumbs"><circle cx="72" cy="84" r="1.8" fill="${deep}" opacity=".6"/>
+        <circle cx="78" cy="89" r="1.4" fill="${accent}" opacity=".7"/>
+        <circle cx="66" cy="90" r="1.2" fill="${light}" opacity=".65"/></g>`,
+    sparkle: `<g class="care-spark"><path d="M88 38l1.6 4.4 4.4 1.6-4.4 1.6L88 50l-1.6-4.4L82 44l4.4-1.6Z" fill="${light}" opacity=".85"/>
+        <path d="M96 58l1.1 3 3 1.1-3 1.1L96 66l-1.1-3-3-1.1 3-1.1Z" fill="${accent}" opacity=".8"/></g>`,
+    chew: `<g class="care-chew"><path d="M66 76q6 5 12 0" stroke="${deep}" stroke-width="2" fill="none" opacity=".45" stroke-linecap="round"/>
+        <path d="M70 84q4 3 8 0" stroke="${deep}" stroke-width="1.6" fill="none" opacity=".3" stroke-linecap="round"/></g>`,
+    hearts: `<g class="care-hearts"><path d="M88 40c2-3 6-2 6 1 0 3-6 6-6 6s-6-3-6-6c0-3 4-4 6-1Z" fill="${accent}" opacity=".75"/>
+        <path d="M98 56c1.4-2 4-1.4 4 .7 0 2-4 4-4 4s-4-2-4-4c0-2.1 2.6-2.7 4-.7Z" fill="${light}" opacity=".7"/></g>`,
+  };
+  const drinkArt = {
+    straw: `<g class="care-cup"><path d="M74 72h14l-2 18H76Z" fill="${mix(light, '#ffffff', 0.3)}" stroke="${deep}" stroke-width="1.4"/>
+        <path d="M81 72l6-14" stroke="${accent}" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M74 78h14" stroke="#fff" stroke-width="1.6" opacity=".55"/></g>`,
+    fizz: `<g class="care-fizz"><circle cx="82" cy="70" r="2" fill="${light}" opacity=".75"/>
+        <circle cx="88" cy="60" r="1.6" fill="${accent}" opacity=".7"/>
+        <circle cx="80" cy="54" r="1.2" fill="${light}" opacity=".6"/></g>`,
+    slurp: `<g class="care-slurp"><path d="M78 74q6-3 10 2" stroke="${accent}" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".8"/>
+        <circle cx="92" cy="70" r="1.8" fill="${light}" opacity=".7"/></g>`,
+    cup: `<g class="care-mug"><path d="M72 74h16v14a4 4 0 0 1-4 4H76a4 4 0 0 1-4-4Z" fill="${mix(accent, '#ffffff', 0.5)}" stroke="${deep}" stroke-width="1.4"/>
+        <path d="M88 78h3a3 3 0 0 1 0 6h-3" fill="none" stroke="${deep}" stroke-width="1.6"/></g>`,
+  };
+  const pick = (state) => ((profile.propsByState && profile.propsByState[state]) || profile.props || '');
+  /* The variant class is namespaced: care-bubble and care-hearts are the art
+     groups that twinkle inside, so the wrapper must not share their names or
+     the twinkle animation would drive the wrapper's visibility too. */
+  const group = (state, art, prop) => (art
+    ? `<g class="care-prop care-prop-${state} care-set-${prop}" data-care-prop="${prop}" pointer-events="none">${art}</g>`
+    : '');
+  const sleepProp = pick('sleep');
+  const eatProp = pick('eat');
+  const drinkProp = pick('drink');
+  /* The blanket art carries its own drifting Zs; the other sets add ours. */
+  return `${group('sleep', sleepArt[sleepProp] || zs, sleepProp)}
+    ${group('eat', eatArt[eatProp] || eatArt.crumbs, eatProp)}
+    ${group('drink', drinkArt[drinkProp] || drinkArt.cup, drinkProp)}`;
+}
+
+if (typeof window !== 'undefined') {
+  window.SPRITE_ANIM_STATES = SPRITE_ANIM_STATES;
+  window.SPRITE_ANIM_TEMPO = SPRITE_ANIM_TEMPO;
+  window.SPRITE_ANIM_PROP_SETS = SPRITE_ANIM_PROP_SETS;
+  window.spriteAnimProfile = spriteAnimProfile;
+  window.spriteAnimAttrs = spriteAnimAttrs;
+}
+
+/* The Animal Puffle and turtle guides paint the live sprite body into the same
+   120-unit portrait space, so both wrap spriteSVG's inner markup here instead
+   of each keeping a copy of the transforms and the svg envelope. */
+const PUFFLE_PORTRAIT_FRAME = 'translate(60 55) scale(.78) translate(-60 -62)';
+
+function pufflePortraitMarkup(sprite, behind = '', over = '') {
+  const art = spriteSVG(sprite, { still: true, expr: 'happy', vectorOnly: true });
+  const inner = art.slice(art.indexOf('>') + 1, art.lastIndexOf('</svg>'));
+  return `<svg class="ap-puffle-art" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><g transform="${PUFFLE_PORTRAIT_FRAME}">${behind}${inner}${over}</g></svg>`;
+}
+
 function spriteSVG(sprite, opts = {}) {
   /* Pets wearing a Lumi sheet skin animate straight from the pack's frame
      indices; everything else uses the flat 2D starlit vector art. */
@@ -4302,7 +4649,7 @@ function spriteSVG(sprite, opts = {}) {
   const expr = opts.expr || 'idle';
   const stage = sprite.stage === 'egg' ? 'baby' : (sprite.stage || 'baby');
   const scale = STAGE_SCALE[stage] || 1;
-  const baby = stage === 'baby';
+  const baby = stage === 'baby' || stage === 'toddler';
   const id = String(sprite.id || 'spr').replace(/[^a-zA-Z0-9_-]/g, '');
   const delay = (id.length % 7) * 0.4 + 0.4;
   const clipId = `clip-${id}`;
@@ -4314,6 +4661,10 @@ function spriteSVG(sprite, opts = {}) {
   const backStep = Number(opts.backStep);
   const backTurn = Number(opts.backTurn);
   const faceOff = !!opts.noFace || view === 'back';
+  /* A creature that draws its own mouth keeps the shared one off its face. */
+  const creature = cpCreatureSpeciesOf(sprite);
+  const creatureOwnMouth = CP_CREATURE_OWN_MOUTH.includes(creature);
+  const creatureOwnEars = CP_CREATURE_OWN_EARS.includes(creature);
 
   /* Face and skill are rolled once per sprite from id + breed + gene. */
   const traits = spriteTraits(sprite);
@@ -4326,7 +4677,7 @@ function spriteSVG(sprite, opts = {}) {
      instead of only the idle one (sleep and love keep their own faces). */
   const customMouth = !!(sprite && sprite.mouth && sprite.mouth !== 'breed');
   const styledMouth = (expr === 'idle' || (customMouth && expr !== 'sleep' && expr !== 'love')) ? mouthStyleMarkup(traits.mouth) : '';
-  const mouth = styledMouth || mouthMarkup(expr);
+  const mouth = creatureOwnMouth ? '' : (styledMouth || mouthMarkup(expr));
   const features = speciesArt ? '' : elementFeature(sprite, c);
   const breed = breedMarkup(sprite, c);
   const arms = speciesArt ? '' : armMarkup(sprite.arms || 'nub', c);
@@ -4513,8 +4864,14 @@ function spriteSVG(sprite, opts = {}) {
   const starlitFx = typeof starlitSparkleMarkup === 'function' ? starlitSparkleMarkup(sprite) : '';
   const shade = typeof starlitShadeMarkup === 'function' ? starlitShadeMarkup(sprite, c, body, clipId) : '';
   const motion = spriteMotionFor(sprite, expr);
+  const anim = spriteAnimProfile(sprite, expr, opts.anim);
+  /* A still render is a list thumbnail: it never switches state, so it carries
+     neither the care prop groups nor the inline timing variables. A roster of a
+     hundred rows would otherwise hold three extra groups and a style attribute
+     per row for motion nobody sees. */
+  const stillArt = !!opts.still;
   const earStyle = sprite.ears && sprite.ears !== 'breed' ? sprite.ears : traits.ears;
-  const ears = speciesArt ? '' : earMarkup(earStyle, c);
+  const ears = speciesArt || creatureOwnEars ? '' : earMarkup(earStyle, c);
   const headStyle = sprite.head && sprite.head !== 'breed' ? sprite.head : traits.head;
   const head = HEAD_SHAPES[headStyle] || HEAD_SHAPES.breed;
   const headDrop = Number(head.dy) || 0;
@@ -4532,10 +4889,12 @@ function spriteSVG(sprite, opts = {}) {
   const styleMeta = styleKey && typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS ? window.LUMI_PUFFLE_VARIANTS[styleKey] : null;
   const styleElement = ELEMENTS[sprite.element];
   const styleArt = styleMeta && styleElement && styleElement.collectionTier && typeof puffleStyleArt === 'function'
-    ? puffleStyleArt(styleKey, c, { view, element: styleElement.puffleElement || styleElement.collectionTier })
+    ? puffleStyleArt(styleKey, c, { view, element: styleElement.puffleElement || styleElement.collectionTier, stage })
     : null;
 
-  return `<svg class="sprite-motion motion-${motion}" data-motion="${motion}"${sprite.fur === 'dream' ? ' data-dream="1"' : ''} viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  const animClass = stillArt ? '' : ` anim-${anim.state} anim-family-${anim.family}`;
+  const animAttrs = stillArt ? '' : ` ${spriteAnimAttrs(anim)}`;
+  return `<svg class="sprite-motion motion-${motion}${animClass}" data-motion="${motion}"${animAttrs}${sprite.fur === 'dream' ? ' data-dream="1"' : ''} viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="${gradId}" x1="0" y1="0" x2="0.35" y2="1">
         <stop offset="0" stop-color="${c.light}"/>
@@ -4551,13 +4910,13 @@ function spriteSVG(sprite, opts = {}) {
       ${aura}
       ${wings}
       ${styleArt ? styleArt.back : ''}
-      ${formMarkup(sprite, c, 'back')}
+      ${formMarkup(sprite, c, 'back', expr)}
       ${farLimbs}
       ${farLegMarkup}
       ${tail}
       ${giantTail}
       ${dreamTrail}
-      ${view === 'side' ? `<g transform="translate(7 10)">${ears}</g>` : `<g transform="translate(60 50) scale(1.14 1) translate(-60 -44)">${ears}</g>`}
+      ${ears ? (view === 'side' ? `<g transform="translate(7 10)">${ears}</g>` : `<g transform="translate(60 50) scale(1.14 1) translate(-60 -44)">${ears}</g>`) : ''}
       ${breed}
       ${legsFinal}
       <g${headTransform ? ` transform="${headTransform}"` : ''}>
@@ -4589,11 +4948,11 @@ function spriteSVG(sprite, opts = {}) {
       <g class="sprite-mouth">${view === 'side' ? sideMouth : (faceOff ? '' : mouth)}</g>
       ${view === 'side' ? sideNose : (faceOff ? '' : noseMarkup(sprite.nose || 'none', c))}</g>
       ${ultraFluff ? ultraForelockMarkup(c) : ''}
-      ${expr === 'sleep' ? napPropsMarkup(c) : ''}
+      ${stillArt ? '' : carePropsMarkup(anim, c)}
       ${features}
       ${finishMarkup(sprite, c, clipId, !!features)}
       ${shinyMarkup(sprite, c, clipId)}
-      ${formMarkup(sprite, c, 'front')}
+      ${formMarkup(sprite, c, 'front', expr)}
       ${customOutfitMarkup(sprite, c, clipId)}
       ${hatMarkup(sprite.hat || 'none', c)}
       ${accessory}
@@ -4753,9 +5112,21 @@ function spriteTraits(sprite) {
   const chosenEyes = sprite && typeof sprite.eyes === 'string' && sprite.eyes !== 'breed' && EYE_STYLE_KEYS.includes(sprite.eyes) ? sprite.eyes : null;
   const chosenMouth = sprite && typeof sprite.mouth === 'string' && TRAIT_MOUTHS.includes(sprite.mouth) ? sprite.mouth : null;
   const chosenIris = sprite && typeof sprite.iris === 'string' && /^#[0-9a-f]{6}$/i.test(sprite.iris) ? sprite.iris : null;
-  const puffleVariant = sprite && sprite.puffleVariant && typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS
-    ? window.LUMI_PUFFLE_VARIANTS[sprite.puffleVariant]
+  const puffleVariant = sprite && sprite.puffleVariant
+    ? (typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS ? window.LUMI_PUFFLE_VARIANTS[sprite.puffleVariant] : null)
+      || (typeof cpCreatureStylePalette === 'function' ? cpCreatureStylePalette(sprite.puffleVariant) : null)
     : null;
+  /* Each Sprite Puffle family carries its own ear and eye shape, so families
+     read as different creatures before colour. Player picks still win. */
+  const familyFace = sprite && typeof window !== 'undefined' && window.SPRITE_PUFFLE_FACES
+    ? window.SPRITE_PUFFLE_FACES[sprite.element] || null
+    : null;
+  const familyEar = familyFace && EAR_STYLES[familyFace.ear] ? familyFace.ear : null;
+  const familyEye = familyFace && EYE_STYLES[familyFace.eye] ? familyFace.eye : null;
+  /* The family eye is a bias, not a lock: two in three keep the signature and
+     the rest roll their own, so a family reads as one face without its puffles
+     becoming clones. Ears stay the family signature. */
+  const keepsFamilyEye = !!familyEye && (seed >>> 9) % 3 !== 0;
   /* Skills are family-flavoured: the roll picks from this family's pool, so a
      Frost Puffle never turns up with an Ember Dash. Unknown families fall back
      to the whole table, which keeps gene-lab species working. */
@@ -4774,8 +5145,8 @@ function spriteTraits(sprite) {
     iris: chosenIris
       || (puffleVariant && (puffleVariant.classic || (sprite && (String(sprite.breed || '').startsWith('cp_penguin_') || sprite.breed === 'cp_puffle'))) && puffleVariant.iris)
       || TRAIT_IRISES[seed % TRAIT_IRISES.length],
-    eyeStyle: chosenEyes || eyes[(seed >>> 3) % eyes.length],
-    ears: earBias[breed] || 'round',
+    eyeStyle: chosenEyes || (keepsFamilyEye ? familyEye : null) || eyes[(seed >>> 3) % eyes.length],
+    ears: earBias[breed] || familyEar || 'round',
     head: 'breed',
     mouth: chosenMouth || TRAIT_MOUTHS[(seed >>> 5) % TRAIT_MOUTHS.length],
     ability: skillPool[(seed >>> 13) % skillPool.length],

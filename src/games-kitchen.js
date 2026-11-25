@@ -681,3 +681,149 @@ function openMusicJamGame() {
   kCountdown(shell, 35, null, finish);
   shell.addCleanup(() => { stopped = true; if (raf) cancelAnimationFrame(raf); });
 }
+
+/* ---------------- ROOM SERVICE RUSH ----------------
+   The hotel floor, as a game. Every ticket names one real dish from the whole
+   room-service menu — hotel courses, cafe, Club Penguin, kitchen, specialist
+   space meals, snacks, drinks and sweets — and the tray holds it beside dishes
+   from other courses. Carrying the right plate pays; three wrong ones close
+   the kitchen, and the plates actually served come home as pantry stock. */
+
+Object.assign(GAME_INFO, {
+  hotelrush: {
+    title: 'Room Service Rush', icon: '🛎️', tag: 'Hotel service',
+    desc: 'Carry each ticket to the right table — every course the hotel serves.',
+    g1: '#ffd166', g2: '#ff8fab',
+  },
+});
+
+function hotelRushPool() {
+  const keys = [];
+  const courses = typeof HOTEL_COURSES !== 'undefined' ? HOTEL_COURSES : [];
+  courses.forEach((course) => {
+    const courseKeys = typeof hotelCourseKeys === 'function' ? hotelCourseKeys(course.key) : [];
+    courseKeys.forEach((key) => {
+      if (keys.indexOf(key) >= 0) return;
+      if (typeof hotelMenuEntry === 'function' && !hotelMenuEntry(key)) return;
+      keys.push(key);
+    });
+  });
+  return keys;
+}
+
+function openHotelServiceGame() {
+  const shell = gameOverlayShell('hotelrush');
+  shell.hintEl.textContent = 'Read the ticket, then tap that dish on the tray. Three wrong plates closes the kitchen.';
+  const pool = hotelRushPool();
+  if (!pool.length) {
+    toast('Room service needs a stocked kitchen first.', '🍽️');
+    shell.close();
+    return;
+  }
+  const courses = typeof HOTEL_COURSES !== 'undefined' ? HOTEL_COURSES : [];
+  const courseByKey = {};
+  courses.forEach((course) => { courseByKey[course.key] = course; });
+  const guestNames = ['the honeymoon suite', 'room 04', 'the corner booth', 'the balcony table', 'a sleepy guest', 'the lobby sofa'];
+  let order = null;
+  let score = 0;
+  let served = 0;
+  let streak = 0;
+  let bestStreak = 0;
+  let misses = 0;
+  let stopped = false;
+  let timer = null;
+  const dishes = [];
+
+  shell.board.innerHTML = '';
+  const wrap = kNode('div', 'hru');
+  wrap.innerHTML = '<div class="hru-ticket"><span class="hru-emoji" data-hru-emoji>🍲</span>'
+    + '<span class="hru-copy"><b data-hru-name>Order</b><i data-hru-course>Hotel menu</i></span>'
+    + '<span class="hru-count" data-hru-served>0 served</span></div>'
+    + '<div class="hru-tray" data-hru-tray></div>'
+    + '<div class="hru-status" data-hru-status>Tap the dish the ticket names.</div>';
+  shell.board.appendChild(wrap);
+
+  const trayEl = wrap.querySelector('[data-hru-tray]');
+  const servedEl = wrap.querySelector('[data-hru-served]');
+
+  const paint = () => {
+    order = pool[Math.floor(Math.random() * pool.length)];
+    const line = hotelMenuEntry(order);
+    const course = courseByKey[line.course] || { name: 'Kitchen', icon: '🍽️' };
+    wrap.querySelector('[data-hru-emoji]').textContent = line.item.emoji;
+    wrap.querySelector('[data-hru-name]').textContent = line.item.name;
+    wrap.querySelector('[data-hru-course]').textContent = `${course.icon} ${course.name} · for ${guestNames[(served + streak) % guestNames.length]}`;
+    /* Two of the three distractors come from other courses when the menu has
+       them, so the tray tests the dish and not just a repeated icon. */
+    const others = kShuffle(pool.filter((key) => key !== order));
+    const picks = [];
+    others.forEach((key) => {
+      if (picks.length >= 2) return;
+      const other = hotelMenuEntry(key);
+      if (other && other.course !== line.course) picks.push(key);
+    });
+    others.forEach((key) => { if (picks.length < 3) picks.push(key); });
+    trayEl.innerHTML = kShuffle([order].concat(picks.slice(0, 3))).map((key) => {
+      const dish = hotelMenuEntry(key);
+      return `<button class="hru-dish" type="button" data-hru-dish="${key}"><span>${dish.item.emoji}</span><small>${esc(dish.item.name)}</small></button>`;
+    }).join('');
+  };
+
+  const finish = () => {
+    if (stopped) return;
+    stopped = true;
+    if (timer) timer.stop();
+    showGameResult(shell, {
+      kind: 'hotelrush',
+      score,
+      coins: 24 + score,
+      xp: 30 + served * 8,
+      perfect: bestStreak,
+      blurb: served ? `${served} plate${served === 1 ? '' : 's'} carried to the right table!` : 'The guests are still waiting.',
+      rewardHtml: `
+        <span class="chip" style="background:#fef08a;color:#854d0e">🪙 +${24 + score} coins</span>
+        <span class="chip">⭐ +${30 + served * 8} XP</span>
+        <span class="chip" style="background:#dcfce7;color:#166534">🍽️ ${served} plate${served === 1 ? '' : 's'} served</span>
+        <span class="chip" style="background:#e0f2fe;color:#075985">🏨 +1 hotel care moment</span>
+        ${dishes.slice(0, 4).map((key) => `<span class="chip">${hotelMenuEntry(key).item.emoji} ${esc(hotelMenuEntry(key).item.name)} to the pantry</span>`).join('')}
+        <span class="chip">💗 +bond</span>`,
+      collect: () => Actions.finishHotelService({ score, served, perfect: bestStreak, dishes }),
+      onCollected: (res) => {
+        if (!res || !res.ok) {
+          toast('The hotel could not save that shift. Try again from the lobby.', '🛎️');
+          return;
+        }
+        const pantry = res.foodKeys.length ? ` · ${res.foodKeys.slice(0, 2).map((key) => (FOODS[key] ? FOODS[key].name : SNACKS[key].name)).join(' · ')} to the pantry` : '';
+        toast(`+${res.coins} coins · +${res.xp} XP${pantry}`, '🛎️');
+        if (res.careGift) toast(`🏨 Hotel Care Bonus: +${res.careGift.coins} coins · +${res.careGift.xp} XP`, '🏨');
+      },
+    });
+  };
+
+  trayEl.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-hru-dish]');
+    if (!button || stopped) return;
+    if (button.dataset.hruDish === order) {
+      served += 1;
+      streak += 1;
+      bestStreak = Math.max(bestStreak, streak);
+      score += 10 + streak * 2;
+      if (dishes.indexOf(order) < 0) dishes.push(order);
+      shell.scoreEl.textContent = String(score);
+      servedEl.textContent = `${served} served`;
+      kFloatText(wrap, streak >= 3 ? `perfect x${streak}` : 'served', 'good');
+      Sfx.pop();
+      paint();
+    } else {
+      misses += 1;
+      streak = 0;
+      kFloatText(wrap, 'wrong table', 'bad');
+      Sfx.error();
+      if (misses >= 3) return finish();
+    }
+  });
+
+  paint();
+  timer = kCountdown(shell, 45, null, finish);
+  shell.addCleanup(() => { stopped = true; });
+}

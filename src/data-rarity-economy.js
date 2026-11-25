@@ -6,12 +6,9 @@
    table exists, and once only — the applied set keeps a reload from compounding
    the multipliers. */
 
-const RARITY_PRICE_MULT = {
-  common: 1, uncommon: 1.15, rare: 1.35, epic: 1.65,
-  legendary: 2.1, mythic: 2.8, secret: 3.6, ultra_secret: 4.6,
-  master: 5.2, exotic: 3.1, ancient: 5.8, celestial: 6.2, divine: 7.5,
-  eternal: 10, creator: 12,
-};
+const RARITY_PRICE_MULT = Object.fromEntries(RARITY_SPEC_KEYS
+  .filter((key) => Number(RARITY_SPEC[key].priceMult) > 0)
+  .map((key) => [key, RARITY_SPEC[key].priceMult]));
 
 /* Relative wild weights: a Common is 60,000x likelier to wander in than an
    Ultra Secret, which is the collection sheet's own 60% / 0.001% spread.
@@ -22,14 +19,10 @@ const RARITY_PRICE_MULT = {
    three at 0.0001 while celestial sat at 0.0005. The values are the same
    numbers, reassigned to the tiers the ladder actually puts in that order;
    tests/rarity-tier-coverage.test.js fails if that slips again. */
-const RARITY_SPAWN_WEIGHT = {
-  common: 60, uncommon: 25, rare: 10, epic: 4,
-  legendary: 0.9, mythic: 0.09, secret: 0.02, ultra_secret: 0.001,
-  master: 0.001, exotic: 0.01, ancient: 0.0005, celestial: 0.0002,
-  divine: 0.0001, eternal: 0.00005, creator: 0.00001,
-};
-
-const RARITY_LADDER = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic', 'secret', 'exotic', 'master', 'ancient', 'celestial', 'divine', 'eternal', 'creator', 'ultra_secret'];
+const RARITY_SPAWN_WEIGHT = Object.fromEntries(RARITY_SPEC_KEYS
+  .filter((key) => Number(RARITY_SPEC[key].spawnWeight) > 0)
+  .map((key) => [key, RARITY_SPEC[key].spawnWeight]));
+const RARITY_LADDER = RARITY_SPEC_KEYS.slice();
 /* Idempotent: the first pass snapshots the untouched price, so a second call
    (or a hot reload) scales from the original instead of compounding. */
 const RARITY_ECONOMY_ORIGINAL = {};

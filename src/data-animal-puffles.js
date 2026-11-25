@@ -128,41 +128,10 @@ const ANIMAL_PUFFLE_FAMILIES = [
 
 const ANIMAL_PUFFLE_STAGE_COUNT = ANIMAL_PUFFLE_FAMILIES.reduce((total, family) => total + family.stages.length, 0);
 
-/* Guardian portraits come from the shipped Lumi kit art: each family borrows the
-   kit whose silhouette matches it, and the slot steps up with the rarity tier so
-   a mythic guardian wears a richer set than a common one. */
-const ANIMAL_PUFFLE_KITS = {
-  /* The fur kit used to carry Fox, Bear, Lion and Cosmic Kitsune, so four
-     guardians read as the same shaggy round puff. Fox keeps the fur silhouette;
-     Bear moves to the stocky round kit, Lion to the maned feather kit, and
-     Cosmic Kitsune to the haloed glow kit. The remaining five-family clusters
-     are spread too: Void Lynx takes the unused robot kit, Leviathan the shell,
-     Moon Dragon and Eternal Wolf the glow, and Robin the feather. Every kit now
-     carries at most four families, and the fur kit only Fox. */
-  bunny: 'snow', squirrel: 'leaf', duck: 'round', hedgehog: 'spike', robin: 'feather',
-  marshmallow: 'snow', cloudsheep: 'fur', jellybean: 'flower', squishy: 'fur', squishygummies: 'glow',
-  cinderfox: 'feather', geodebear: 'spike', nebulaowl: 'feather',
-  fox: 'fur', deer: 'horn', otter: 'fin', owl: 'leaf', beaver: 'round',
-  wolf: 'snow', bear: 'round', butterfly: 'flower', bee: 'flower', tiger: 'spike', panther: 'crystal',
-  axolotl: 'fin', turtle: 'shell', dolphin: 'fin', peacock: 'flower', raven: 'spike', snowleopard: 'snow',
-  starcat: 'glow', lion: 'feather', swan: 'crystal', phoenix: 'dragon', unicorn: 'horn', dragonpup: 'dragon',
-  griffin: 'feather', kirin: 'horn', leviathan: 'shell', roc: 'spike', moondragon: 'glow',
-  cosmickitsune: 'glow', voidlynx: 'robot', genesisstag: 'leaf', heartlightbunny: 'flower', creatordragon: 'dragon',
-  prismchimera: 'crystal', eternalwolf: 'glow', worldphoenix: 'feather', crowngriffin: 'crystal', spriteprime: 'dragon',
-};
-const ANIMAL_PUFFLE_KIT_NAMES = ['crystal', 'dragon', 'feather', 'fin', 'flower', 'fur', 'glow', 'horn', 'leaf', 'robot', 'round', 'shell', 'snow', 'spike'];
-/* Kit variant per evolution stage: plain starter, adventuring mid kit, and the
-   guardian set the card portrait is cut from. */
-const ANIMAL_PUFFLE_STAGE_SLOTS = ['0', '3', '5'];
 const ANIMAL_PUFFLE_TIER_STEP = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, secret: 5, ultra_secret: 5 };
-
-/* Every kit sheet is drawn in the same neutral blue, so the portraits are
-   tinted per family. The golden angle keeps neighbouring families far apart in
-   hue, including the families that still share a kit after the spread. */
-/* Griffin and Thunder Roc are both mythic birds; the Griffin wears the feather
-   kit on a wide tufted body while the Roc keeps the spike kit, and both get
-   fixed hues (gold vs storm blue) so the two portraits never read as
-   recolours of one family. */
+/* Portraits are tinted to each family's own hue; the golden angle keeps
+   neighbouring families far apart, and a few pairs with similar silhouettes
+   get fixed hues so they never read as recolours of one family. */
 const ANIMAL_PUFFLE_HUE_OVERRIDES = {
   griffin: 42, roc: 205,
   marshmallow: 24, cloudsheep: 205, jellybean: 96, squishy: 188, squishygummies: 316,
@@ -171,147 +140,86 @@ const ANIMAL_PUFFLE_HUE_OVERRIDES = {
      Bunny, Wolf and Snow Leopard from reading as three washes of the same blue. */
   bunny: 328, wolf: 212, snowleopard: 174,
 };
-/* Snow needs more saturation than the other sheets to carry those hues; its
-   near-white fur otherwise swallows the tint at card size. Keep this in step
-   with the filter below so the three portraits stay clearly separated. */
-const ANIMAL_PUFFLE_KIT_TINTS = {
-  snow: { sat: 3.2, bright: 1.0 },
-};
 const ANIMAL_PUFFLE_HUES = new Map(ANIMAL_PUFFLE_FAMILIES.map((family, index) => [family.id,
   ANIMAL_PUFFLE_HUE_OVERRIDES[family.id] ?? Math.round((index * 137.508) % 360)]));
 
-/* The fourteen kit sheets are shared by up to four families each after the
-   spread, so the portrait art alone could still repeat a guardian in a different
-   hue. Every one of the fifty-one families carries an outline profile instead:
-   body class, fur, ears, crest, wings and tail are drawn behind the kit portrait,
-   giving every guardian its own silhouette without a new bitmap. Profiles never
-   repeat inside one kit.
-   Each portrait also gets a round puffball rim and a traced copy of the profile
-   over the shared art, so the family shape stays legible at card size. */
+/* Every one of the fifty-one families carries an outline profile: fur, ears,
+   crest, wings and tail, drawn around the shared puffle body so every guardian
+   has its own silhouette. The painted portrait and the silhouette both read it. */
 const ANIMAL_PUFFLE_SILHOUETTES = {
-  /* Mammal profiles: the old fur kit was split across fur, round, feather and
-     glow, so this group no longer shares one portrait body. */
-  bunny: { body: 'tall', fur: 'tufts', ears: 'long', tail: 'puff' },
-  marshmallow: { body: 'round', fur: 'fluffy', ears: 'round', tail: 'puff' },
-  cloudsheep: { body: 'round', fur: 'fluffy', ears: 'round', tail: 'puff' },
-  jellybean: { body: 'round', fur: 'smooth', ears: 'tuft', tail: 'short' },
-  squishy: { body: 'round', fur: 'tufts', ears: 'round', tail: 'puff' },
-  squishygummies: { body: 'round', fur: 'smooth', ears: 'round', tail: 'heart' },
-  cinderfox: { body: 'tall', fur: 'tufts', ears: 'pointy', tail: 'bushy' },
-  geodebear: { body: 'wide', fur: 'fluffy', ears: 'round', tail: 'thin' },
-  nebulaowl: { body: 'round', fur: 'feather', ears: 'tuft', tail: 'short' },
-  squirrel: { body: 'round', fur: 'spiky', ears: 'tuft', tail: 'bushy', tailHigh: true },
-  fox: { body: 'sleek', fur: 'smooth', ears: 'pointy', tail: 'bushy' },
-  beaver: { body: 'squat', fur: 'smooth', ears: 'round', tail: 'flat' },
-  wolf: { body: 'sleek', fur: 'tufts', ears: 'pointy', tail: 'curl' },
-  bear: { body: 'round', fur: 'fluffy', ears: 'round', tail: 'puff' },
-  tiger: { body: 'wide', fur: 'fluffy', ears: 'round', crest: 'mane', tail: 'thin' },
-  panther: { body: 'sleek', fur: 'smooth', ears: 'round', tail: 'thin' },
-  lion: { body: 'round', fur: 'fluffy', ears: 'round', crest: 'mane', tail: 'tuft' },
-  griffin: { body: 'wide', fur: 'tufts', ears: 'tuft', wings: 'spread', tail: 'fan' },
+  /* Mammal profiles: fur, ears and tail carry the family. */
+  bunny: { fur: 'tufts', ears: 'long', tail: 'puff' },
+  marshmallow: { fur: 'fluffy', ears: 'round', tail: 'puff' },
+  cloudsheep: { fur: 'fluffy', ears: 'round', tail: 'puff' },
+  jellybean: { fur: 'smooth', ears: 'tuft', tail: 'short' },
+  squishy: { fur: 'tufts', ears: 'round', tail: 'puff' },
+  squishygummies: { fur: 'smooth', ears: 'round', tail: 'heart' },
+  cinderfox: { fur: 'tufts', ears: 'pointy', tail: 'bushy' },
+  geodebear: { fur: 'fluffy', ears: 'round', tail: 'thin' },
+  nebulaowl: { fur: 'feather', ears: 'tuft', tail: 'short' },
+  squirrel: { fur: 'spiky', ears: 'tuft', tail: 'bushy', tailHigh: true },
+  fox: { fur: 'smooth', ears: 'pointy', tail: 'bushy' },
+  beaver: { fur: 'smooth', ears: 'round', tail: 'flat' },
+  wolf: { fur: 'tufts', ears: 'pointy', tail: 'curl' },
+  bear: { fur: 'fluffy', ears: 'round', tail: 'puff' },
+  tiger: { fur: 'fluffy', ears: 'round', crest: 'mane', tail: 'thin' },
+  panther: { fur: 'smooth', ears: 'round', tail: 'thin' },
+  lion: { fur: 'fluffy', ears: 'round', crest: 'mane', tail: 'tuft' },
+  griffin: { fur: 'tufts', ears: 'tuft', wings: 'spread', tail: 'fan' },
   /* Feather kit. */
-  duck: { body: 'squat', fur: 'smooth', beak: true, wings: 'folded', tail: 'fan' },
-  robin: { body: 'round', fur: 'tufts', crest: 'tuft', wings: 'folded', tail: 'short' },
-  owl: { body: 'wide', fur: 'fluffy', ears: 'tuft', wings: 'folded', tail: 'short' },
-  peacock: { body: 'tall', fur: 'smooth', crest: 'crown', wings: 'spread', tail: 'fan' },
-  raven: { body: 'sleek', fur: 'smooth', crest: 'spike', wings: 'spread', tail: 'wedge' },
-  swan: { body: 'tall', fur: 'smooth', neck: 'long', wings: 'spread', tail: 'fan' },
-  phoenix: { body: 'round', fur: 'spiky', crest: 'flame', wings: 'spread', tail: 'flame' },
-  roc: { body: 'wide', fur: 'spiky', crest: 'spike', wings: 'spread', tail: 'storm' },
-  worldphoenix: { body: 'tall', fur: 'spiky', crest: 'flame', wings: 'spread', tail: 'flame', halo: 'ring' },
+  duck: { fur: 'smooth', beak: true, wings: 'folded', tail: 'fan' },
+  robin: { fur: 'tufts', crest: 'tuft', wings: 'folded', tail: 'short' },
+  owl: { fur: 'fluffy', ears: 'tuft', wings: 'folded', tail: 'short' },
+  peacock: { fur: 'smooth', crest: 'crown', wings: 'spread', tail: 'fan' },
+  raven: { fur: 'smooth', crest: 'spike', wings: 'spread', tail: 'wedge' },
+  swan: { fur: 'smooth', neck: 'long', wings: 'spread', tail: 'fan' },
+  phoenix: { fur: 'spiky', crest: 'flame', wings: 'spread', tail: 'flame' },
+  roc: { fur: 'spiky', crest: 'spike', wings: 'spread', tail: 'storm' },
+  worldphoenix: { fur: 'spiky', crest: 'flame', wings: 'spread', tail: 'flame', halo: 'ring' },
   /* Glow kit. */
-  starcat: { body: 'round', fur: 'tufts', ears: 'pointy', tail: 'star' },
-  cosmickitsune: { body: 'sleek', fur: 'tufts', ears: 'pointy', tail: 'nine' },
+  starcat: { fur: 'tufts', ears: 'pointy', tail: 'star' },
+  cosmickitsune: { fur: 'tufts', ears: 'pointy', tail: 'nine' },
   /* Void Lynx uses the robot kit with portal rifts and cheek tufts; Eternal
      Wolf keeps the glow kit's halo ring on a sleek constellation body. */
-  voidlynx: { body: 'tall', fur: 'spiky', ears: 'tuft', tail: 'thin', halo: 'rift', cheek: 'lynx' },
-  heartlightbunny: { body: 'round', fur: 'fluffy', ears: 'long', tail: 'heart' },
-  eternalwolf: { body: 'sleek', fur: 'fluffy', ears: 'tuft', crest: 'star', tail: 'curl', halo: 'ring' },
-  spriteprime: { body: 'wide', fur: 'spiky', ears: 'round', crest: 'crown', mane: 'lion', wings: 'spread', halo: 'ring' },
+  voidlynx: { fur: 'spiky', ears: 'tuft', tail: 'thin', halo: 'rift', cheek: 'lynx' },
+  heartlightbunny: { fur: 'fluffy', ears: 'long', tail: 'heart' },
+  eternalwolf: { fur: 'fluffy', ears: 'tuft', crest: 'star', tail: 'curl', halo: 'ring' },
+  spriteprime: { fur: 'spiky', ears: 'round', crest: 'crown', mane: 'lion', wings: 'spread', halo: 'ring' },
   /* Spike kit. */
-  hedgehog: { body: 'squat', fur: 'spiky', ears: 'round', tail: 'short' },
+  hedgehog: { fur: 'spiky', ears: 'round', tail: 'short' },
   /* Horn kit. */
-  deer: { body: 'tall', fur: 'smooth', ears: 'tuft', crest: 'antler', tail: 'short' },
-  unicorn: { body: 'tall', fur: 'tufts', ears: 'pointy', crest: 'horn', tail: 'flow' },
+  deer: { fur: 'smooth', ears: 'tuft', crest: 'antler', tail: 'short' },
+  unicorn: { fur: 'tufts', ears: 'pointy', crest: 'horn', tail: 'flow' },
   /* Fin kit. */
-  otter: { body: 'sleek', fur: 'smooth', ears: 'round', tail: 'thick' },
-  axolotl: { body: 'squat', fur: 'smooth', gills: 'frill', tail: 'fin' },
-  dolphin: { body: 'sleek', fur: 'smooth', beak: true, dorsal: 'fin', tail: 'fluke' },
-  leviathan: { body: 'tall', fur: 'smooth', crest: 'horns', dorsal: 'spines', tail: 'serpent' },
+  otter: { fur: 'smooth', ears: 'round', tail: 'thick' },
+  axolotl: { fur: 'smooth', gills: 'frill', tail: 'fin' },
+  dolphin: { fur: 'smooth', beak: true, dorsal: 'fin', tail: 'fluke' },
+  leviathan: { fur: 'smooth', crest: 'horns', dorsal: 'spines', tail: 'serpent' },
   /* Flower kit. */
-  butterfly: { body: 'tall', fur: 'smooth', antennae: true, wings: 'butterfly', tail: 'short' },
-  bee: { body: 'round', fur: 'fluffy', antennae: true, wings: 'small', tail: 'sting' },
+  butterfly: { fur: 'smooth', antennae: true, wings: 'butterfly', tail: 'short' },
+  bee: { fur: 'fluffy', antennae: true, wings: 'small', tail: 'sting' },
   /* Shell, snow and leaf kits. */
-  turtle: { body: 'wide', fur: 'smooth', shell: 'dome', tail: 'short' },
-  snowleopard: { body: 'wide', fur: 'fluffy', ears: 'tuft', spots: true, tail: 'curl' },
-  genesisstag: { body: 'round', fur: 'tufts', ears: 'pointy', crest: 'antler', canopy: 'leaves', tail: 'puff' },
+  turtle: { fur: 'smooth', shell: 'dome', tail: 'short' },
+  snowleopard: { fur: 'fluffy', ears: 'tuft', spots: true, tail: 'curl' },
+  genesisstag: { fur: 'tufts', ears: 'pointy', crest: 'antler', canopy: 'leaves', tail: 'puff' },
   /* Dragon, glow and crystal profiles. The high-rarity pairs that share a kit
      are separated by body and appendage, not only hue: Creator Dragon is a tall,
      smooth horned serpent, while Sprite Prime Beast is a wide, spiky crown-maned
      beast; Eternal Wolf wears star-crested wolf tufts instead of the kitsune's
      fox ears; Crown Griffin gets a tufted lion tail instead of Prism Chimera's
      matching fan. */
-  dragonpup: { body: 'wide', fur: 'smooth', crest: 'horns', wings: 'dragon', tail: 'spade' },
-  kirin: { body: 'tall', fur: 'tufts', crest: 'antler', tail: 'flame' },
-  moondragon: { body: 'sleek', fur: 'smooth', crest: 'crescent', wings: 'dragon', tail: 'serpent', halo: 'ring' },
-  creatordragon: { body: 'tall', fur: 'smooth', crest: 'horns', wings: 'dragon', tail: 'serpent', dorsal: 'spines' },
+  dragonpup: { fur: 'smooth', crest: 'horns', wings: 'dragon', tail: 'spade' },
+  kirin: { fur: 'tufts', crest: 'antler', tail: 'flame' },
+  moondragon: { fur: 'smooth', crest: 'crescent', wings: 'dragon', tail: 'serpent', halo: 'ring' },
+  creatordragon: { fur: 'smooth', crest: 'horns', wings: 'dragon', tail: 'serpent', dorsal: 'spines' },
   /* Crystal kit. */
-  prismchimera: { body: 'tall', fur: 'fluffy', crest: 'antler', mane: 'lion', wings: 'dragon', tail: 'fan' },
-  crowngriffin: { body: 'wide', fur: 'tufts', ears: 'tuft', crest: 'crown', wings: 'spread', tail: 'tuft' },
+  prismchimera: { fur: 'fluffy', crest: 'antler', mane: 'lion', wings: 'dragon', tail: 'fan' },
+  crowngriffin: { fur: 'tufts', ears: 'tuft', crest: 'crown', wings: 'spread', tail: 'tuft' },
 };
-/* Profiles keep their authored body labels for reference, but every guardian
-   paints the same round base. Normalising here also covers any profile added
-   later, so a tall or wide label can never introduce a second body silhouette. */
-Object.values(ANIMAL_PUFFLE_SILHOUETTES).forEach((profile) => { profile.body = 'round'; });
-
-/* The six cosmic families that shared the glow kit used to show the same
-   kit-painted eyes and muzzle. These marks are drawn over the face in the same
-   128 cell as the kit frame, so each one keeps the shared chibi face but reads
-   as its own family: Star Cat's forehead star and cheek freckles, Cosmic
-   Kitsune's blaze and whisker diamonds, Void Lynx's bandit mask and rift,
-   Heartlight Bunny's heart blaze and blush, Eternal Wolf's brow streaks and
-   comet trail, and Sprite Prime's prismatic crown and orbit. */
-const ANIMAL_PUFFLE_FACE_MARKINGS = {
-  starcat: `
-    <path d="M64 35l2.8 7.2 7.7.6-5.9 5 1.8 7.5-6.4-4-6.4 4 1.8-7.5-5.9-5 7.7-.6Z" fill="#ffe08a" stroke="#7a4a1b" stroke-width="1.1"/>
-    <path d="M43 79l1.4 3.2 3.4.3-2.6 2.2.8 3.3-3-1.8-3 1.8.8-3.3-2.6-2.2 3.4-.3ZM85 79l1.4 3.2 3.4.3-2.6 2.2.8 3.3-3-1.8-3 1.8.8-3.3-2.6-2.2 3.4-.3Z" fill="#fff3c4" opacity=".95"/>
-    <g stroke="#fff3c4" stroke-width="2" stroke-linecap="round" opacity=".85"><path d="M29 74l12 3M28 82l12 1M99 74l-12 3M100 82l-12 1"/></g>`,
-  cosmickitsune: `
-    <path d="M64 34c-5 8-7 17-4 24h8c3-7 1-16-4-24Z" fill="#fff3e0" opacity=".94"/>
-    <path d="M37 78l7-4 7 4-7 4ZM91 78l-7-4-7 4 7 4Z" fill="#ff9ec7" stroke="#9d174d" stroke-width=".9"/>
-    <g stroke="#ffb3d1" stroke-width="2" stroke-linecap="round" opacity=".9"><path d="M27 71l14 3M26 78l15 1M101 71l-14 3M102 78l-15 1"/></g>`,
-  voidlynx: `
-    <path d="M34 49c8-4 17-4 24 0l-4 9c-6-3-13-4-20-2Z" fill="#160f2b" opacity=".82"/>
-    <path d="M94 49c-8-4-17-4-24 0l4 9c6-3 13-4 20-2Z" fill="#160f2b" opacity=".82"/>
-    <path d="M64 35l3 9 9 2-9 3-3 9-3-9-9-3 9-2Z" fill="#b18cff" stroke="#4a2a7a" stroke-width="1"/>
-    <g stroke="#d9c8f0" stroke-width="2" stroke-linecap="round" opacity=".85"><path d="M31 73l-9-4M31 80l-10 2M97 73l9-4M97 80l10 2"/></g>`,
-  heartlightbunny: `
-    <path d="M64 35c-4-6-13-3-13 4 0 7 13 15 13 15s13-8 13-15c0-7-9-10-13-4Z" fill="#ff9ec7" stroke="#9d174d" stroke-width="1.1"/>
-    <path d="M63 42c-2-3-6-1-6 2 0 3 6 7 6 7s6-4 6-7c0-3-4-5-6-2Z" fill="#fff3e0" opacity=".9"/>
-    <ellipse cx="39" cy="81" rx="7" ry="3.2" fill="#ff9ec7" opacity=".38"/><ellipse cx="89" cy="81" rx="7" ry="3.2" fill="#ff9ec7" opacity=".38"/>
-    <path d="M42 75l2 3 3.4.4-2.5 2.2.7 3.3-3.6-2-3.6 2 .7-3.3-2.5-2.2 3.4-.4ZM86 75l2 3 3.4.4-2.5 2.2.7 3.3-3.6-2-3.6 2 .7-3.3-2.5-2.2 3.4-.4Z" fill="#ffd6e8"/>`,
-  eternalwolf: `
-    <path d="M64 34l2.4 6.2 6.6.5-5.1 4.3 1.6 6.5-5.5-3.5-5.5 3.5 1.6-6.5-5.1-4.3 6.6-.5Z" fill="#bde9ff" stroke="#2b5f7a" stroke-width="1"/>
-    <g stroke="#e8f4ff" stroke-width="2.8" stroke-linecap="round" opacity=".9"><path d="M42 55l13-4M86 55l-13-4"/></g>
-    <path d="M34 76c6 3 10 3 15 0M34 83c5 3 9 3 14 1M94 76c-6 3-10 3-15 0M94 83c-5 3-9 3-14 1" fill="none" stroke="#d6f2ff" stroke-width="1.8" stroke-linecap="round" opacity=".8"/>`,
-  spriteprime: `
-    <path d="M64 32l5 8 10-2-5 9 8 7-10 1-3 10-5-8-5 8-3-10-10-1 8-7-5-9 10 2Z" fill="#8fe8ff" stroke="#2e5c8c" stroke-width="1"/>
-    <path d="M64 40l2.6 6.4 6.4 2.6-6.4 2.6L64 58l-2.6-6.4L55 49l6.4-2.6Z" fill="#fff8e2"/>
-    <g stroke-width="2.4" stroke-linecap="round" opacity=".95"><path d="M34 73l13 2" stroke="#ffd166"/><path d="M34 79l13 1" stroke="#8fe8ff"/><path d="M34 85l12 0" stroke="#ff9ec7"/><path d="M94 73l-13 2" stroke="#ffd166"/><path d="M94 79l-13 1" stroke="#8fe8ff"/><path d="M94 85l-12 0" stroke="#ff9ec7"/></g>`,
-};
-
-/* The outline is drawn in a 64-unit box on the same scale as the portrait, so
-   the kit art covers the body while the ears, crest, wings and tail show around
-   it. Everything inherits currentColor, which the CSS sets to the family aura. */
-/* Every guardian silhouette now uses the same round puffball base as every
-   Sprite and Sprite Puffle. The body class stays as profile metadata for old
-   data, but family identity comes from the hairy fringe and the ears, crest,
-   wings and tail around that one round body. */
-const AP_SILHOUETTE_BODIES = {
-  /* The same round body path as the live sprite, scaled into the 64-unit
-     portrait box, so guardian, Sprite Puffle and sprite outlines match. */
-  round: '<path d="M32 17.5c11 0 20 9 20 20.5s-9 20.5-20 20.5-20-9-20-20.5 9-20.5 20-20.5Z"/>',
-};
+/* The same round body path the live sprite draws, scaled into the 64-unit
+   portrait box. Family identity comes from the fringe, ears, crest, wings and
+   tail in the profile, which the outline and the painted portrait both read. */
+const AP_SILHOUETTE_ROUND = '<path d="M32 17.5c11 0 20 9 20 20.5s-9 20.5-20 20.5-20-9-20-20.5 9-20.5 20-20.5Z"/>';
 
 function apSilhouetteFur(style) {
   if (!style || style === 'smooth') return '';
@@ -341,15 +249,13 @@ function apSilhouetteFur(style) {
   return marks.join('');
 }
 
-function apSilhouetteSVG(familyId, className = 'ap-portrait-silhouette') {
+/* The family's own animal shape: fur fringe, ears, crest, wings, tail, shell
+   and the rest, drawn in the 64-unit space the silhouette uses. One list feeds
+   both the outline trace and the filled portrait, so the two never drift. */
+function apFamilyShapeParts(familyId) {
   const p = ANIMAL_PUFFLE_SILHOUETTES[familyId];
   if (!p) return '';
-  /* The dotted rim and the round body are the shared puffball base; the fringe
-     and appendages are what make two families sharing a kit read differently. */
-  const puffball = '<circle cx="32" cy="38" r="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-dasharray=".6 3.6" stroke-linecap="round" opacity=".38"/>';
-  /* Every guardian shares the same round puffball base. Family identity lives in
-     the ears, crest, wings, tail and face marks, not in a pear or slab torso. */
-  const parts = [puffball, AP_SILHOUETTE_BODIES.round, apSilhouetteFur(p.fur)];
+  const parts = [apSilhouetteFur(p.fur)];
   const add = (markup) => parts.push(markup);
   const high = p.tailHigh ? -8 : 0;
   if (p.ears === 'long') add('<ellipse cx="23" cy="15" rx="5" ry="13" transform="rotate(-7 23 15)"/><ellipse cx="41" cy="15" rx="5" ry="13" transform="rotate(7 41 15)"/>');
@@ -405,75 +311,84 @@ function apSilhouetteSVG(familyId, className = 'ap-portrait-silhouette') {
   if (p.shell === 'dome') add('<path d="M9 42a23 17 0 0 1 46 0Z" fill="none" stroke="currentColor" stroke-width="3"/><g fill="none" stroke="currentColor" stroke-width="2" opacity=".7"><path d="M32 25v17"/><path d="M22 28v14"/><path d="M42 28v14"/></g>');
   if (p.canopy === 'leaves') add('<path d="M11 6c4-1 6 1 7 4-3 2-6 1-7-4Z"/><path d="M53 6c-4-1-6 1-7 4 3 2 6 1 7-4Z"/><path d="M20 1c4 1 5 4 4 7-3 0-5-2-4-7Z"/>');
   if (p.spots) add('<g opacity=".55"><circle cx="22" cy="33" r="2"/><circle cx="30" cy="46" r="1.7"/><circle cx="40" cy="31" r="2"/><circle cx="45" cy="47" r="1.7"/></g>');
-  return `<svg class="${className}" viewBox="-4 -4 72 72" aria-hidden="true" focusable="false"><g fill="currentColor">${parts.join('')}</g></svg>`;
+  return parts.join('');
+}
+
+function apSilhouetteSVG(familyId) {
+  const p = ANIMAL_PUFFLE_SILHOUETTES[familyId];
+  if (!p) return '';
+  /* The dotted rim and the round body are the shared puffball base; the fringe
+     and appendages are what make two families read differently. */
+  const puffball = '<circle cx="32" cy="38" r="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-dasharray=".6 3.6" stroke-linecap="round" opacity=".38"/>';
+  return `<svg class="ap-portrait-silhouette" viewBox="-4 -4 72 72" aria-hidden="true" focusable="false"><g fill="currentColor">${puffball}${AP_SILHOUETTE_ROUND}${apFamilyShapeParts(familyId)}</g></svg>`;
 }
 
 function apEsc(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-/* Kit art for one family. The card portrait always uses the guardian-grade kit
-   (slot 5, 128px cells) so every family shows its top form instead of a starter
-   puffle, while the stage medallions climb from the plain kit to that same set. */
-function apKitLook(family, slot) {
-  const kit = ANIMAL_PUFFLE_KIT_NAMES.includes(ANIMAL_PUFFLE_KITS[family.id]) ? ANIMAL_PUFFLE_KITS[family.id] : 'round';
-  const step = ANIMAL_PUFFLE_TIER_STEP[family.tier] || 0;
+/* The encyclopedia draws the same round puffle body the live game draws, tinted
+   to the family's own hue, with that family's animal shape around it. Features
+   are authored in the silhouette's 64-unit space and mapped onto the body, so a
+   Bunny keeps long ears and a Fox keeps a bushy tail while both stay puffles. */
+const apTint = (hue, sat, light) => hslComponentsToHex(hue, sat / 100, light / 100);
+
+function apPuffleSprite(family, stageIndex) {
+  const p = ANIMAL_PUFFLE_SILHOUETTES[family.id] || {};
   const hue = ANIMAL_PUFFLE_HUES.get(family.id) || 0;
-  const kitTint = ANIMAL_PUFFLE_KIT_TINTS[kit];
-  const sat = kitTint ? kitTint.sat + step * 0.04 : 1.12 + step * 0.07;
-  const bright = kitTint ? kitTint.bright + step * 0.01 : 1 + step * 0.02;
-  /* A hue filter alone leaves the snow sheet almost white. Grayscale/sepia
-     gives that pale source a neutral base first, so the trio's separate hues
-     survive at 72 px. */
-  const filter = kit === 'snow'
-    ? `grayscale(1) sepia(.9) saturate(${sat.toFixed(2)}) hue-rotate(${hue}deg) brightness(${bright.toFixed(2)})`
-    : '';
+  const step = ANIMAL_PUFFLE_TIER_STEP[family.tier] || 0;
+  /* Smooth families keep the short coat; every furry one wears the same coats
+     the rest of the roster uses, so the fur reads as the same material. */
+  const fur = ({ smooth: 'smooth', fluffy: 'cloud', spiky: 'shaggy', feather: 'puffle' })[p.fur] || 'tufty';
   return {
-    kit,
-    src: lumiKitAsset(`${kit}-${slot}`, slot === '5' ? 'sheet' : 'thumb'),
-    tint: `--ap-hue:${hue}deg;--ap-sat:${sat.toFixed(2)};--ap-bright:${bright.toFixed(2)}${filter ? `;--ap-filter:${filter}` : ''}`,
+    id: `ap-${family.id}-${stageIndex}`,
+    element: 'bloom',
+    palette: 'custom',
+    custom: {
+      body: apTint(hue, 66, 72 + Math.min(4, step)),
+      light: apTint(hue, 82, 88),
+      deep: apTint(hue, 58, 46),
+      accent: apTint(hue + 34, 85, 66),
+      belly: apTint(hue, 80, 86),
+    },
+    breed: 'basic_sprite',
+    stage: stageIndex === 0 ? 'baby' : stageIndex === 1 ? 'sprite' : 'elder',
+    fur,
+    name: family.name,
   };
 }
 
-/* One guardian portrait per family, cropped from the first frame of the kit's
-   guardian sheet (6 x 18 cells of the same art). */
-/* Family face marks sit above the shared kit art and under the outline trace. */
-function apFaceMarkSVG(family) {
-  const marks = ANIMAL_PUFFLE_FACE_MARKINGS[family.id];
-  if (!marks) return '';
-  return `<svg class="ap-portrait-face" data-ap-face-mark="${family.id}" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><g>${marks}</g></svg>`;
+function apPuffleArtSVG(family, stageIndex = 2) {
+  const index = Math.max(0, Math.min(family.stages.length - 1, Number(stageIndex) || 0));
+  const sprite = apPuffleSprite(family, index);
+  const shape = apFamilyShapeParts(family.id);
+  const behind = shape
+    ? `<g transform="translate(60 61) scale(1.95) translate(-32 -37)" fill="${sprite.custom.body}" stroke="${sprite.custom.deep}" stroke-width=".7" stroke-linejoin="round">${shape}</g>`
+    : '';
+  /* The outline trace stays the fallback so a page that renders before the
+     sprite renderer still shows the family's documented shape. */
+  return pufflePortraitMarkup(sprite, behind) || apSilhouetteSVG(family.id);
 }
 
+/* One guardian portrait per family, on the shared puffle body. */
 function apGuardianPortrait(family) {
-  const art = apKitLook(family, '5');
   const guardian = family.stages[family.stages.length - 1] || `${family.name} Guardian`;
-  const silhouette = apSilhouetteSVG(family.id);
-  const trace = apSilhouetteSVG(family.id, 'ap-portrait-trace');
-  const face = apFaceMarkSVG(family);
-  return `<span class="ap-portrait" role="img" aria-label="Guardian portrait: ${apEsc(guardian)}" data-ap-silhouette="${silhouette ? family.id : 'kit'}" data-ap-kit="${art.kit}"${face ? ` data-ap-face="${family.id}"` : ''} style="--ap-src:url('${art.src}');${art.tint}">${silhouette}<span class="ap-portrait-art" aria-hidden="true"></span>${face}${trace}<span class="ap-portrait-tag" aria-hidden="true">GUARDIAN</span></span>`;
+  return `<span class="ap-portrait" role="img" aria-label="Guardian portrait: ${apEsc(guardian)}" data-ap-silhouette="${family.id}" data-ap-art="puffle">${apPuffleArtSVG(family, 2)}<span class="ap-portrait-tag" aria-hidden="true">GUARDIAN</span></span>`;
 }
 
-/* Full-size stage portrait for the comparison sheet. It uses the same kit art,
-   tint and family silhouette as the encyclopedia card, but steps back through
-   the baby (slot 0) and sprite (slot 3) kits before the guardian (slot 5). */
+/* Full-size stage portrait for the comparison sheet, stepping from the baby
+   body up to the guardian so the three stages stay visibly different. */
 function apStagePortrait(family, stageIndex = 2) {
   const index = Math.max(0, Math.min(family.stages.length - 1, Number(stageIndex) || 0));
-  const slot = ANIMAL_PUFFLE_STAGE_SLOTS[Math.min(index, ANIMAL_PUFFLE_STAGE_SLOTS.length - 1)];
-  const art = apKitLook(family, slot);
   const stage = family.stages[index] || family.name;
   const label = index === 0 ? 'BABY' : index === 1 ? 'SPRITE' : 'GUARDIAN';
-  const silhouette = apSilhouetteSVG(family.id);
-  const trace = apSilhouetteSVG(family.id, 'ap-portrait-trace');
-  const face = index === family.stages.length - 1 ? apFaceMarkSVG(family) : '';
-  return `<span class="ap-portrait ap-stage-portrait" role="img" aria-label="${label} portrait: ${apEsc(stage)}" data-ap-stage="${label.toLowerCase()}" data-ap-silhouette="${silhouette ? family.id : 'kit'}" data-ap-kit="${art.kit}"${face ? ` data-ap-face="${family.id}"` : ''} style="--ap-src:url('${art.src}');${art.tint}">${silhouette}<span class="ap-portrait-art" aria-hidden="true"></span>${face}${trace}<span class="ap-portrait-tag" aria-hidden="true">${label}</span></span>`;
+  return `<span class="ap-portrait ap-stage-portrait" role="img" aria-label="${label} portrait: ${apEsc(stage)}" data-ap-stage="${label.toLowerCase()}" data-ap-silhouette="${family.id}" data-ap-art="puffle">${apPuffleArtSVG(family, index)}<span class="ap-portrait-tag" aria-hidden="true">${label}</span></span>`;
 }
 
-/* Stage rows use the same kit art in place of emoji orbs, with the family
-   silhouette behind it so baby and sprite already follow the guardian outline. */
-function apStageMedallion(family, slot) {
-  const art = apKitLook(family, slot);
-  const silhouette = apSilhouetteSVG(family.id, 'ap-orb-sil');
-  return `<span class="ap-orb-slot">${silhouette}<span class="ap-orb ap-orb-art" aria-hidden="true" style="--ap-src:url('${art.src}');${art.tint}"></span></span>`;
+/* Stage rows use the same puffle art in place of emoji orbs, so baby and sprite
+   already wear the family shape at the smaller size. */
+function apStageMedallion(family, index) {
+  return `<span class="ap-orb-slot">${apPuffleArtSVG(family, index)}</span>`;
 }
 
 /* The encyclopedia page: one aura-tinted card per family, with the full
@@ -490,7 +405,7 @@ function wikiAnimalPufflesMarkup() {
       <div class="ap-tier-head"><h3>${group.style.icon} ${apEsc(group.style.name)} Animal Puffles</h3><span>${group.list.length} families · ${group.list.length * 3} stages</span></div>
       <div class="ap-grid">${group.list.map((family) => `<article class="ap-card" data-ap-family="${family.id}">
         <div class="ap-card-head">${apGuardianPortrait(family)}<span class="ap-family"><b>${apEsc(family.name)}</b><small>${apEsc(family.effect)}</small></span></div>
-        <ol class="ap-line">${family.stages.map((stage, index) => `<li class="ap-stage${index === family.stages.length - 1 ? ' is-guardian' : ''}">${apStageMedallion(family, ANIMAL_PUFFLE_STAGE_SLOTS[Math.min(index, ANIMAL_PUFFLE_STAGE_SLOTS.length - 1)])}<span>${apEsc(stage)}</span></li>`).join('')}</ol>
+        <ol class="ap-line">${family.stages.map((stage, index) => `<li class="ap-stage${index === family.stages.length - 1 ? ' is-guardian' : ''}">${apStageMedallion(family, index)}<span>${apEsc(stage)}</span></li>`).join('')}</ol>
         <p class="ap-note">${apEsc(family.note)}</p>
         <span class="ap-effect">${apEsc(family.effect)}</span>
       </article>`).join('')}</div>

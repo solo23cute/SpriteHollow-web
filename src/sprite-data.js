@@ -5,7 +5,7 @@
    while a release gate can still read exactly which file and field failed. */
 
 const SPRITE_DATA_INDEX = 'assets/sprite_hollow_index.json';
-const SPRITE_DATA_RARITIES = ['common', 'rare', 'epic', 'legendary', 'mythic'];
+const SPRITE_DATA_RARITIES = ['common', 'rare', 'epic', 'legendary', 'mythic', 'ultra'];
 
 const SPRITE_DATA = {
   ready: false,

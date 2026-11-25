@@ -25,8 +25,11 @@ function gameIntroStyle(kind, info) {
   return 'pop';
 }
 
-function gameOverlayShell(kind) {
-  const info = GAME_INFO[kind] || { title: 'Mini Game', icon: '🎮', tag: 'Arcade', desc: 'Play and win rewards.', g1: '#8b7bff', g2: '#ffd166' };
+/* `overrideInfo` lets a game whose theming changes with the world (the event
+   vigil takes the live preset's name, colour and mote) use this shell without
+   parking a card in GAME_INFO that the Play screen would list all year. */
+function gameOverlayShell(kind, overrideInfo = null) {
+  const info = overrideInfo || GAME_INFO[kind] || { title: 'Mini Game', icon: '🎮', tag: 'Arcade', desc: 'Play and win rewards.', g1: '#8b7bff', g2: '#ffd166' };
   const introStyle = gameIntroStyle(kind, info);
   const intro = `<div class="game-intro game-intro--${introStyle}" data-game-intro="${esc(kind)}" style="--game-a:${info.g1 || '#8b7bff'};--game-b:${info.g2 || '#ffd166'}" aria-hidden="true">
     <span class="game-intro__halo"></span>
@@ -199,6 +202,10 @@ function showGameResult(shell, { kind, score, coins, xp, blurb, perfect = 0, eve
   const boost = liveEvent && liveEvent.game === kind ? liveEvent : null;
   const previewCoins = Math.round(preview.payout * (boost ? boost.coinBoost : 1));
   const boostedXp = Math.round(Math.max(120, (Number(xp) || 25) * 4) * (boost ? boost.xpBoost : 1));
+  /* The puffle's favourite game is a comfort that names a real minigame, so the
+     result card says when this run was that game. */
+  const favourites = s && typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  const lovedGame = !!(favourites && favourites.game && favourites.game.game === kind);
   const result = document.createElement('div');
   result.className = 'game-result';
   result.innerHTML = `
@@ -217,6 +224,7 @@ function showGameResult(shell, { kind, score, coins, xp, blurb, perfect = 0, eve
         ${bonusFoodKeys.map((key) => `<span class="chip" style="background:#dcfce7;color:#166534">${FOODS[key].emoji} +1 ${esc(FOODS[key].name)}</span>`).join('')}
         <span class="chip" style="background:#fce7f3;color:#9d174d">🎁 +2 Snack Gifts</span>
         <span class="chip">💗 +bond${boost && boost.bondBonus ? ` +${boost.bondBonus}` : ''}</span>
+        ${lovedGame ? `<span class="chip" style="background:#fce7f3;color:#9d174d" title="This puffle's favourite game">${favourites.game.icon} ${esc(favourites.game.name)} · +4 Joy +2 bond</span>` : ''}
         ${bestChips(record, score)}
         ${typeof arcadeGameKind === 'function' && arcadeGameKind(kind) ? `<span class="chip">🏟️ +${previewCoins.toLocaleString()} arcade progress</span>` : ''}
         ${typeof waveRewardChips === 'function' ? waveRewardChips(kind, score) : ''}
@@ -1343,6 +1351,7 @@ function openGame(kind) {
   else if (typeof CLASSIC_GAME_KEYS !== 'undefined' && CLASSIC_GAME_KEYS.includes(kind)) openClassicGame(kind);
   else if (typeof CASH_GAME_KEYS !== 'undefined' && CASH_GAME_KEYS.includes(kind)) openCashGame(kind);
   else if (kind === 'kitchen') openKitchenGame();
+  else if (kind === 'hotelrush') openHotelServiceGame();
   else if (kind === 'smoothie') openSmoothieGame();
   else if (kind === 'musicjam') openMusicJamGame();
   else if (kind === 'eggarcade') openEggArcadeGame();
@@ -1350,5 +1359,6 @@ function openGame(kind) {
   else if (kind === 'spa') openSpaGame();
   else if (kind === 'starlane') openStarLaneGame();
   else if (kind === 'portalmatch') openPortalPairGame();
+  else if (String(kind).startsWith('vigil-')) openEventVigilGame(String(kind).slice(6));
   else if (typeof openSeasonalGame === 'function') openSeasonalGame(kind);
 }

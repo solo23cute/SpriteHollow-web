@@ -59,6 +59,7 @@ const App = {
     if (tab === 'hollow' && from !== 'hollow' && typeof showHollowLoading === 'function') showHollowLoading();
     Sfx.click();
   },
+  mountedTab: null,
   requestTab(tab) {
     if (!state.started || !tab) return;
     if (!this.ready) {
@@ -93,6 +94,9 @@ const App = {
       try { this.cleanup(); } catch (err) { console.error(err); }
       this.cleanup = null;
     }
+    /* Re-rendering the tab you are already on — after an order, a feed or a
+       stay change — keeps your place; a change of tab still starts at the top. */
+    const keepScroll = this.mountedTab === this.tab ? screen.scrollTop : 0;
     screen.innerHTML = '';
     screen.className = `screen${this.tab === 'hollow' ? ' is-hollow' : ''}`;
     screen.scrollTop = 0;
@@ -117,6 +121,7 @@ const App = {
     const name = screens[this.tab] || 'hollowScreen';
     const fn = typeof window[name] === 'function' ? window[name] : hollowScreen;
     const screenCleanup = fn(screen) || null;
+    if (keepScroll) screen.scrollTop = keepScroll;
     const reminderCleanup = ReminderPermission.bind(this.tab, screen);
     const cleanups = [screenCleanup, reminderCleanup].filter((cleanup) => typeof cleanup === 'function');
     this.cleanup = cleanups.length ? () => cleanups.forEach((cleanup) => cleanup()) : null;
@@ -130,6 +135,7 @@ const App = {
     syncAppDayFrame(this.tab);
     updateBadges();
     if (typeof mountAppLayoutDebug === 'function') mountAppLayoutDebug();
+    this.mountedTab = this.tab;
   },
   startGame(kind) {
     openGame(kind);
@@ -623,4 +629,6 @@ async function boot() {
   else enterApp();
 }
 
-boot();
+/* Pages that load the bundle only for its renderers (the art contact-sheet
+   harness) set this flag so the app itself never boots. */
+if (!window.__SH_SKIP_BOOT) boot();

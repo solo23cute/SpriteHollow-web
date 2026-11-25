@@ -1,0 +1,9 @@
+{
+  "id": "broken_sprite",
+  "rarity": "ultra",
+  "abilities": [
+    "glitch_hop",
+    "patch_stitch"
+  ],
+  "wings": false
+}

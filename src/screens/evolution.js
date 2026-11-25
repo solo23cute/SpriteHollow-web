@@ -87,7 +87,7 @@ function formResultHTML(sprite, form) {
   const frameElement = typeof elementFrameKey === 'function' ? (elementFrameKey(sprite.element) || '') : '';
   return `<div class="evo-result-head">
       <span class="evo-result-kicker">Evolution complete</span>
-      <h2>${form.icon || '🧬'} ${esc(formName(sprite))}</h2>
+      <h2>${form.icon || '🧬'} ${esc(cpCreatureLookName(sprite) || formName(sprite))}</h2>
       <p class="sub">${esc(form.desc)}</p>
     </div>
     <div class="evo-pop${ascended ? ' is-ascended' : ''}" data-rarity="${tier ? spriteRarityKey(sprite) : ''}" data-frame-element="${frameElement}" style="--evo-glow:${el.primary};--rarity:${tier ? tier.color : el.primary};--rarity-gradient:${tier ? (tier.gradient || tier.color) : el.primary};--rarity-glow:${tier ? (tier.frameGlow || tier.color) : el.primary}">
@@ -125,6 +125,8 @@ function runEvolutionSequence(opts) {
   const toStage = isStage ? (opts.to || s.stage) : s.stage;
   const fromLabel = STAGE_LABELS[fromStage] || 'Egg';
   const toLabel = isStage ? (STAGE_LABELS[toStage] || 'Sprite') : (formName(s) || 'New form');
+  /* Growing is a life moment, so the sprite says something in its own voice. */
+  const growLine = typeof window.puffleVoiceLine === 'function' ? window.puffleVoiceLine(s, 'grow') : null;
   const evoAnimation = isStage && typeof evolutionStageAnimationFor === 'function' ? evolutionStageAnimationFor(toStage) : null;
   const before = isStage ? { ...s, stage: fromStage } : { ...s, form: null };
   const after = isStage ? { ...s, stage: toStage } : s;
@@ -155,6 +157,7 @@ function runEvolutionSequence(opts) {
     </div>
     <h2 class="evo-seq-title">${esc(displayName(s))}</h2>
     <div class="evo-seq-sub">${esc(fromLabel)} <b class="evo-arrow">→</b> <b>${esc(toLabel)}</b></div>
+    ${growLine ? `<div class="evo-seq-quote" data-evo-quote style="margin-top:8px;font-size:12px;font-style:italic;opacity:.9;text-align:center">“${esc(growLine)}”</div>` : ''}
     <div class="evo-seq-bar"><i data-evo-fill></i></div>
     <div class="evo-seq-phase"><span data-evo-phase>${esc(EVO_PHASES[0])}</span><b data-evo-pct>0%</b></div>
     <button class="btn btn-ghost btn-block" data-evo-skip style="margin-top:10px">Skip animation</button>
@@ -242,6 +245,8 @@ function celebrateFormEvolution(sprite, form) {
 /* Called by growth helpers when a level-up crosses a stage threshold. */
 function announceStageEvolution(s, fromStage, toStage) {
   if (!s || fromStage === toStage) return;
+  /* The Club Penguin line changes colour with the stage it reaches. */
+  if (typeof syncCpPuffleEvolutionColour === 'function') syncCpPuffleEvolutionColour(s);
   try {
     setTimeout(() => celebrateStageEvolution({ spriteId: s.id, from: fromStage, to: toStage }), 260);
   } catch (err) { /* celebrations are cosmetic; never break growth */ }

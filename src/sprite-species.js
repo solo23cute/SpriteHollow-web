@@ -7,6 +7,7 @@
 const SPRITE_SPECIES_META = {
   baby_sprite: { icon: '🍼', kind: 'baby', shape: 'pompom', palette: 'aurora' },
   basic_sprite: { icon: '🟣', kind: 'starter', shape: 'round', palette: 'lavender', color: 'purple' },
+  broken_sprite: { icon: '👾', kind: 'glitch', shape: 'round', palette: 'prism' },
   crystal_sprite: { icon: '💎', kind: 'crystal', shape: 'pebble', palette: 'glacier' },
   ember_sprite: { icon: '🔥', kind: 'ember', shape: 'drop', palette: 'hellfire' },
   frost_sprite: { icon: '❄️', kind: 'frost', shape: 'penguin', palette: 'glacier' },
@@ -185,6 +186,10 @@ function registerSpriteSpecies(data) {
   Object.keys(species).forEach((id) => {
     const def = species[id];
     if (!def || !def.id) return;
+    if (typeof ELEMENTS !== 'undefined' && ELEMENTS[id] && def.rarity
+      && typeof TYPE_EGG_RARITIES !== 'undefined' && TYPE_EGG_RARITIES[def.rarity]) {
+      ELEMENTS[id].eggRarity = def.rarity;
+    }
     if (!BREEDS[id]) {
       BREEDS[id] = spriteSpeciesBreed(id, def);
       added += 1;
@@ -236,13 +241,13 @@ const SPRITE_AURA_SHAPES = {
   sparkles: (a, l) => `<path d="M26 30l1.4 4 4 1.4-4 1.4-1.4 4-1.4-4-4-1.4 4-1.4Z" fill="${l}"/>
     <path d="M94 44l1.2 3.4 3.4 1.2-3.4 1.2-1.2 3.4-1.2-3.4-3.4-1.2 3.4-1.2Z" fill="${a}"/>
     <circle cx="88" cy="86" r="2" fill="${l}"/><circle cx="30" cy="80" r="1.6" fill="${a}"/>`,
-  wingGlow: (a, l) => `<ellipse cx="60" cy="60" rx="50" ry="44" fill="${a}" opacity=".16"/>
+  wingGlow: (a, l) => `<ellipse cx="60" cy="60" rx="46" ry="44" fill="${a}" opacity=".16"/>
     <ellipse cx="60" cy="60" rx="44" ry="38" fill="none" stroke="${l}" stroke-width="1" opacity=".35"/>`,
   trailEffect: (a, l) => `<path d="M14 76c8 6 18 8 28 6" stroke="${a}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
     <path d="M10 88c10 7 22 9 34 6" stroke="${l}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".5"/>
     <circle cx="16" cy="66" r="1.8" fill="${a}"/>`,
-  shadowAura: (a, l) => `<ellipse cx="60" cy="62" rx="50" ry="44" fill="${a}" opacity=".2"/>
-    <ellipse cx="60" cy="62" rx="50" ry="44" fill="none" stroke="${l}" stroke-width="1.2" opacity=".4" stroke-dasharray="3 6"/>`,
+  shadowAura: (a, l) => `<ellipse cx="60" cy="62" rx="46" ry="44" fill="${a}" opacity=".2"/>
+    <ellipse cx="60" cy="62" rx="46" ry="44" fill="none" stroke="${l}" stroke-width="1.2" opacity=".4" stroke-dasharray="3 6"/>`,
   lightningAura: (a, l) => `<path d="M22 30l10 18-6 2 9 16" stroke="${a}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
     <path d="M98 34l-9 17 6 2-8 15" stroke="${l}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
   snowAura: (a, l) => `<g stroke="${l}" stroke-width="1.4" stroke-linecap="round" opacity=".8">
@@ -325,6 +330,132 @@ function spriteSpeciesPresets() {
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 }
+
+
+/* The sprite sheet registered its species as breeds only, so the Studio could
+   spawn one but nothing could hatch, find or summon it: no ELEMENTS entry meant
+   no egg, no wild draw and no rank. This table is the shipped sheet roster;
+   each row gets a real element, an egg at its rank's price, a gene and a Titan,
+   so every table that makes another species obtainable sees these too. */
+const SPRITE_SHEET_SPECIES = {
+  baby_dragon: { rarity: 'legendary', abilities: ['ember_breath', 'wing_flap'] },
+  baby_sprite: { rarity: 'common', abilities: ['cute_blink', 'tiny_jump'] },
+  basic_sprite: { rarity: 'common', abilities: ['float', 'sparkle'] },
+  broken_sprite: { rarity: 'ultra', abilities: ['glitch_hop', 'patch_stitch'] },
+  christmas_sprite: { rarity: 'legendary', abilities: ['frost_gift', 'jingle_dash'] },
+  cloud_bunny: { rarity: 'common', abilities: ['cloud_hop', 'fluff_puff'] },
+  cosmic_cat: { rarity: 'mythic', abilities: ['void_purr', 'comet_nap'] },
+  crystal_sprite: { rarity: 'rare', abilities: ['crystal_shield', 'gem_burst'] },
+  cyber_sprite: { rarity: 'epic', abilities: ['data_spike', 'cyber_cloak'] },
+  diamond_sprite: { rarity: 'mythic', abilities: ['prism_cut', 'hard_shine'] },
+  ember_sprite: { rarity: 'epic', abilities: ['fire_trail', 'phoenix_jump'] },
+  frost_sprite: { rarity: 'epic', abilities: ['ice_wings', 'snow_burst'] },
+  galaxy_sprite: { rarity: 'mythic', abilities: ['star_trail', 'supernova'] },
+  ghost_sprite: { rarity: 'epic', abilities: ['spooky_wail', 'phase_step'] },
+  gold_sprite: { rarity: 'legendary', abilities: ['gold_rush', 'gilded_aura'] },
+  halloween_sprite: { rarity: 'legendary', abilities: ['spooky_glow', 'treat_rush'] },
+  lightning_chick: { rarity: 'common', abilities: ['static_peck', 'thunder_cheep'] },
+  mini_crystal: { rarity: 'rare', abilities: ['crystal_shard', 'glint_step'] },
+  moon_owl: { rarity: 'epic', abilities: ['moon_glide', 'night_eye'] },
+  nature_sprite: { rarity: 'rare', abilities: ['vine_heal', 'leaf_storm'] },
+  neon_sprite: { rarity: 'epic', abilities: ['neon_glow', 'light_beam'] },
+  rainbow_sprite: { rarity: 'mythic', abilities: ['rainbow_beam', 'color_burst'] },
+  royal_sprite: { rarity: 'epic', abilities: ['royal_glow', 'crown_spark'] },
+  shadow_sprite: { rarity: 'legendary', abilities: ['dark_dash', 'shadow_blink'] },
+  spring_sprite: { rarity: 'rare', abilities: ['blossom_burst', 'petal_dance'] },
+  star_fox: { rarity: 'rare', abilities: ['star_pounce', 'tail_glow'] },
+  storm_sprite: { rarity: 'epic', abilities: ['lightning_dash', 'thunder_wings'] },
+  summer_sprite: { rarity: 'rare', abilities: ['sunbeam', 'wave_dash'] },
+  valentine_sprite: { rarity: 'epic', abilities: ['heart_aura', 'cupid_shot'] },
+};
+
+/* Real pantry dishes, so a sheet species eats what the Hollow actually sells. */
+const SPRITE_SHEET_DISHES = [
+  'Star Pop', 'Moon Berry', 'Sun Nectar', 'Warm Soup', 'Cloud Feast',
+  'Honeycomb Cake', 'Berry Cheesecake', 'Cotton Candy', 'Lava Cookie',
+  'Cloud Cupcake', 'Crunch Crisps', 'Moon Pie', 'Cinnamon Roll',
+  'Berry Smoothie', 'Hot Cocoa',
+];
+
+/* Ability mods are care multipliers; genes read the sprite's bonus keys, so the
+   same numbers are renamed rather than dropped, exactly as abilityEffectsFor
+   maps them. */
+const SPRITE_GENE_FROM_MOD = {
+  bondMod: 'petBond', xpMod: 'xp', joyMod: 'joyDecay',
+  hungerMod: 'hungerDecay', energyMod: 'energyDecay', cleanMod: 'cleanDecay',
+};
+
+function spriteSheetGene(id) {
+  const row = SPRITE_SHEET_SPECIES[id] || {};
+  const primary = abilityInfo((row.abilities || [])[0]);
+  if (!primary) return null;
+  const effect = {};
+  Object.keys(primary.mods || {}).forEach((key) => {
+    const target = SPRITE_GENE_FROM_MOD[key];
+    const value = Number(primary.mods[key]);
+    if (target && isFinite(value) && value > 0) effect[target] = value;
+  });
+  Object.keys(primary.effect || {}).forEach((key) => {
+    const value = Number(primary.effect[key]);
+    if (isFinite(value) && value > 0) effect[key] = value;
+  });
+  if (!Object.keys(effect).length) effect.xp = 1.05;
+  return { name: primary.name, icon: primary.icon, desc: primary.blurb, effect };
+}
+
+function registerSpriteSheetElements() {
+  if (typeof ELEMENTS === 'undefined' || typeof PALETTES === 'undefined') return 0;
+  let added = 0;
+  Object.keys(SPRITE_SHEET_SPECIES).forEach((id, index) => {
+    const row = SPRITE_SHEET_SPECIES[id];
+    const palette = PALETTES[spriteSpeciesPalette(id, row)] || {};
+    const name = spriteSpeciesName(id);
+    const rarity = typeof TYPE_EGG_RARITIES !== 'undefined' && TYPE_EGG_RARITIES[row.rarity] ? row.rarity : 'common';
+    const dish = SPRITE_SHEET_DISHES[index % SPRITE_SHEET_DISHES.length];
+    const ability = abilityInfo(row.abilities[0]);
+    if (!ELEMENTS[id]) {
+      ELEMENTS[id] = {
+        name,
+        primary: palette.body || '#b69cff',
+        light: palette.light || '#e9e2ff',
+        deep: palette.deep || '#5a467a',
+        accent: palette.accent || '#ffb3d1',
+        trait: ability ? `${ability.name} - ${ability.blurb}` : `Hollow-sheet ${rarity} species.`,
+        blurb: `${name} came off the sprite sheet and decided to stay.`,
+        greeting: 'I was a drawing this morning. Now I have a bed.',
+        likes: dish,
+        eggRarity: rarity,
+        forcedBreed: id,
+        speciesSheet: true,
+      };
+      added += 1;
+    }
+    if (Array.isArray(ELEMENT_KEYS) && !ELEMENT_KEYS.includes(id)) ELEMENT_KEYS.push(id);
+    if (typeof NAME_START !== 'undefined' && !NAME_START[id]) {
+      NAME_START[id] = [name.split(' ')[0], 'Myst', 'Echo', 'Veil'];
+    }
+    const tier = typeof TIER_EGG_META !== 'undefined' ? TIER_EGG_META[rarity] : null;
+    const base = tier && typeof TYPE_EGG_DISCOUNT === 'number'
+      ? Math.max(5, Math.round((tier.price / TYPE_EGG_DISCOUNT) / 5) * 5)
+      : 90;
+    if (typeof TYPE_EGG_BASE_PRICE !== 'undefined' && !TYPE_EGG_BASE_PRICE[id]) {
+      TYPE_EGG_BASE_PRICE[id] = base;
+      if (typeof TYPE_EGG_PRICE !== 'undefined' && TYPE_EGG_PRICE[id] == null && typeof discountedEggPrice === 'function') {
+        TYPE_EGG_PRICE[id] = discountedEggPrice(base);
+      }
+    }
+    if (Array.isArray(TYPE_EGG_SPECIES) && !TYPE_EGG_SPECIES.includes(id)) TYPE_EGG_SPECIES.push(id);
+    if (Array.isArray(WILD_SPECIES) && !WILD_SPECIES.includes(id)) WILD_SPECIES.push(id);
+    if (typeof GENE_POWERS !== 'undefined' && !GENE_POWERS[id]) {
+      const gene = spriteSheetGene(id);
+      if (gene) GENE_POWERS[id] = gene;
+    }
+    if (typeof TITAN_NAMES !== 'undefined' && !TITAN_NAMES[id]) TITAN_NAMES[id] = `${name} Titan`;
+  });
+  return added;
+}
+
+registerSpriteSheetElements();
 
 function applySpriteDataToGame(data) {
   const source = data || (typeof SPRITE_DATA !== 'undefined' ? SPRITE_DATA : null);

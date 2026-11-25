@@ -71,9 +71,16 @@ function puffleEvolutionCardHTML(s) {
   const FORM_STAGE = ['baby', 'sprite', 'youngadult', 'elder', 'apex'];
   const stageSwatch = (i) => {
     const stage = FORM_STAGE[i] || 'baby';
+    /* A Club Penguin puffle keeps the coat it rolled at every stage, so its
+       thumbnails must not paint the old stage colours over it. */
+    const ownColour = typeof cpPuffleColourOfStyle === 'function' ? cpPuffleColourOfStyle(s.puffleVariant) : null;
+    const stageStyle = ownColour
+      ? `cp_color_${ownColour}`
+      : (typeof window.puffleEvolutionColour === 'function' ? window.puffleEvolutionColour(line.key, stage) : null);
+    const sample = stageStyle ? { ...s, stage, puffleVariant: stageStyle } : { ...s, stage };
     if (typeof spriteSVG === 'function') {
       try {
-        const svg = spriteSVG({ ...s, stage }, { still: true })
+        const svg = spriteSVG(sample, { still: true })
           .replace('<svg ', '<svg width="18" height="18" ')
           .replace('class="sprite-motion', 'class="evo-thumb-art sprite-motion');
         return `<button type="button" class="evo-thumb" data-evo-form="${i}" data-evo-owned="${index}" data-evo-chain="${esc(line.key)}" data-evo-element="${esc(s.element)}" title="Stage ${i + 1} · ${esc(stage)} · tap to preview" style="display:inline-flex;width:18px;height:18px;margin-right:4px;vertical-align:-4px;border-radius:50%;overflow:hidden;padding:0;border:0;background:transparent;cursor:pointer">${svg}</button>`;
@@ -420,6 +427,12 @@ function collectionScreen(root) {
       if (typeof toast === 'function') toast(`${ELEMENTS[id] ? ELEMENTS[id].name : id} egg pinned in the Nest.`, '🥚');
     }
   });
+  /* The creature roster sits above the grid it summarises. */
+  if (typeof cpCreatureDexHTML === 'function') {
+    const creatureDex = cpCreatureDexHTML();
+    const dexAnchor = root.querySelector('[data-count]')?.closest('.section-title');
+    if (creatureDex && dexAnchor) dexAnchor.insertAdjacentHTML('afterend', creatureDex);
+  }
   const search = root.querySelector('[data-sprite-search]');
   let resetGrid = false;
   search.addEventListener('input', () => {
@@ -511,13 +524,7 @@ function collectionScreen(root) {
     const q = query.trim().toLowerCase();
     const matchesQuery = (s) => {
       if (!q) return true;
-      const el = ELEMENTS[s.element] || ELEMENTS.bloom;
-      const text = [
-        displayName(s), s.name, s.element, el.name, el.trait, el.blurb,
-        GENE_POWERS[s.element]?.name,
-        isExoticSpecies(s.element) ? 'exotic signature' : '',
-        isSecretSpecies(s.element) ? 'secret vault' : '',
-      ].join(' ').toLowerCase();
+      const text = spriteSearchText(s);
       return q.split(/\s+/).filter(Boolean).every((part) => text.includes(part));
     };
     const matchesFinish = (s) => finishFilter === 'all'
@@ -615,6 +622,18 @@ function collectionScreen(root) {
   };
 }
 
+/* Everything the collection search reads, in one place: a coated creature has to
+   be findable by the coat in its name as well as by its element. */
+function spriteSearchText(s) {
+  const el = ELEMENTS[s.element] || ELEMENTS.bloom;
+  return [
+    displayName(s), s.name, s.element, el.name, el.trait, el.blurb, typeName(s), formName(s),
+    GENE_POWERS[s.element]?.name,
+    isExoticSpecies(s.element) ? 'exotic signature' : '',
+    isSecretSpecies(s.element) ? 'secret vault' : '',
+  ].join(' ').toLowerCase();
+}
+
 function spriteCardHTML(s) {
   const el = ELEMENTS[s.element] || ELEMENTS.bloom;
   const active = state.activeId === s.id;
@@ -706,6 +725,153 @@ function rarityLadderHTML(target) {
   </div>`;
 }
 
+/* The colour a Club Penguin puffle wears brings the rest of its canon kit with
+   it: the ability that colour is known for, the skill it practises, the
+   temperament, the snack, and the habitat it was observed in. The colour follows
+   the family's evolution line, so this card grows with the puffle. */
+function cpPuffleDetailHTML(s) {
+  const profile = typeof cpPuffleProfileForSprite === 'function' ? cpPuffleProfileForSprite(s) : null;
+  if (!profile) return '';
+  const t = profile.type;
+  const scenes = (profile.habitat.biomes || [])
+    .map((key) => (typeof SCENES !== 'undefined' && SCENES[key] ? SCENES[key] : null))
+    .filter(Boolean);
+  /* The care loop reads puffleComfortsFor, so the chip names that dish: a card
+     built from the type table can point at a dish that pays nothing. */
+  const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  const food = comforts && comforts.food && typeof FOODS !== 'undefined'
+    ? FOODS[comforts.food.id]
+    : (t.likesFood && typeof FOODS !== 'undefined' ? FOODS[t.likesFood] : null);
+  const chip = (icon, text) => `<span class="chip">${icon} ${esc(text)}</span>`;
+  /* Dark coats (black, and anything void-dark) disappear against the card, so
+     the tint falls back to the colour's light step when the primary is too
+     dark to read as a border. */
+  const tintOf = (type) => {
+    const hex = String(type.primary || '').replace('#', '');
+    if (hex.length !== 6) return type.primary || 'var(--line)';
+    const lum = (0.2126 * parseInt(hex.slice(0, 2), 16) + 0.7152 * parseInt(hex.slice(2, 4), 16) + 0.0722 * parseInt(hex.slice(4, 6), 16)) / 255;
+    return lum < 0.3 ? (type.light || type.primary) : type.primary;
+  };
+  const tint = tintOf(t);
+  const skill = t.skill;
+  /* The ability and the skill are gameplay, so their numbers share one "in
+     play" row instead of dangling inside a wrapped flavour sentence. */
+  const playChips = [t.ability, skill]
+    .map((entry) => {
+      const text = entry && typeof cpPuffleEffectText === 'function' ? cpPuffleEffectText(entry.effect) : '';
+      return text ? `<span class="chip" data-cp-effect style="border-color:${esc(tint)}66">⚙️ ${esc(entry.name)}: ${esc(text)}</span>` : '';
+    })
+    .filter(Boolean)
+    .join('');
+  return `<div class="card" data-cp-puffle="${esc(profile.colour)}" style="padding:12px;margin-top:12px;border-color:${esc(tint)}66">
+    <div class="between"><div class="tiny muted" style="font-weight:800;letter-spacing:.08em">CLUB PENGUIN · ${esc(t.label.toUpperCase())}</div><span class="chip" style="border-color:${esc(tint)}">${t.icon} ${esc(t.label.replace(/ Puffle$/, ''))}</span></div>
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px">
+      ${chip(profile.bodyIcon, `${profile.bodyName} body`)}
+      ${(t.personality || []).map((word) => `<span class="chip" data-cp-personality="${esc(word)}">💭 ${esc(word)}</span>`).join('')}
+    </div>
+    <div class="tiny" data-cp-ability style="margin-top:9px;line-height:1.55">${t.ability.icon} <b>${esc(t.ability.name)}</b> — ${esc(t.ability.desc)}</div>
+    ${skill ? `<div class="tiny muted" data-cp-skill style="margin-top:4px;line-height:1.55">${skill.icon} Skill: <b style="color:var(--text)">${esc(skill.name)}</b> — ${esc(skill.desc)}</div>` : ''}
+    ${playChips ? `<div class="row" data-cp-effects style="gap:5px;flex-wrap:wrap;margin-top:8px">${playChips}</div>` : ''}
+    <div class="tiny muted" data-cp-habitat style="margin-top:6px;line-height:1.55">🗺️ <b style="color:var(--text)">${esc(profile.habitat.label)}</b>${scenes.length ? ` · ${scenes.map((sc) => `${sc.emoji} ${esc(sc.name)}`).join(' · ')}` : ''}</div>
+    ${t.wild ? `<div class="tiny muted" style="margin-top:2px;line-height:1.5">Observed in the wild: ${esc(t.wild)}</div>` : ''}
+    <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px">
+      ${t.toy ? chip('🪀', t.toy) : ''}
+      ${t.snack ? chip('🍽', t.snack) : ''}
+      ${food ? chip(food.emoji || '🍴', `Hollow favourite: ${food.name}`) : ''}
+    </div>
+  </div>`;
+}
+
+/* A creature's canon coats ship with its species, but the only way to wear one
+   used to be the evolution roll: the family sheet lists Sprite Puffle styles,
+   which a creature cannot wear. This card offers the species' own coats and
+   repaints the portrait as soon as one is picked. */
+function creatureCoatCardHTML(s) {
+  const form = s && s.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[s.form] : null;
+  const creature = form && form.creature;
+  const species = creature && typeof CP_PUFFLE_CREATURES !== 'undefined' ? CP_PUFFLE_CREATURES[creature] : null;
+  if (!species) return '';
+  /* Only a real creature coat counts as current. A creature in a classic puffle
+     colour wears none of these, and marking the species coat as worn pointed
+     players at a look the portrait was not showing. */
+  const current = typeof cpCreatureStyleKey === 'function' ? cpCreatureStyleKey(s.form, s.puffleVariant) : null;
+  /* A classic puffle colour repaints the whole body but belongs to no species, so
+     it is never a canon coat and never marks one. It gets its own entry below,
+     and so does any other look the sprite can wear (a shiny finish), so the card
+     always has exactly one entry for the portrait. */
+  const variantTable = typeof window !== 'undefined' ? window.LUMI_PUFFLE_VARIANTS : null;
+  const wornVariant = String((s && s.puffleVariant) || '');
+  const wornOther = !current && variantTable && variantTable[wornVariant] ? wornVariant : null;
+  const wornLook = wornOther ? variantTable[wornOther] : null;
+  /* The style palette already names and colours every coat, so the card only
+     has to pick the chips. */
+  const rows = [`pc_${creature}`, ...cpCreatureCoats(creature).map((coat) => `pc_${creature}_${coat.key}`)].map((key) => {
+    const look = typeof cpCreatureStylePalette === 'function' ? cpCreatureStylePalette(key) : null;
+    const name = (look && look.name) || key;
+    return { key, name, hex: (look && look.primary) || species.primary };
+  });
+  /* Counted from what this puffle has worn, plus whatever it wears now, so an
+     old save never opens on "0 of 3 worn" while showing a coat. */
+  const wornKeys = Array.isArray(state.stats && state.stats.coats) ? state.stats.coats : [];
+  const wornCount = rows.filter((row) => wornKeys.includes(row.key) || row.key === current).length;
+  return `<div class="card" data-creature-coats="${esc(creature)}" style="padding:12px;margin-top:10px">
+    <div class="between"><div class="tiny muted" style="font-weight:800;letter-spacing:.08em">CANON COATS</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap;justify-content:flex-end">
+        <span class="chip" data-creature-coat-count aria-live="polite">${wornCount} of ${rows.length} worn</span>
+        <button type="button" class="chip" data-creature-coat-shuffle title="Pick a random canon coat">🎲 Surprise me</button>
+      </div>
+    </div>
+    <p class="tiny muted" style="margin:7px 0 9px;line-height:1.55">Every ${esc(species.label.toLowerCase())} coat is part of the species. Pick one and the portrait repaints: form, size and stats stay the same.</p>
+    ${wornOther ? `<p class="tiny muted" data-creature-coat-note style="margin:0 0 9px;line-height:1.55">This one is wearing ${wornLook.classic ? `the classic ${esc(wornLook.colorLabel || wornLook.name.replace(' Puffle', ''))} puffle colour` : 'a look outside its canon coats'}, so no canon coat is on. Pick a coat to bring its ${esc(species.label.toLowerCase())} back.</p>` : ''}
+    <div class="family-chip-row" role="group" aria-label="Canon coats for ${esc(species.label)}">${wornOther ? `<span class="chip" data-creature-coat-worn="${esc(wornOther)}" aria-current="true" title="${esc(wornLook.name)} — what it wears now, which is not one of its canon coats" style="display:inline-flex;align-items:center;gap:5px;border-color:var(--accent);font-weight:800"><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${esc(wornLook.primary)};border:1px solid rgba(0,0,0,.3);flex:0 0 auto"></i>${esc(wornLook.colorLabel || wornLook.name.replace(' Puffle', ''))}${wornLook.classic ? ' <span class="tiny muted">· classic</span>' : ''}</span>` : ''}${rows.map((row) => `<button type="button" class="chip" data-creature-coat="${esc(row.key)}" data-creature-coat-name="${esc(row.name)}" aria-pressed="${row.key === current}" style="display:inline-flex;align-items:center;gap:5px;cursor:pointer${row.key === current ? ';border-color:var(--accent);font-weight:800' : ''}"><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${esc(row.hex)};border:1px solid rgba(0,0,0,.3);flex:0 0 auto"></i>${esc(row.name)}</button>`).join('')}</div>
+  </div>`;
+}
+
+/* A creature has no Club Penguin profile card, so nothing on its sheet ever
+   named the dish, toy or game the care loop actually rewards. Every value here
+   comes from the same puffleComfortsFor table the feed, fetch and play actions
+   read, so the copy cannot drift from the bonus. */
+function cpCreatureFavouritesHTML(s) {
+  const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  const form = s && s.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[s.form] : null;
+  if (!comforts || !form || !form.creature) return '';
+  const chip = (icon, key, text) => `<span class="chip" data-creature-favourite="${esc(key)}">${icon} ${esc(text)}</span>`;
+  return `<div class="card" data-creature-favourites="${esc(form.creature)}" style="padding:12px;margin-top:10px">
+    <div class="tiny muted" style="font-weight:800;letter-spacing:.08em">FAVOURITE THINGS</div>
+    <div class="family-chip-row" style="margin-top:8px">
+      ${chip(comforts.food.icon || '🍴', 'food', `Favourite dish: ${comforts.food.name}`)}
+      ${chip(comforts.drink.icon || '🥤', 'drink', `Favourite drink: ${comforts.drink.name}`)}
+      ${chip(comforts.treat.icon || '🍬', 'treat', `Favourite treat: ${comforts.treat.name}`)}
+      ${chip(comforts.toy.icon || '🎾', 'toy', `Fetch toy: ${comforts.toy.name}`)}
+      ${chip(comforts.game.icon || '🎮', 'game', `Favourite game: ${comforts.game.name}`)}
+      ${chip('🏡', 'biome', `Prefers: ${comforts.biome}`)}
+    </div>
+    <p class="tiny muted" style="margin:8px 0 0">Feeding this dish restores extra joy and bond.</p>
+  </div>`;
+}
+
+/* The fifteen species are a set to finish, not fifteen separate surprises, so the
+   roster names every one: grown or not, and how many of its coats the Hollow has
+   worn. */
+function cpCreatureDexHTML() {
+  if (typeof CP_PUFFLE_CREATURES === 'undefined' || typeof cpCreatureCoats !== 'function') return '';
+  const worn = Array.isArray(state.stats && state.stats.coats) ? state.stats.coats : [];
+  const types = Object.keys(CP_PUFFLE_CREATURES);
+  const chips = types.map((type) => {
+    const species = CP_PUFFLE_CREATURES[type];
+    const coats = [`pc_${type}`, ...cpCreatureCoats(type).map((coat) => `pc_${type}_${coat.key}`)];
+    const wornCount = coats.filter((key) => worn.includes(key)).length;
+    const owned = state.sprites.some((sprite) => sprite.form === `pc_${type}`);
+    const label = `${species.label}: ${owned ? 'in the Hollow' : 'not grown yet'}, ${wornCount} of ${coats.length} coats worn`;
+    return `<span class="chip" data-creature-dex="${type}" data-dex-owned="${owned ? 1 : 0}" data-dex-coats="${wornCount}/${coats.length}" title="${esc(label)}">${owned ? species.icon : '◻️'} ${esc(species.label.replace(/ Puffle$/, ''))} · ${wornCount}/${coats.length}</span>`;
+  }).join('');
+  return `<div class="card" data-creature-dex-card style="padding:12px;margin-top:10px">
+    <div class="between"><div class="tiny muted" style="font-weight:800;letter-spacing:.08em">PUFFLE CREATURES</div><span class="chip">${types.length} species</span></div>
+    <p class="tiny muted" style="margin:7px 0 9px;line-height:1.55">Every species has its own coats. The count is how many of that species' coats this Hollow has worn.</p>
+    <div class="family-chip-row">${chips}</div>
+  </div>`;
+}
+
 function openSpriteDetail(id) {
   const s = findSprite(id);
   if (!s) return;
@@ -780,9 +946,46 @@ function openSpriteDetail(id) {
           <span class="chip">💚 Likes ${esc(traits.likes)}</span>
           <span class="chip">🚫 Dislikes ${esc(traits.dislikes)}</span>
         </div>
-        <p class="tiny muted" style="margin:8px 0 0">Feeding the favorite food restores extra Joy and bond.</p>
+        <p class="tiny muted" style="margin:8px 0 0">Feeding its favourite food restores extra Joy and bond.</p>
       </div>`;
     })()}
+    ${(() => {
+      const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+      if (!comforts) return '';
+      /* The temperament card names the dish its breed feeds and what that feed
+         does, so this card keeps the rest of the comforts and only repeats the
+         food when no temperament card is there to name it. */
+      const temperament = breed && typeof BREED_TRAITS !== 'undefined' ? BREED_TRAITS[s.breed] : null;
+      const temperamentDish = temperament && temperament.favorite && typeof FOODS !== 'undefined' && FOODS[temperament.favorite] ? temperament.favorite : null;
+      const ownDish = !temperamentDish;
+      /* A used favourite rests for a minute; the card says so instead of
+         letting the player find out from a refusal. */
+      const toyWait = Math.max(0, 60000 - (Date.now() - (Number(s.lastFavToy) || 0)));
+      const gameWait = Math.max(0, 60000 - (Date.now() - (Number(s.lastFavGame) || 0)));
+      const restLabel = (wait) => (wait > 0 ? ` · ready in ${Math.ceil(wait / 1000)}s` : '');
+      const gameInfo = typeof GAME_INFO !== 'undefined' ? GAME_INFO[comforts.game.game] : null;
+      const gameTitle = (gameInfo && gameInfo.title) || 'a garden game';
+      return `<div class="card" style="padding:12px;margin-top:12px">
+        <div class="tiny muted" style="font-weight:800;letter-spacing:.08em">FAVOURITE THINGS</div>
+        <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:9px">
+          ${ownDish ? `<span class="chip">${comforts.food.icon} Eats ${esc(comforts.food.name)}</span>` : ''}
+          <span class="chip">${comforts.drink.icon} Drinks ${esc(comforts.drink.name)}</span>
+          <span class="chip">${comforts.treat.icon} Treat ${esc(comforts.treat.name)}</span>
+          <span class="chip">${comforts.toy.icon} Toy ${esc(comforts.toy.name)}</span>
+          <span class="chip">${comforts.game.icon} Game ${esc(comforts.game.name)}</span>
+        </div>
+        <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:9px">
+          <button class="btn btn-ghost" type="button" data-comfort-play="toy"${toyWait > 0 ? ' disabled' : ''}>${comforts.toy.icon} Play with the ${esc(comforts.toy.name.toLowerCase())}${restLabel(toyWait)}</button>
+          <button class="btn btn-ghost" type="button" data-comfort-play="game"${gameWait > 0 ? ' disabled' : ''}>${comforts.game.icon} Play ${esc(comforts.game.name)}${restLabel(gameWait)}</button>
+        </div>
+        <p class="tiny muted" style="margin:8px 0 0">Its own toy and game are worth a little more Joy and bond.</p>
+        <p class="tiny muted" style="margin:5px 0 0" data-comfort-like>🎮 ${esc(comforts.game.name)} plays like ${esc(gameTitle)}.</p>
+        <p style="margin:9px 0 0;font-size:12px;line-height:1.55">🏡 <b>${esc(comforts.biome)}</b>${comforts.scenes.length ? ` · thrives in ${comforts.scenes.map((scene) => esc(scene)).join(', ')}` : ''}</p>
+        <p class="tiny muted" style="margin:6px 0 0">✨ Favourite nook: ${esc(comforts.nook)}</p>
+        ${ownDish ? `<p class="tiny muted" style="margin:6px 0 0">Feeding its favourite food restores extra Joy and bond.</p>` : ''}
+      </div>`;
+    })()}
+    ${cpPuffleDetailHTML(s)}
     ${s.retired ? `<div class="card" style="padding:10px;margin-top:10px;font-size:11px;line-height:1.55;color:var(--muted)">🏡 <b style="color:var(--text)">Retired.</b> Needs are paused and XP is off. Petting, feeding, and visits still work.</div>` : ''}
     ${s.stage === 'egg' ? `
       <div class="card" style="padding:12px;margin-top:14px">
@@ -864,6 +1067,8 @@ function openSpriteDetail(id) {
       ${s.stage !== 'egg' ? `<div class="card" style="padding:12px;margin-top:10px;font-size:11.5px;line-height:1.6;color:var(--muted)">🍬 <b style="color:var(--text)">Candy sugar ${s.sugar || 0}/3.</b> Feeding candy treats builds sugar. At 3, this sprite transforms into a random candy species.</div>` : ''}
       ${abilityPathCardHTML(s)}
       ${puffleEvolutionCardHTML(s)}
+      ${creatureCoatCardHTML(s)}
+      ${typeof cpCreatureFavouritesHTML === 'function' ? cpCreatureFavouritesHTML(s) : ''}
       ${typeof spritePuffleFamilyPanelHTML === 'function' ? spritePuffleFamilyPanelHTML(s) : ''}
       <div class="detail-actions">
         <button class="btn ${isActive ? 'btn-ghost' : 'btn-primary'}" data-set-active ${isActive || s.retired ? 'disabled' : ''}>${s.retired ? 'Retired' : isActive ? 'Currently active' : 'Set active'}</button>
@@ -896,6 +1101,55 @@ function openSpriteDetail(id) {
       });
       root.querySelector('[data-talk]')?.addEventListener('click', () => { close(); App.openChat(s.id); });
       root.querySelector('[data-style]')?.addEventListener('click', () => { close(); App.openStudio({ spriteId: s.id }); });
+
+      /* A canon coat saves at once and repaints the portrait, because the sheet
+         stays open so coats can be compared in place. */
+      root.querySelectorAll('[data-creature-coat]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          Actions.customize(s.id, { puffleVariant: btn.dataset.creatureCoat });
+          root.querySelectorAll('[data-creature-coat]').forEach((other) => {
+            const on = other === btn;
+            other.setAttribute('aria-pressed', on ? 'true' : 'false');
+            other.style.borderColor = on ? 'var(--accent)' : '';
+            other.style.fontWeight = on ? '800' : '';
+          });
+          /* The worn classic colour and its note described the look that was
+             on, so they go out with the pick instead of leaving two entries
+             marked as current. */
+          root.querySelector('[data-creature-coat-worn]')?.remove();
+          root.querySelector('[data-creature-coat-note]')?.remove();
+          const countEl = root.querySelector('[data-creature-coat-count]');
+          if (countEl) {
+            const keys = Array.from(root.querySelectorAll('[data-creature-coat]')).map((chip) => chip.dataset.creatureCoat);
+            const worn = new Set(Array.isArray(state.stats && state.stats.coats) ? state.stats.coats : []);
+            worn.add(btn.dataset.creatureCoat);
+            countEl.textContent = `${keys.filter((key) => worn.has(key)).length} of ${keys.length} worn`;
+          }
+          const hero = root.querySelector('.detail-hero');
+          if (hero && typeof spriteSVG === 'function') {
+            const next = spriteSVG(s, { expr: typeof expressionFor === 'function' ? expressionFor(s) : 'idle' });
+            const svg = hero.querySelector('svg');
+            if (svg) svg.outerHTML = next;
+            else hero.insertAdjacentHTML('beforeend', next);
+          }
+          /* The name is the colourway itself ("Black Dog Puffle", "Golden
+             Retriever Puffle"), so the toast names it rather than appending a
+             second noun: "...the Black Dog Puffle coat" reads as a coat made of
+             puffle. */
+          const colourway = btn.dataset.creatureCoatName;
+          toast(`${displayName(s)} now wears ${colourway ? `the ${colourway} colourway` : 'its species colourway'}.`, '🎨');
+          Sfx.pop();
+        });
+      });
+      /* The roster is a collection, not a menu: one press rolls a coat for a
+         player who would rather be surprised than compare chips. */
+      root.querySelector('[data-creature-coat-shuffle]')?.addEventListener('click', () => {
+        const speciesKey = root.querySelector('[data-creature-coats]')?.dataset.creatureCoats;
+        if (!speciesKey || typeof cpCreatureColourwayRoll !== 'function') return;
+        const rolled = cpCreatureColourwayRoll(speciesKey);
+        const chip = rolled ? root.querySelector(`[data-creature-coat="${rolled}"]`) : null;
+        if (chip) chip.click();
+      });
       root.querySelector('[data-evo-open]')?.addEventListener('click', () => { close(); setTimeout(() => openEvolutionForecast(s.id), 160); });
       root.querySelector('[data-breed-open]')?.addEventListener('click', () => { close(); setTimeout(() => openBreedingCodex(s.element), 40); });
       root.querySelector('[data-retire]')?.addEventListener('click', () => {
@@ -931,11 +1185,30 @@ function openSpriteDetail(id) {
             return;
           }
           close();
-          toast(`${displayName(s)} evolved into ${formName(res.sprite)}!`, res.form.icon);
+          toast(`${displayName(s)} evolved into ${cpCreatureLookName(res.sprite) || formName(res.sprite)}!`, res.form.icon);
           Sfx.win();
           /* The reveal waits for the manifest's evolve animation to finish. */
           const evolveMs = typeof spriteAnimationDuration === 'function' ? spriteAnimationDuration('evolve', 380) : 380;
           setTimeout(() => openSpriteDetail(s.id), Math.max(380, Math.min(1400, evolveMs)));
+        });
+      });
+      root.querySelectorAll('[data-comfort-play]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          const r = typeof Actions.playFavourite === 'function' ? Actions.playFavourite(s.id, btn.dataset.comfortPlay) : { ok: false, reason: 'missing' };
+          if (!r.ok) {
+            toast(r.reason === 'cooldown'
+              ? `${displayName(s)} just played that. Give it ${Math.max(1, Math.ceil((r.wait || 0) / 1000))}s.`
+              : 'That puffle has no favourites yet.', '⏳');
+            Sfx.error();
+            return;
+          }
+          burstOn(e.currentTarget, r.kind === 'game' ? ['🎮', '✨'] : ['💛', '✨'], 5);
+          toast(`${displayName(s)} loves ${r.item.name}! +${r.joy} Joy${r.coins ? ` · +${r.coins} coins` : ''}.`, r.item.icon);
+          /* Both favourites share the rest rule, so both buttons go quiet. */
+          root.querySelectorAll('[data-comfort-play]').forEach((other) => {
+            other.disabled = true;
+            if (other === btn) other.textContent = `${btn.textContent.replace(/ · ready in [0-9]+s$/, '')} · ready in 60s`;
+          });
         });
       });
       root.querySelector('[data-pet]')?.addEventListener('click', (e) => {
@@ -969,8 +1242,9 @@ function openSpriteDetail(id) {
             return;
           }
           Sfx.pop();
-          burstOn(e.currentTarget, ['🎾', '✨'], 5);
-          toast(`${displayName(s)} pounces on the ball!`, '🎾');
+          const fetchToy = r.toy || { name: 'ball', icon: '🎾' };
+          burstOn(e.currentTarget, [fetchToy.icon, '✨'], 5);
+          toast(`${displayName(s)} pounces on the ${fetchToy.name.toLowerCase()}!${r.favouriteToy ? ' Its favourite!' : ''}`, fetchToy.icon);
         });
         root.querySelector('[data-family-home]')?.addEventListener('click', () => {
           if (typeof openHomesSheet !== 'function') return;
@@ -986,6 +1260,9 @@ function openSpriteDetail(id) {
           }, 140);
         });
         const familyPreview = root.querySelector('[data-family-variant-preview]');
+        /* Which variant the sheet saves when no chip is on: a creature falls
+           back to its species coat, never to a Sprite Puffle style. */
+        const familyDefaultVariant = root.querySelector('[data-family-card]')?.dataset.familyDefault || familyRow.key;
         const paintFamilyPreview = (puffleVariant) => {
           if (!familyPreview || typeof spriteSVG !== 'function') return;
           const accessory = familyPreview.dataset.accessory || s.accessory || 'none';
@@ -1169,6 +1446,18 @@ function openRenameModal(id) {
 /* A read-only look at one named form: its sprite, its rarity rung and the stats
    it would carry. Every form is rendered into the same sheet and Prev/Next just
    swaps panels, so stepping never stacks overlays or loses the scroll position. */
+/* The evolution preview draws the line's own colours, so a Club Penguin Puffle's
+   five forms read as five classic colours instead of one colour five times. */
+function evolutionStageSample(elementKey, chainKey, stage) {
+  const sample = { element: elementKey, stage };
+  const style = typeof window.puffleEvolutionColour === 'function' ? window.puffleEvolutionColour(chainKey, stage) : null;
+  if (style) {
+    sample.puffleVariant = style;
+    if (typeof BREEDS !== 'undefined' && BREEDS[elementKey]) sample.breed = elementKey;
+  }
+  return sample;
+}
+
 function openEvolutionFormPreview(chainKey, elementKey, formIndex, ownedIndex) {
   const chain = window.PUFFLE_EVOLUTION_CHAINS ? window.PUFFLE_EVOLUTION_CHAINS[chainKey] : null;
   if (!chain || typeof openSheet !== 'function') return;
@@ -1185,7 +1474,7 @@ function openEvolutionFormPreview(chainKey, elementKey, formIndex, ownedIndex) {
     const stats = typeof puffleStatsFor === 'function' ? puffleStatsFor(elementKey, Math.min(3, i)) : null;
     const isMine = mine !== null && i === mine;
     return `<div data-evo-panel="${i}"${isMine ? ' data-evo-mine="1"' : ''} style="${isMine ? 'border:1px solid var(--accent);border-radius:16px;padding:10px;margin:-10px' : ''}">
-      <div style="text-align:center;margin-bottom:10px">${typeof spriteSVG === 'function' ? spriteSVG({ element: elementKey, stage }, { still: true }).replace('<svg ', '<svg width="156" height="156" shape-rendering="geometricPrecision" ') : ''}</div>
+      <div style="text-align:center;margin-bottom:10px">${typeof spriteSVG === 'function' ? spriteSVG(evolutionStageSample(elementKey, chainKey, stage), { still: true }).replace('<svg ', '<svg width="156" height="156" shape-rendering="geometricPrecision" ') : ''}</div>
       <div class="row" style="justify-content:center;gap:6px;margin-bottom:10px">
         ${tier ? `<span class="chip" style="border-color:${tier.color}">${tier.icon} ${esc(tier.name)} ${'★'.repeat(tier.stars)}</span><span class="chip" style="border-color:${tier.color}">${esc(typeof window.puffleBadgeFor === 'function' ? window.puffleBadgeFor(tier.key, chainKey + ':' + i) : tier.badge)}</span>` : ''}
         <span class="chip">${esc(stage)}</span>

@@ -71,6 +71,7 @@ const PUFFLE_FAMILY_CLASS = {
   time: { name: 'Controller', icon: '⏳', note: 'Extra turns, speed control, timeline manipulation.' },
   rainbow: { name: 'Mage', icon: '🌈', note: 'Adaptive elemental powers, spectrum magic.' },
   secret: { name: 'Guardian', icon: '👑', note: 'Reality manipulation, universal energy, creator powers.' },
+  classic: { name: 'Performer', icon: '🐧', note: 'Colour-shifting tricks, party buffs, and unshakeable cheer.' },
 };
 
 const PUFFLE_FAMILY_LABELS = {
@@ -78,6 +79,7 @@ const PUFFLE_FAMILY_LABELS = {
   wind: 'Wind', moon: 'Moon', light: 'Light', shadow: 'Shadow', cosmic: 'Cosmic', crystal: 'Crystal',
   dragon: 'Dragon', spirit: 'Spirit', mushroom: 'Mushroom', poison: 'Poison', metal: 'Metal',
   music: 'Music', time: 'Time', rainbow: 'Rainbow', secret: 'Creator',
+  classic: 'Classic',
 };
 
 window.PUFFLE_MATCHUPS = PUFFLE_MATCHUPS;
@@ -148,6 +150,7 @@ const PUFFLE_FAMILY_POWERS = {
   time: 'Time manipulation and extra turns',
   rainbow: 'Adaptive spectrum magic',
   secret: 'Reality-bending universal energy',
+  classic: 'Classic colour-shifting and party magic',
 };
 window.PUFFLE_FAMILY_POWERS = PUFFLE_FAMILY_POWERS;
 window.puffleFamilyPower = function puffleFamilyPower(elementKey) {

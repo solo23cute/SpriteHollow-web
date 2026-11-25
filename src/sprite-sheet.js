@@ -64,6 +64,24 @@ window.LUMI_ACTION_CLIPS = {
   special: 'special', magic: 'special', cast: 'special', ability: 'special',
 };
 
+/* Sheet pets animate from painted frames, so they never reach the vector
+   renderer that draws the care props. This hands them the same per-sprite
+   profile: the state attributes go on the svg root and the props are appended
+   inside it, scaled from the 120-unit portrait space into the sheet cell. */
+function sheetCareMarkup(sprite, opts, cell) {
+  if (typeof spriteAnimProfile !== 'function' || typeof spriteAnimAttrs !== 'function') return { attrs: '', props: '' };
+  if (!sprite || opts.still) return { attrs: '', props: '' };
+  const anim = spriteAnimProfile(sprite, opts.expr || 'idle', opts.anim);
+  const palette = typeof resolvePalette === 'function' ? resolvePalette(sprite) : null;
+  const c = palette || { light: '#f4f1ff', accent: '#b69cff', deep: '#2b2240' };
+  const props = typeof carePropsMarkup === 'function' ? carePropsMarkup(anim, c) : '';
+  const scale = (cell / 120).toFixed(4);
+  return {
+    attrs: ` ${spriteAnimAttrs(anim)}`,
+    props: props ? `<g class="care-layer" transform="scale(${scale})">${props}</g>` : '',
+  };
+}
+
 const LUMI_SHEET_CELL = 128;
 /* Resolution tiers: 128px cells for gameplay, 64 and 32 for small screens, and
    512px cells from the 8192 master for the kit slots that ship one. */
@@ -439,7 +457,8 @@ ${rules}`;
     const fxArt = FX && fxLevel !== 'off'
       ? `<g class="lumi-fx lumi-fx-${fxKind}" opacity="${fxLevel === 'full' ? 1 : 0.55}" pointer-events="none">${FX}</g>`
       : '';
-    return `<svg class="sprite-motion motion-${motion} lumi-sheet${sleeping}" data-tier="${tier}" data-clip="${still ? 'idle' : clip}" data-sheet="${form}" data-kit="${lumiKitFor(sprite)}" data-ability="${ability.name}" data-fx="${fxKind || 'none'}"${still ? ' data-still="1"' : ''} viewBox="0 0 ${LUMI_SHEET_CELL} ${LUMI_SHEET_CELL}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${ability.icon} ${ability.name}">
+    const careForKit = sheetCareMarkup(sprite, opts, LUMI_SHEET_CELL);
+    return `<svg class="sprite-motion motion-${motion} lumi-sheet${sleeping}" data-tier="${tier}" data-clip="${still ? 'idle' : clip}" data-sheet="${form}" data-kit="${lumiKitFor(sprite)}" data-ability="${ability.name}" data-fx="${fxKind || 'none'}"${still ? ' data-still="1"' : ''}${careForKit.attrs} viewBox="0 0 ${LUMI_SHEET_CELL} ${LUMI_SHEET_CELL}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${ability.icon} ${ability.name}">
       <title>${ability.icon} ${ability.name}</title>
       ${fluff}
       ${ascendArt}
@@ -448,6 +467,7 @@ ${rules}`;
       ${kitArt}
       ${traitArt}
       ${wear}
+      ${careForKit.props}
     </svg>`;
   }
 
@@ -1138,7 +1158,8 @@ function lumiPuffleAtlasMarkup(sprite, opts = {}) {
   const wear = palette && typeof hairMarkup === 'function'
     ? `<g class="lumi-wear" transform="scale(${(LUMI_SHEET_CELL / 120).toFixed(4)})"><g class="lumi-wear-move">${hairMarkup(sprite.hair, palette)}${lumiAccessoryMarkup(sprite, palette)}${typeof hatMarkup === 'function' ? hatMarkup(sprite.hat, palette) : ''}</g></g>`
     : '';
-  return `<svg class="sprite-motion motion-${motion} lumi-sheet lumi-puffle-atlas${expr === 'sleep' ? ' is-slow' : ''}" data-tier="atlas" data-clip="${clip}" data-sheet="atlas" data-atlas-row="${row}" data-ability="${ability.name}"${still ? ' data-still="1"' : ''} viewBox="0 0 ${LUMI_PUFFLE_ATLAS.cell} ${LUMI_PUFFLE_ATLAS.cell}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${ability.icon} ${ability.name}">
+  const care = sheetCareMarkup(sprite, opts, LUMI_PUFFLE_ATLAS.cell);
+  return `<svg class="sprite-motion motion-${motion} lumi-sheet lumi-puffle-atlas${expr === 'sleep' ? ' is-slow' : ''}" data-tier="atlas" data-clip="${clip}" data-sheet="atlas" data-atlas-row="${row}" data-ability="${ability.name}"${still ? ' data-still="1"' : ''}${care.attrs} viewBox="0 0 ${LUMI_PUFFLE_ATLAS.cell} ${LUMI_PUFFLE_ATLAS.cell}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${ability.icon} ${ability.name}">
     <title>${ability.icon} ${ability.name}</title>
     <g transform="translate(0 ${-row * LUMI_PUFFLE_ATLAS.cell})">
       <g class="lumi-puffle-atlas-frames">
@@ -1146,6 +1167,7 @@ function lumiPuffleAtlasMarkup(sprite, opts = {}) {
       </g>
     </g>
     ${wear}
+    ${care.props}
   </svg>`;
 }
 

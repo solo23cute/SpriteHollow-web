@@ -242,3 +242,66 @@ Object.assign(FOODS, HOTEL_FOODS);
 Object.assign(FOOD_DIET, HOTEL_DIET);
 FOOD_KEYS.push(...Object.keys(HOTEL_FOODS));
 CANDY_ITEMS.push(...HOTEL_CANDY_KEYS);
+
+/* ---------------- room service ----------------
+   The hotel kitchen is not a separate cuisine. Room service sends up whatever
+   the Hollow eats: the hotel's own menu, cafe meals, Club Penguin counter
+   food, kitchen and world dishes, specialist space meals, pantry snacks,
+   drinks and sweets. A dish already in the pantry is carried up for the tray
+   fee alone; anything else is ordered in at its shelf price plus that fee. */
+const HOTEL_TRAY_FEE = 4;
+const HOTEL_SNACK_PRICE = 6;
+const HOTEL_COURSES = [
+  { key: 'hotel', name: 'Hotel menu', icon: '🏨', cats: ['hotel'] },
+  { key: 'cafe', name: 'Cafe meals', icon: '☕', cats: ['cafe'] },
+  { key: 'club', name: 'Club Penguin cafe', icon: '🐧', cats: ['cp'] },
+  { key: 'meals', name: 'Kitchen meals', icon: '🍲', cats: ['meal', 'meat', 'veg', 'savory', 'fresh', 'produce'] },
+  { key: 'specials', name: 'Specialist meals', icon: '🌌', cats: ['space'] },
+  { key: 'snacks', name: 'Snacks', icon: '🍪', cats: ['snack'] },
+  { key: 'drinks', name: 'Drinks', icon: '🥤', cats: ['drink'] },
+  { key: 'sweets', name: 'Sweets & treats', icon: '🍰', cats: ['dessert', 'sweet', 'treat', 'candy'] },
+];
+
+function hotelCourseForCat(cat) {
+  const course = HOTEL_COURSES.find((entry) => entry.cats.indexOf(cat) >= 0);
+  return course ? course.key : 'meals';
+}
+
+/* One room-service line: the dish, which course it belongs to, and its shelf
+   price. Null means the kitchen cannot send it up at all (a rebirth feast
+   rewrites the sprite itself, and a missing or negative price is not food). */
+function hotelMenuEntry(key) {
+  if (typeof FOODS === 'undefined' || typeof SNACKS === 'undefined') return null;
+  const snack = !FOODS[key] && SNACKS[key] ? SNACKS[key] : null;
+  const food = FOODS[key] || null;
+  const item = food || snack;
+  if (!item || (food && food.rebirth)) return null;
+  /* Pantry snacks are earned free and carry no shelf price, so room service
+     charges its own snack rate for one. */
+  const price = Number(Number.isFinite(Number(item.price)) ? item.price : snack ? HOTEL_SNACK_PRICE : NaN);
+  if (!Number.isFinite(price) || price < 0) return null;
+  const course = snack ? 'snacks' : hotelCourseForCat(String(item.cat || 'meal'));
+  return { key, kind: snack ? 'snack' : 'food', item, price, course };
+}
+
+function hotelCourseKeys(courseKey) {
+  const keys = [];
+  const push = (key) => {
+    const entry = hotelMenuEntry(key);
+    if (entry && entry.course === courseKey && keys.indexOf(key) < 0) keys.push(key);
+  };
+  if (typeof FOOD_KEYS !== 'undefined') FOOD_KEYS.forEach(push);
+  if (typeof SNACK_KEYS !== 'undefined') SNACK_KEYS.forEach(push);
+  return keys;
+}
+
+/* A stocked dish only costs the tray fee; a dish that is not in the pantry is
+   bought in at shelf price first. */
+function hotelServePrice(key) {
+  const entry = hotelMenuEntry(key);
+  if (!entry) return null;
+  const stocked = entry.kind === 'snack'
+    ? (typeof snackCount === 'function' && snackCount(key) > 0)
+    : (typeof foodCount === 'function' && foodCount(key) > 0);
+  return (stocked ? 0 : entry.price) + HOTEL_TRAY_FEE;
+}

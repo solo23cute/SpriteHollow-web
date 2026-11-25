@@ -151,6 +151,18 @@ const SUMMON_CUE_SPECS = {
       ['sparkle', 4.2, { count: 5, base: 1174, vol: 0.012, step: 0.18 }],
     ],
   },
+  ultra: {
+    length: 7, theme: 'Signal Surge', layers: [
+      ['glide', 0, { from: 174, to: 1388, dur: 1.8, type: 'square', vol: 0.014 }],
+      ['noise', 0.3, { dur: 1.2, vol: 0.02, freq: 5200, q: 1.2 }],
+      ['pad', 1.4, { freq: 349, dur: 4.6, vol: 0.017, detune: 6 }],
+      ['pad', 1.5, { freq: 466, dur: 4.4, vol: 0.015, detune: 6 }],
+      ['bell', 2.6, { freq: 1318, dur: 1.8, vol: 0.022 }],
+      ['bell', 3.4, { freq: 1976, dur: 1.4, vol: 0.017 }],
+      ['thump', 4.6, { freq: 88, dur: 1.3, vol: 0.036 }],
+      ['sparkle', 5.4, { count: 6, base: 1760, vol: 0.011, step: 0.17 }],
+    ],
+  },
   divine: {
     length: 8, theme: 'Heavenly Arrival', layers: [
       ['pad', 0, { freq: 261, dur: 7.5, vol: 0.016, detune: 9 }],
@@ -248,6 +260,22 @@ const SUMMON_CUE_SPECS = {
       ['sparkle', 8.6, { count: 12, base: 1046, vol: 0.01, step: 0.34 }],
       ['pad', 10, { freq: 523, dur: 4.6, vol: 0.014 }],
       ['bell', 12, { freq: 1568, dur: 2.8, vol: 0.018 }],
+    ],
+  },
+  god: {
+    length: 18, theme: 'Godlight Ascension', layers: [
+      ['thump', 0, { freq: 42, dur: 2.4, vol: 0.05 }],
+      ['pad', 0, { freq: 55, dur: 17, vol: 0.02, detune: 3 }],
+      ['pad', 0.6, { freq: 82.4, dur: 16, vol: 0.016 }],
+      ['pad', 1.2, { freq: 110, dur: 15, vol: 0.014, detune: 5 }],
+      ['glide', 2, { from: 55, to: 880, dur: 8, type: 'sawtooth', vol: 0.016 }],
+      ['bell', 4, { freq: 1760, dur: 3.6, vol: 0.02 }],
+      ['bell', 7.2, { freq: 2093, dur: 3.2, vol: 0.016 }],
+      ['thump', 8.4, { freq: 49, dur: 2.4, vol: 0.045 }],
+      ['noise', 8.4, { dur: 2.4, vol: 0.022, freq: 700, q: 0.7 }],
+      ['shimmer', 10, { count: 16, base: 2093, vol: 0.01, step: 0.32 }],
+      ['pad', 12, { freq: 659, dur: 6, vol: 0.014 }],
+      ['sparkle', 14, { count: 10, base: 1568, vol: 0.009, step: 0.22 }],
     ],
   },
 };

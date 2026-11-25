@@ -231,3 +231,148 @@ function openPortalPairGame() {
     timers.forEach((id) => { clearTimeout(id); clearInterval(id); });
   });
 }
+
+/* The event vigil: the playable half of a Hollow event preset. The live event's
+   own motes surface in a nine-light grid; enough of them keeps the badge for
+   the day. The shell is themed from the preset rather than GAME_INFO, so the
+   Play screen never lists a vigil for an event that is not up. */
+function openEventVigilGame(presetKey) {
+  const liveKey = (state.world && state.world.eventPreset) || null;
+  const key = presetKey || liveKey;
+  const preset = key && typeof EVENT_PRESETS !== 'undefined' ? EVENT_PRESETS[key] : null;
+  /* The vigil belongs to the sky that is up, so a stale button or an old link
+     cannot play a vigil for an event the Hollow is not hosting. */
+  if (!preset || liveKey !== preset.key) {
+    if (typeof toast === 'function') toast('No event is up — light one in the Hollow sky sheet first.', '✨');
+    return null;
+  }
+  const vig = typeof EVENT_VIGIL !== 'undefined' ? EVENT_VIGIL : { duration: 30, target: 18 };
+  const DURATION = Math.max(10, Number(vig.duration) || 30);
+  const TARGET = Math.max(1, Number(vig.target) || 18);
+  const kind = `vigil-${preset.key}`;
+  const shell = gameOverlayShell(kind, {
+    icon: preset.icon,
+    title: preset.name,
+    tag: 'Event vigil',
+    desc: `Tap each ${preset.mote} while it glows.`,
+    g1: preset.tint,
+    g2: preset.tint2,
+  });
+  const { board } = shell;
+  board.innerHTML = `<div class="event-vigil" style="--vigil:${preset.tint};--vigil-2:${preset.tint2}">
+      <div class="event-vigil-grid" data-vigil-grid>
+        ${Array.from({ length: 9 }, (_, index) => `<button class="vigil-mote" type="button" data-vigil-mote="${index}" aria-label="Vigil light ${index + 1}"><span aria-hidden="true">${preset.mote}</span></button>`).join('')}
+      </div>
+      <div class="starlane-hud"><span data-vigil-caught>Caught 0 / ${TARGET}</span><span data-vigil-streak>Streak 0</span></div>
+      <p class="tiny muted">${esc(preset.vigilBlurb || '')}</p>
+    </div>${gameMiniSprite()}`;
+  const motes = [...board.querySelectorAll('[data-vigil-mote]')];
+  const caughtEl = board.querySelector('[data-vigil-caught]');
+  const streakEl = board.querySelector('[data-vigil-streak]');
+  let score = 0;
+  let streak = 0;
+  let remaining = DURATION;
+  let running = true;
+  let lit = null;
+  let litTimer = null;
+
+  function paintHud() {
+    shell.scoreEl.textContent = score;
+    caughtEl.textContent = `Caught ${score} / ${TARGET}`;
+    streakEl.textContent = `Streak ${streak}`;
+  }
+
+  function unlight() {
+    if (litTimer) clearTimeout(litTimer);
+    litTimer = null;
+    if (lit) lit.classList.remove('is-lit');
+    lit = null;
+  }
+
+  function surface() {
+    if (!running || lit) return;
+    lit = motes[randInt(0, motes.length - 1)];
+    lit.classList.add('is-lit');
+    lit.classList.remove('is-miss');
+    const life = Math.max(520, 960 - score * 16);
+    litTimer = setTimeout(() => {
+      if (!running || !lit) return;
+      lit.classList.remove('is-lit');
+      lit = null;
+      streak = 0;
+      paintHud();
+    }, life);
+  }
+
+  motes.forEach((mote) => {
+    mote.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      if (!running) return;
+      if (mote === lit) {
+        unlight();
+        score += 1;
+        streak += 1;
+        mote.classList.add('is-hit');
+        setTimeout(() => mote.classList.remove('is-hit'), 220);
+        shell.scoreEl.classList.add('is-bump');
+        setTimeout(() => shell.scoreEl.classList.remove('is-bump'), 220);
+        Sfx.pop();
+        burstOn(mote, [preset.mote, '✨'], 4);
+        tapHaptic(8);
+        paintHud();
+        setTimeout(surface, 120);
+      } else {
+        mote.classList.add('is-miss');
+        setTimeout(() => mote.classList.remove('is-miss'), 220);
+        score = Math.max(0, score - 1);
+        streak = 0;
+        Sfx.error();
+        paintHud();
+      }
+    });
+  });
+
+  shell.timerEl.textContent = `${DURATION}s`;
+  shell.timerBar.style.width = '100%';
+  paintHud();
+  const spawn = setInterval(surface, 560);
+  const clock = setInterval(() => {
+    if (!running) return;
+    remaining = Math.max(0, remaining - 0.1);
+    shell.timerEl.textContent = `${Math.ceil(remaining)}s`;
+    shell.timerBar.style.width = `${(remaining / DURATION) * 100}%`;
+    if (remaining <= 0) finish();
+  }, 100);
+
+  function finish() {
+    if (!running) return;
+    running = false;
+    clearInterval(spawn);
+    clearInterval(clock);
+    unlight();
+    motes.forEach((mote) => { mote.disabled = true; });
+    /* The badge is filed by the run, not by opening the game, so quitting early
+       cannot keep a vigil. It pays nothing: the run's own coins stand alone. */
+    const kept = typeof Actions !== 'undefined' && typeof Actions.recordVigil === 'function'
+      ? Actions.recordVigil(preset.key, score)
+      : { ok: false, reason: 'missing' };
+    const coins = Math.min(150, 14 + score * 6);
+    const xp = 12 + score * 4;
+    const blurb = kept.ok
+      ? (kept.already
+        ? `${preset.badge} vigil kept again — today's badge was already filed.`
+        : `${preset.badge} vigil kept. The badge is on the shelf.`)
+      : score >= TARGET
+        ? `${preset.badge} vigil reached, but the event had already ended.`
+        : `The vigil needs ${TARGET} motes to be kept — you caught ${score}.`;
+    showGameResult(shell, { kind, score, coins, xp, blurb });
+  }
+
+  shell.addCleanup(() => {
+    running = false;
+    clearInterval(spawn);
+    clearInterval(clock);
+    unlight();
+  });
+  return { kind, preset: preset.key, target: TARGET };
+}

@@ -1,6 +1,6 @@
 /* Sprite Hollow rarity framework.
 
-   Eleven tiers, one badge each, with the four named evolution forms of every
+   Twelve tiers, one badge each, with the four named evolution forms of every
    family placed somewhere on the ladder. The tiers are the archive's own scale
    (Common through Creator) and are separate from the puffle *style* tiers
    in lumi-palettes.js: those group cosmetics, these rank creatures.
@@ -15,6 +15,7 @@ const PUFFLE_RARITY_TIERS = [
   { key: 'epic', name: 'Epic', stars: 4, icon: '👑', badge: 'Arcane Crown', chance: 4, color: '#A46BFF', blurb: 'Large transformations, floating magic circles, stacked effects.' },
   { key: 'legendary', name: 'Legendary', stars: 5, icon: '⭐', badge: 'Golden Star', chance: 0.9, color: '#FFC94D', blurb: 'Massive wings, crowns, divine armour, advanced particles.' },
   { key: 'mythic', name: 'Mythic', stars: 6, icon: '✨', badge: 'Mythic Crest', chance: 0.09, color: '#FF6FA8', blurb: 'Celestial beings with reality-altering elemental power.' },
+  { key: 'ultra', name: 'Ultra', stars: 7, icon: '🛰', badge: 'Signal Crest', chance: 0.05, color: '#B6F2FF', blurb: 'Overcharged forms that glitch between states.' },
   { key: 'secret', name: 'Secret', stars: 7, icon: '🌈', badge: 'Rainbow Crown', chance: 0.01, color: '#8FE3FF', blurb: 'Ultra-rare hidden creatures that rarely appear at all.' },
   { key: 'ultra_secret', name: 'Ultra Secret', stars: 8, icon: '👑', badge: 'Cosmic Throne', badgeAlt: 'Heart Throne', badgeAltChance: 0.15, chance: 0.001, color: '#FFE08A', blurb: 'The rulers and creators of Sprite Hollow.' },
   { key: 'ancient', name: 'Ancient', stars: 9, icon: '🌑', badge: 'Ancient Relic', chance: 0.0005, color: '#6B5C9B', blurb: 'Old-world forms carrying runes, relics, and deep elemental memory.' },
@@ -85,7 +86,6 @@ const PUFFLE_CHAIN_RARITY = {
   evo_clockwork: ['rare', 'epic', 'mythic', 'secret'],
   evo_dreamwalker: ['rare', 'legendary', 'mythic', 'secret'],
   evo_fairy_spore: ['uncommon', 'rare', 'legendary', 'mythic'],
-  evo_void_dragon: ['rare', 'legendary', 'mythic', 'secret'],
   evo_prismatic: ['rare', 'epic', 'mythic', 'secret'],
   pc_creator: ['secret', 'secret', 'ultra_secret', 'ultra_secret'],
   pc_sprite_hollow_prime: ['ultra_secret', 'ultra_secret', 'ultra_secret', 'ultra_secret'],

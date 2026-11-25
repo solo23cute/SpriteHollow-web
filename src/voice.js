@@ -1,5 +1,18 @@
 /* Spoken greetings, goodbyes, return updates, and needs reminders.
    Uses the Android text-to-speech bridge when packaged, speechSynthesis in the browser. */
+
+/* Deterministic 32-bit hash: the same puffle always gets the same voice, and a
+   different id gets a different slot without storing anything. */
+function voiceHash(text) {
+  let hash = 2166136261;
+  const value = String(text || '');
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
 const Voice = {
   native: null,
   lastLine: '',
@@ -13,9 +26,16 @@ const Voice = {
 
   init() {
     this.startedAt = Date.now();
-    if (typeof window !== 'undefined' && window.Voice && typeof window.Voice.speak === 'function') {
-      this.native = window.Voice;
+    /* The boot bundle publishes this object on window for cross-script typeof,
+       so window.Voice is usually this very object. Only a different object is
+       the Android text-to-speech bridge; adopting ourselves made every browser
+       line call back into speak() and stop at the duplicate guard, silently. */
+    const bridge = typeof window !== 'undefined' ? window.Voice : null;
+    if (bridge && bridge !== this && typeof bridge.speak === 'function') {
+      this.native = bridge;
       if (typeof this.native.setType === 'function') this.native.setType(this.type());
+    } else {
+      this.native = null;
     }
   },
 
@@ -44,7 +64,7 @@ const Voice = {
     if (typeof Captions !== 'undefined') Captions.speech(text);
     const type = opts.type === 'male' || opts.type === 'female' ? opts.type : this.type();
     try {
-      if (this.native) {
+      if (this.native && this.native !== this) {
         if (typeof this.native.setType === 'function') this.native.setType(type);
         this.native.speak(text);
         return true;
@@ -55,6 +75,9 @@ const Voice = {
         utterance.lang = (typeof I18N_LANGUAGES !== 'undefined' && I18N_LANGUAGES[uiLang()]?.tag) || 'en-US';
         utterance.rate = Number.isFinite(opts.rate) ? opts.rate : (type === 'male' ? 0.96 : 1.0);
         utterance.pitch = Number.isFinite(opts.pitch) ? opts.pitch : (type === 'male' ? 0.8 : 1.12);
+        /* A puffle with its own installed voice uses it; without one the pitch
+           and rate alone still keep it apart from the next sprite. */
+        if (opts.voice) utterance.voice = opts.voice;
         utterance.volume = 0.95;
         window.speechSynthesis.speak(utterance);
         return true;
@@ -76,15 +99,11 @@ const Voice = {
     return typeof state === 'undefined' || !state.theme || state.theme.spriteVoice !== false;
   },
 
-  /* Every sprite gets its own small voice: element sets the base pitch, the
-     personality nudges rate and pitch, so two sprites never sound identical. */
+  /* Every sprite gets its own small voice. The sprite id seeds the pitch, so
+     two puffles of the same species and personality still sound different;
+     element brightness, age and size only nudge it further. */
   spriteTone(s) {
-    const seedText = `${s?.element || 'bloom'}|${s?.personality || 'sunny'}`;
-    let hash = 2166136261;
-    for (let i = 0; i < seedText.length; i += 1) {
-      hash ^= seedText.charCodeAt(i);
-      hash = Math.imul(hash, 16777619);
-    }
+    const hash = voiceHash(`${s?.id || 'sprite'}|${s?.element || 'bloom'}|${s?.personality || 'sunny'}|${s?.breed || ''}`);
     const el = ELEMENTS[s?.element] || ELEMENTS.bloom;
     const luminance = (() => {
       const m = String(el?.primary || '').replace('#', '');
@@ -93,18 +112,57 @@ const Voice = {
       return (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
     })();
     /* The element name carries most of the pitch so two species with similar
-       palettes still sound apart; palette brightness only nudges it. */
-    const nameSpread = ((hash >>> 7) % 100) / 100; // 0..1
-    const base = 0.92 + nameSpread * 0.72 + (luminance - 0.5) * 0.18;
-    const wobble = ((hash >>> 0) % 100) / 100; // 0..1
-    const rate = { sunny: 1.08, grump: 0.94, shy: 1.02, bold: 1.06, goofy: 1.12, dreamy: 0.92, sassy: 1.04 }[s?.personality] || 1;
-    return { pitch: Math.min(1.9, Math.max(0.7, base + wobble * 0.3)), rate: Math.min(1.2, Math.max(0.85, rate + (wobble - 0.5) * 0.06)) };
+       palettes still sound apart; the id and palette fill in the rest. */
+    const nameSpread = ((hash >>> 7) % 100) / 100; // 0..1, shared by the species
+    /* Coarse per-sprite steps, so two ids land on audibly different points
+       instead of two pitches a thousandth apart. */
+    const idPitch = (hash >>> 17) % 8; // 0..7
+    const idRate = (hash >>> 21) % 5; // 0..4
+    const stageShift = {
+      baby: 0.2, toddler: 0.17, child: 0.12, juvenile: 0.07, sprite: 0.02,
+      youngadult: 0, midadult: -0.02, highadult: -0.04, elder: -0.08,
+      ancient: -0.13, sensei: -0.15, apex: -0.17, omni: -0.18, celestial: -0.2,
+    }[s?.stage] || 0;
+    const sizeShift = { small: 0.06, large: -0.06 }[s?.size] || 0;
+    const base = 0.84 + nameSpread * 0.4 + idPitch * 0.085 + (luminance - 0.5) * 0.12
+      + stageShift + sizeShift;
+    const personalRate = { sunny: 1.08, grump: 0.94, shy: 1.02, bold: 1.06, goofy: 1.12, dreamy: 0.92, sassy: 1.04 }[s?.personality] || 1;
+    const pitch = Math.min(2, Math.max(0.62, base));
+    const rate = Math.min(1.24, Math.max(0.82, personalRate + (idRate - 2) * 0.035));
+    return { pitch, rate, label: pitch >= 1.48 ? 'bright' : pitch >= 1.14 ? 'light' : pitch >= 0.88 ? 'warm' : 'low' };
+  },
+
+  /* The browser exposes several installed voices; give each puffle one of them
+     by id so it is a different voice, not only a different pitch. The Android
+     bridge has a single voice, so it falls back to tone there. */
+  voiceFor(s) {
+    if (!s) return null;
+    const voices = this.voices();
+    if (voices.length < 2) return null;
+    const key = `${s.id || s.element || 'sprite'}|voice`;
+    const index = voiceHash(key) % voices.length;
+    return voices[index] || null;
+  },
+
+  voices() {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return [];
+    if (typeof window.speechSynthesis.getVoices !== 'function') return [];
+    let all = [];
+    try { all = window.speechSynthesis.getVoices() || []; } catch { return []; }
+    if (!all.length) return [];
+    const tag = (typeof I18N_LANGUAGES !== 'undefined' && typeof uiLang === 'function' && I18N_LANGUAGES[uiLang()]?.tag)
+      || 'en-US';
+    const prefix = String(tag).slice(0, 2).toLowerCase();
+    const sameLanguage = all.filter((voice) => String(voice.lang || '').toLowerCase().startsWith(prefix));
+    const list = sameLanguage.length ? sameLanguage : all;
+    /* Some browsers list dozens of duplicates; a dozen is plenty to be distinct. */
+    return list.slice(0, 12);
   },
 
   spriteSpeak(s, text, opts = {}) {
     if (!s || !text || !this.spriteEnabled() || !this.supported()) return false;
     const tone = this.spriteTone(s);
-    return this.speak(text, { ...opts, pitch: tone.pitch, rate: tone.rate });
+    return this.speak(text, { ...opts, pitch: tone.pitch, rate: tone.rate, voice: this.voiceFor(s) });
   },
 
   actionFor(need) {

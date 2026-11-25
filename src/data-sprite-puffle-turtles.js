@@ -161,39 +161,50 @@ function sptTierStyle(tier) {
   return styles[tier.id] || { name: tier.id, icon: '⚪', color: '#C9CDD2', glow: 'rgba(201,205,210,.5)' };
 }
 
-/* Every element wears a different shipped kit instead of the same shell/round
-   body. The tier still steps the kit slot up, so a legendary guardian wears a
-   richer frame than a common hatchling, but Nature, Fire, Ice and the rest no
-   longer share one round silhouette. */
-const SPRITE_PUFFLE_TURTLE_KITS = {
-  nature: 'leaf', fire: 'dragon', ice: 'snow', water: 'fin',
-  earth: 'horn', lightning: 'spike', dark: 'crystal', light: 'feather',
-};
-/* The two fusion guardians combine every bloodline, so they get their own kits
-   rather than borrowing one element's body for both cards. */
-const SPRITE_PUFFLE_TURTLE_FUSION_KITS = {
-  eternalharmony: 'shell', omniverse: 'glow',
-};
-/* CSS hue-rotate is an offset, and the kit is drawn at roughly 210 degrees, so
-   each entry is the rotation from blue to that element's hue. */
-const SPRITE_PUFFLE_TURTLE_HUES = {
-  nature: 265, fire: 170, ice: 340, water: 10,
-  earth: 185, lightning: 208, dark: 75, light: 195,
-  /* The fusions are not element lines, so they get their own gold and violet
-     tints instead of falling back to the neutral blue kit. */
-  eternalharmony: 42, omniverse: 282,
-};
+/* Turtle portraits are the same round, furry puffle body the game draws, with a
+   shell plate over the belly, flippers at the sides and tier regalia on top; the
+   turtle reads from the shell, not from a different creature shape. */
+const SPRITE_PUFFLE_TURTLE_FALLBACK_PALETTE = { primary: '#DCE9F7', secondary: '#8FB6D9', shell: '#4F7FA8', glow: '#BFE3FF' };
 
-/* The kit sheets are drawn in one neutral blue, so each element line tints its
-   own hue and steps saturation up with the tier; otherwise every line reads as
-   the same puffle at every rarity. */
-function sptPortrait(line, tier, label, kitName) {
+function sptPuffleArtSVG(line, tier, label) {
+  const palette = line.palette || SPRITE_PUFFLE_TURTLE_FALLBACK_PALETTE;
   const slot = Number(tier.slot) || 0;
-  const hue = SPRITE_PUFFLE_TURTLE_HUES[line.id];
-  const kit = kitName || SPRITE_PUFFLE_TURTLE_KITS[line.id] || (slot >= 5 ? 'round' : 'shell');
-  const tint = hue == null ? '' : `;--ap-hue:${hue}deg;--ap-sat:${(1.18 + slot * 0.06).toFixed(2)};--ap-bright:${(1 + slot * 0.01).toFixed(2)}`;
-  const thumb = lumiKitAsset(`${kit}-${tier.slot}`, 'thumb');
-  return `<span class="ap-portrait spt-portrait" role="img" aria-label="${sptEsc(label)} portrait" data-ap-kit="${kit}" data-spt-kit="${kit}" style="--ap-src:url('${thumb}')${tint}"><span class="ap-portrait-art" aria-hidden="true"></span></span>`;
+  const sprite = {
+    id: `spt-${line.id}-${tier.id}`,
+    element: 'bloom',
+    palette: 'custom',
+    custom: {
+      body: palette.primary,
+      light: mix(palette.primary, '#ffffff', 0.45),
+      deep: palette.shell,
+      accent: palette.glow,
+      belly: mix(palette.primary, palette.secondary, 0.28),
+    },
+    breed: 'basic_sprite',
+    stage: slot >= 4 ? 'elder' : slot >= 2 ? 'sprite' : 'baby',
+    /* Every turtle line is furry, so the fur ring is part of the silhouette. */
+    fur: slot >= 3 ? 'shaggy' : 'tufty',
+    name: label,
+  };
+  const flippers = '<ellipse cx="13" cy="45" rx="6" ry="9" transform="rotate(-18 13 45)"/><ellipse cx="51" cy="45" rx="6" ry="9" transform="rotate(18 51 45)"/>';
+  const plate = mix(palette.shell, palette.primary, 0.32);
+  const seams = '<g fill="none" stroke="' + palette.shell + '" stroke-width=".65" opacity=".5"><path d="M32 43v14"/><path d="M24 46l-1.2 8"/><path d="M40 46l1.2 8"/><path d="M21 50h22"/></g>';
+  const crystals = slot >= 2 ? `<path d="M21 49l2.6-5 2.6 5-2.6 3Z" fill="${palette.glow}" stroke="${palette.shell}" stroke-width=".6"/><path d="M37.8 49l2.6-5 2.6 5-2.6 3Z" fill="${palette.glow}" stroke="${palette.shell}" stroke-width=".6"/>` : '';
+  const runes = slot >= 3 ? `<g fill="${palette.glow}" opacity=".9"><circle cx="24" cy="55" r="1.2"/><circle cx="32" cy="56.8" r="1.2"/><circle cx="40" cy="55" r="1.2"/></g>` : '';
+  const crown = slot >= 4 ? `<path d="M26 14l2.4 4.6 3.6-6 3.6 6 2.4-4.6 1.2 7H24.8Z" fill="${mix(palette.glow, '#ffffff', 0.3)}" stroke="${palette.shell}" stroke-width=".7" stroke-linejoin="round"/>` : '';
+  const flippersGroup = `<g transform="translate(60 61) scale(1.95) translate(-32 -37)" fill="${palette.primary}" stroke="${palette.shell}" stroke-width=".7" stroke-linejoin="round">${flippers}</g>`;
+  const shellGroup = `<g transform="translate(60 61) scale(1.95) translate(-32 -37)">
+          ${crown}${crystals}
+          <ellipse cx="32" cy="50" rx="11" ry="7.6" fill="${palette.shell}" stroke="${mix(palette.shell, '#000000', 0.35)}" stroke-width=".8"/>
+          <ellipse cx="32" cy="49.6" rx="7.6" ry="4.9" fill="${plate}"/>
+          ${seams}
+          <circle cx="32" cy="49.6" r="1.9" fill="${palette.glow}"/>${runes}
+        </g>`;
+  return pufflePortraitMarkup(sprite, flippersGroup, shellGroup);
+}
+
+function sptPortrait(line, tier, label) {
+  return `<span class="ap-portrait spt-portrait" role="img" aria-label="${sptEsc(label)} portrait" data-spt-art="puffle" data-spt-line="${line.id}">${sptPuffleArtSVG(line, tier, label)}</span>`;
 }
 
 function wikiSpritePuffleTurtlesMarkup() {
@@ -235,13 +246,13 @@ function wikiSpritePuffleTurtlesMarkup() {
       <span class="ap-effect">Mythic form</span>
     </article>`).join('');
   const fusionCards = fusions.map((fusion, index) => `<article class="ap-card spt-fusion-card" data-spt-fusion="${fusion.id}" style="--ap-aura:${index ? '#8FE8FF' : '#FFD166'};--ap-glow:${index ? 'rgba(143,232,255,.45)' : 'rgba(255,209,102,.45)'}">
-      <div class="ap-card-head">${sptPortrait(fusion, { slot: '5' }, fusion.name, SPRITE_PUFFLE_TURTLE_FUSION_KITS[fusion.id])}<span class="ap-family"><b>${fusion.icon} ${sptEsc(fusion.name)}</b><small>${sptEsc(fusion.tier)} · ${sptEsc(fusion.shell)}</small></span></div>
+      <div class="ap-card-head">${sptPortrait(fusion, { slot: '5' }, fusion.name)}<span class="ap-family"><b>${fusion.icon} ${sptEsc(fusion.name)}</b><small>${sptEsc(fusion.tier)} · ${sptEsc(fusion.shell)}</small></span></div>
       <div class="family-chip-row">${lines.map((line) => `<span class="chip">${line.icon} ${sptEsc(line.name)}</span>`).join('')}</div>
       ${fusion.id === 'eternalharmony' ? `<div class="family-chip-row"><span class="chip">🔐 Secret · collect all ${lines.length} turtle lines</span><span class="chip">🧬 Worldshell</span><span class="chip">🏛️ Worldshell Titan</span></div>` : ''}
       <p class="ap-note">${sptEsc(fusion.note)}</p>
       <span class="ap-effect">${sptEsc(fusion.tier)}</span>
     </article>`).join('');
-  return `<p class="wiki-lede">The <b>Sprite Puffle Turtle</b> collection is one species wearing <b>${lines.length} elemental kits</b>. Every line keeps the chibi turtle face and tiny limbs, but each element now has its own kit body, guardian frame and shell silhouette, so the eight portraits no longer read as the same round puff in a different hue.</p>
+  return `<p class="wiki-lede">The <b>Sprite Puffle Turtle</b> collection is one species wearing <b>${lines.length} elemental shells</b>. Every line is the same round, furry puffle body the game draws, with a shell plate, flippers and elemental regalia added, so the eight portraits read as puffles wearing shells rather than as a different creature in a different hue.</p>
     <p>Each element runs a three-stage evolution (<b>hatchling → shelled → guardian</b>) through all four tiers, for <b>${forms} tier forms</b>, plus a <b>mythic form</b> per element (<b>${mythicCount}</b>) and <b>${fusions.length} fusion guardians</b> that blend every bloodline: <b>${total} creature entries</b> in one lineup.</p>
     <p><b>Dark</b> and <b>Light</b> are real species as well as catalogue lines: their type eggs hatch a <b>Shadepuff Turtle</b> or <b>Lumipuff Turtle</b>, each with its own gene, Titan and habitats, and both grow through the normal life stages. The other six lines stay field-guide entries.</p>
     <div class="ap-legend-row">${legend}</div>
@@ -260,7 +271,7 @@ function wikiSpritePuffleTurtlesMarkup() {
     ${typeof eternalHarmonyCardMarkup === 'function' ? eternalHarmonyCardMarkup() : ''}
     <h3>How the tiers read</h3>
     <p><b>Common</b> keeps a basic elemental shell with simple markings. <b>Rare</b> adds glowing patterns and a stronger magic trail. <b>Epic</b> floats crystals around the shell, brightens the aura and lights the eyes. <b>Legendary</b> is the ancient guardian: elemental runes, majestic shell structures and a full crown of light. Each line carries its own shell text at every tier, so a Common Water shell and a Common Fire shell read nothing alike, and the four steps inside one element build on each other. Every tier is a complete <b>${lines.length * 3}-creature</b> row of the same three stages, so the whole collection reads as one species rather than ${total} separate mascots.</p>
-    <p class="wiki-footnote">Element, stage and mythic names as catalogued above · shells drawn from the Hollow's turtle kit art · Dark and Light hatch from type eggs · no imported creature art</p>`;
+    <p class="wiki-footnote">Element, stage and mythic names as catalogued above · shells painted onto the game's round puffle body · Dark and Light hatch from type eggs · no imported creature art</p>`;
 }
 
 /* Dark and Light are playable: each hatches from a type egg as its first form,

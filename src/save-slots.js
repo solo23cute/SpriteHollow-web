@@ -14,6 +14,7 @@ const SAVE_SLOT_LABEL_PREFIX = 'sprite-hollow.slot.label.';
 
 function saveSlotKey(index) { return `${SAVE_SLOT_PREFIX}${index}`; }
 function saveSlotLabelKey(index) { return `${SAVE_SLOT_LABEL_PREFIX}${index}`; }
+function saveSlotPreviousKey(index) { return `${saveSlotKey(index)}.prev`; }
 
 function activeSaveSlot() {
   try {
@@ -58,7 +59,16 @@ function saveSlotInfo(index) {
     eggs: sprites.filter((sprite) => sprite && sprite.stage === 'egg').length,
     geneSpecies: Array.isArray(data.geneDesigns) ? data.geneDesigns.length : 0,
     savedAt: Number(data.savedAt) || 0,
+    previous: !!readSlotPrevious(index),
   };
+}
+
+function readSlotPrevious(index) {
+  try {
+    return localStorage.getItem(saveSlotPreviousKey(index));
+  } catch {
+    return null;
+  }
 }
 
 /* A slot is a second write after the live save. A quota error here must not be
@@ -94,15 +104,17 @@ function writeSlotRaw(index, raw) {
 
 /* The first time the panel opens, give the Hollow that is already here a home
    in the first empty slot. Never overwrite an existing (or unreadable) slot
-   just because no pointer survived a reset or switch failure. */
-function adoptSaveSlot() {
+   just because no pointer survived a reset or switch failure. `exceptIndex`
+   skips a slot the caller is about to replace, so adoption cannot put the
+   Hollow somewhere that is already booked for something else. */
+function adoptSaveSlot(exceptIndex = 0) {
   if (typeof savesLocked === 'function' && savesLocked()) return 0;
   const active = activeSaveSlot();
   if (active) return active;
   let target = 0;
   for (let index = 1; index <= SAVE_SLOT_COUNT; index += 1) {
     try {
-      if (!localStorage.getItem(saveSlotKey(index))) { target = index; break; }
+      if (index !== exceptIndex && !localStorage.getItem(saveSlotKey(index))) { target = index; break; }
     } catch (err) {
       markSlotWriteFailure(err);
       return 0;
@@ -151,6 +163,21 @@ function captureSaveSlot(index) {
   return writeSlotRaw(index, saveStorageString(state));
 }
 
+/* The Hollow in use has to live somewhere before its live key is replaced. The
+   active pointer is its normal home; without one (a lost pointer, an early
+   write failure) adoption gives it the first empty slot that is not the one
+   about to be overwritten. Returns the slot holding it, or 0 when there is
+   nowhere to keep it -- then the caller refuses instead of dropping the Hollow
+   the dialog promised to keep. Replacing the active slot itself is the one case
+   with nothing to copy: both callers roll the slot back if the replacement
+   fails, so the bytes are never lost. */
+function keepLiveHollowInSlot(exceptIndex = 0) {
+  const active = activeSaveSlot();
+  if (active && active === exceptIndex) return active;
+  if (active) return captureSaveSlot(active) ? active : 0;
+  return adoptSaveSlot(exceptIndex);
+}
+
 /* Called after every normal save so the active slot tracks the live Hollow.
    The caller supplies the payload it just wrote. When called without one, the
    live payload must still match the in-memory state; otherwise a failed save
@@ -177,8 +204,7 @@ function switchToSaveSlot(index) {
   if (typeof savesLocked === 'function' && savesLocked()) return false;
   const target = readSaveSlot(index);
   if (!target) return false;
-  const active = activeSaveSlot();
-  if (active && active !== index && !captureSaveSlot(active)) return false;
+  if (!keepLiveHollowInSlot(index)) return false;
   try {
     /* Snapshot the Hollow in memory, not the possibly stale live key. */
     const current = typeof state !== 'undefined' ? saveStorageString(state) : localStorage.getItem(SAVE_KEY);
@@ -236,11 +262,48 @@ function switchToSaveSlot(index) {
   return true;
 }
 
+/* Overwriting a slot keeps the generation it replaces, so Save here, Overwrite
+   and Start over are reversible from the slot card. Only explicit writes rotate
+   it: the autosave mirror would otherwise burn the previous copy every few
+   seconds. */
+function rememberSlotGeneration(index) {
+  try {
+    const prior = localStorage.getItem(saveSlotKey(index));
+    if (prior) localStorage.setItem(saveSlotPreviousKey(index), prior);
+    return true;
+  } catch (err) {
+    markSlotWriteFailure(err);
+    return false;
+  }
+}
+
+function restoreSaveSlotGeneration(index) {
+  if (typeof savesLocked === 'function' && savesLocked()) return false;
+  if (!index || index === activeSaveSlot()) return false;
+  const previous = readSlotPrevious(index);
+  if (!previous || !writeSlotRaw(index, previous)) return false;
+  try { localStorage.removeItem(saveSlotPreviousKey(index)); } catch { /* the copy is already back */ }
+  return true;
+}
+
+/* Start-over keeps the replaced Hollow in its slot, so the pointer must not keep
+   aiming at it: the fresh Hollow's first autosave would otherwise mirror over
+   the very Hollow the keeper just left. */
+function releaseActiveSlot() {
+  try {
+    localStorage.removeItem(SAVE_SLOT_POINTER_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function writeSaveSlot(index) {
   if (typeof savesLocked === 'function' && savesLocked()) return false;
   if (!index || index < 1 || index > SAVE_SLOT_COUNT) return false;
   const raw = typeof state !== 'undefined' ? saveStorageString(state) : localStorage.getItem(SAVE_KEY);
   if (!raw) return false;
+  if (!rememberSlotGeneration(index)) return false;
   const active = activeSaveSlot();
   let journal = null;
   if (typeof SaveJournal !== 'undefined') {
@@ -277,9 +340,9 @@ function writeSaveSlot(index) {
 function startNewSaveSlot(index, opts = {}) {
   if (typeof savesLocked === 'function' && savesLocked()) return false;
   if (!index || index < 1 || index > SAVE_SLOT_COUNT) return false;
-  /* Keep the Hollow in memory in its own slot before the live key is replaced. */
-  const active = activeSaveSlot();
-  if (active && !captureSaveSlot(active)) return false;
+  /* The Hollow in memory gets a slot of its own before the live key is
+     replaced; with nowhere to keep it, nothing is changed. */
+  if (!keepLiveHollowInSlot(index)) return false;
   let raw;
   try {
     raw = saveStorageString(freshState());
@@ -293,6 +356,8 @@ function startNewSaveSlot(index, opts = {}) {
       SaveIntegrity.createRestorePoint(current, 'before a new Hollow');
     }
   } catch { /* recovery is best effort; the new Hollow still proceeds */ }
+  /* Keep the Hollow this slot holds now, so Start over can be undone. */
+  rememberSlotGeneration(index);
   let before = null;
   try {
     before = {
@@ -335,6 +400,7 @@ function clearSaveSlot(index) {
   try {
     localStorage.removeItem(saveSlotKey(index));
     localStorage.removeItem(saveSlotLabelKey(index));
+    localStorage.removeItem(saveSlotPreviousKey(index));
     return true;
   } catch {
     return false;
@@ -366,6 +432,7 @@ function saveSlotCardHTML(info) {
       <button class="btn btn-primary btn-sm" type="button" data-slot-switch="${info.index}"${info.empty || info.active ? ' disabled' : ''}>${info.active ? 'In use' : 'Switch'}</button>
       <button class="btn btn-soft btn-sm" type="button" data-slot-write="${info.index}">${info.empty ? 'Save here' : 'Overwrite'}</button>
       <button class="btn btn-ghost btn-sm" type="button" data-slot-clear="${info.index}"${info.active || info.empty ? ' disabled' : ''}>Delete</button>
+      ${info.previous && !info.active ? `<button class="btn btn-ghost btn-sm" type="button" data-slot-undo="${info.index}">Undo overwrite</button>` : ''}
     </div>
     <button class="btn btn-ghost btn-sm btn-block slot-new" type="button" data-slot-new="${info.index}">${info.active ? '↻ Start this Hollow over' : '＋ Start a new Hollow here'}</button>
   </article>`;
@@ -446,6 +513,20 @@ function openSaveSlots() {
             toast('Starting a brand-new Hollow…', '🌱');
           } else {
             toast('The new Hollow could not be started. Nothing was changed.', '⚠️');
+          }
+          return;
+        }
+        const undoBtn = event.target.closest('[data-slot-undo]');
+        if (undoBtn) {
+          const index = Number(undoBtn.dataset.slotUndo);
+          const sure = await confirmModal(`Bring back the Hollow slot ${index} held before?`, 'This replaces what is in that slot now with the copy kept from the last overwrite.', 'Bring it back');
+          if (!sure) return;
+          if (restoreSaveSlotGeneration(index)) {
+            paint();
+            Sfx.coin();
+            toast(`Slot ${index} holds its previous Hollow again.`, '↩️');
+          } else {
+            toast('That previous copy could not be restored.', '⚠️');
           }
           return;
         }

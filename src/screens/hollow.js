@@ -168,6 +168,18 @@ function currentEventPreset() {
   return key && typeof EVENT_PRESETS !== 'undefined' ? EVENT_PRESETS[key] || null : null;
 }
 
+/* The chip that makes an event playable. The label is built in one place so the
+   chip painted with the screen and a chip created after a preset is applied
+   cannot disagree about whether today's vigil is already kept. */
+function eventVigilKept(key) {
+  const row = key && state.world && state.world.vigils ? state.world.vigils[key] : null;
+  return !!(row && row.day === dayKey());
+}
+
+function eventVigilChipLabel(key) {
+  return eventVigilKept(key) ? '✓ Vigil kept' : '▶ Play vigil';
+}
+
 function openWeatherSheet() {
   const selected = state.world?.weather || 'auto';
   const seasonSel = state.world?.season || 'auto';
@@ -331,6 +343,10 @@ function syncSceneTransitions() {
 }
 syncSceneTransitions();
 let pendingSceneTransition = null;
+/* The room-service course the player is browsing. The screen re-renders after
+   every order, so this keeps the browsed course instead of snapping back to
+   the hotel menu mid-order. */
+let hotelCourseView = '';
 
 function queueSceneTransition(from, to) {
   syncSceneTransitions();
@@ -444,6 +460,7 @@ function hollowScreen(root) {
         <button class="chip weather-chip" type="button" data-weather title="Change the Hollow weather">${currentWeather().icon} ${currentWeather().name} · change</button>
         <button class="chip badge-shelf-chip" type="button" data-badge-shelf title="Every event badge the Hollow has hosted" ${eventBadges.length ? '' : 'hidden'}>🏅 ${eventBadges.length} event badge${eventBadges.length === 1 ? '' : 's'}</button>
         ${eventPreset ? `<button class="chip event-chip" type="button" data-event-chip title="${esc(eventPreset.blurb)}">${eventPreset.icon} ${esc(eventPreset.badge)} · ${esc(eventPreset.name)}</button>` : ''}
+        ${eventPreset ? `<button class="chip event-vigil-chip" type="button" data-event-vigil title="Play the ${esc(eventPreset.name)} — ${esc(eventPreset.vigilBlurb || 'keep the badge for today')}">${eventVigilChipLabel(eventPreset.key)}</button>` : ''}
         <button class="chip habitat-chip" type="button" data-habitat title="${esc(hab0.scene.habitat)} habitat — ${hab0.scene.name}">${hab0.scene.emoji} ${esc(hab0.scene.habitat)} · +${hab0.percent}% XP</button>
         <button class="chip" type="button" data-warm title="Warm clothes" hidden></button>
         <span class="chip" data-phase>${timePhase().icon} ${timePhase().label}</span>
@@ -522,6 +539,10 @@ function hollowScreen(root) {
   root.querySelector('[data-world]')?.addEventListener('click', () => { Sfx.click(); openWeatherSheet(); });
   root.querySelector('[data-weather]')?.addEventListener('click', () => { Sfx.click(); openWeatherSheet(); });
   root.querySelector('[data-badge-shelf]')?.addEventListener('click', () => { Sfx.click(); openWeatherSheet(); });
+  root.querySelector('[data-event-vigil]')?.addEventListener('click', () => {
+    Sfx.click();
+    if (typeof openEventVigilGame === 'function') openEventVigilGame(state.world?.eventPreset);
+  });
   root.querySelector('[data-habitat]')?.addEventListener('click', () => { Sfx.click(); openStudioSheet(); });
   root.querySelector('[data-warm]')?.addEventListener('click', () => { Sfx.click(); openStudioSheet(); });
   root.querySelector('[data-bedroom]')?.addEventListener('click', () => { Sfx.click(); openBedroomSheet(); });
@@ -890,6 +911,26 @@ function hollowScreen(root) {
     } else if (eventChip) {
       eventChip.remove();
     }
+    /* The vigil chip follows the event chip, including when the preset is
+       applied while this screen is already mounted. */
+    let vigilChip = root.querySelector('[data-event-vigil]');
+    if (liveEvent) {
+      if (!vigilChip) {
+        vigilChip = document.createElement('button');
+        vigilChip.type = 'button';
+        vigilChip.className = 'chip event-vigil-chip';
+        vigilChip.dataset.eventVigil = '';
+        vigilChip.addEventListener('click', () => {
+          Sfx.click();
+          if (typeof openEventVigilGame === 'function') openEventVigilGame(state.world?.eventPreset);
+        });
+        if (eventChip && eventChip.parentNode) eventChip.parentNode.insertBefore(vigilChip, eventChip.nextSibling);
+      }
+      vigilChip.textContent = eventVigilChipLabel(liveEvent.key);
+      vigilChip.title = `Play the ${liveEvent.name} — ${liveEvent.vigilBlurb || 'keep the badge for today'}`;
+    } else if (vigilChip) {
+      vigilChip.remove();
+    }
     const badgeChip = root.querySelector('[data-badge-shelf]');
     if (badgeChip) {
       const badges = Array.isArray(state.world?.badges) ? state.world.badges : [];
@@ -1105,10 +1146,29 @@ function hollowScreen(root) {
 
   function ambientWhisper() {
     if (Date.now() - lastWhisper < 9000) return;
-    const s = currentSprite();
+    const s = pick(visibleRoster());
     if (!s) return;
-    const line = idleLine(pick(visibleRoster()));
+    const line = idleLine(s);
     setWhisper(line);
+  }
+
+  /* A puffle with something on its mind says it out loud in its own voice: the
+     favourite snack, the favourite toy and the need that wants fixing. Its own
+     timer, because the whisper line above refreshes too often for the throttle
+     to ever come due. */
+  let lastSpokenAt = 0;
+  function speakNeeds() {
+    if (Date.now() - lastSpokenAt < 90000) return;
+    /* A care sheet may be open on purpose (the feed list, for one); only a
+       full chat or a game owns the screen too completely to talk over. */
+    if (document.querySelector('.chat-overlay, .game-overlay, .modal')) return;
+    if (typeof Voice === 'undefined' || !Voice.spriteSpeak) return;
+    const s = pick(visibleRoster());
+    if (!s || s.stage === 'egg' || s.asleep) return;
+    const low = Voice.lowestNeed ? Voice.lowestNeed(s) : null;
+    if (!low || low.value >= 60) return;
+    const spoken = typeof puffleGuideText === 'function' ? puffleGuideText(s) : '';
+    if (spoken && Voice.spriteSpeak(s, spoken)) lastSpokenAt = Date.now();
   }
 
   // caretakers
@@ -1330,6 +1390,36 @@ function hollowScreen(root) {
       return diet ? ` · ${DIET_PATHS[diet.path].icon} ${DIET_PATHS[diet.path].label}` : '';
     };
     const cuisineTag = (key) => FOODS[key]?.region ? ' · 🌍 World Kitchen' : '';
+    /* One query narrows the pantry and the market together: with hundreds of
+       dishes, finding one by name was scrolling, not shopping. */
+    let query = '';
+    const matchesText = (...parts) => {
+      if (!query) return true;
+      return parts.some((part) => String(part || '').toLowerCase().includes(query));
+    };
+    /* The pantry marks the dishes a resident loves, so stocking for someone is
+       visible without opening the market. One pass over the roster per render:
+       the comfort table is not cheap enough to rebuild for every pantry row. */
+    function favouriteLovers() {
+      const byFood = new Map();
+      (typeof puffleComfortsFor === 'function' ? roster() : [])
+        .filter((row) => row.stage !== 'egg'
+          && !(typeof SECRET_SPECIES_META !== 'undefined' && SECRET_SPECIES_META[row.element]))
+        .forEach((row) => {
+          const food = puffleComfortsFor(row)?.food;
+          if (!food) return;
+          const names = byFood.get(food.id) || [];
+          names.push(displayName(row));
+          byFood.set(food.id, names);
+        });
+      return byFood;
+    }
+    const loveTag = (lovers, key) => {
+      const names = lovers.get(key) || [];
+      if (!names.length) return '';
+      const who = names.length > 2 ? `${names.slice(0, 2).join(', ')} +${names.length - 2}` : names.join(' & ');
+      return ` · 💛 ${who}`;
+    };
     const feedSuccess = (res) => {
       close();
       const item = res.food || res.snack;
@@ -1340,6 +1430,20 @@ function hollowScreen(root) {
         node.classList.add('react-hop');
         setTimeout(() => node.classList.remove('react-hop'), 720);
         if (typeof lumiPlayClip === 'function') lumiPlayClip(node, item.cat === 'drink' ? 'drink' : 'eat', 1900);
+        /* The care state lives on the sprite, not on the DOM node: the stage
+           repaints on its own schedule and a node-only state would be replaced
+           mid-bite. Every render reads sprite.careAnim for 1.9 s. */
+        const careState = item.cat === 'drink' ? 'drink' : 'eat';
+        s.careAnim = careState;
+        s.careAnimUntil = Date.now() + 1900;
+        paint();
+        setTimeout(() => {
+          if (s.careAnim === careState) {
+            delete s.careAnim;
+            delete s.careAnimUntil;
+            paint();
+          }
+        }, 1900);
         emote(s.id, item.emoji);
         fluffShed(node, s, 'feed');
         wagTail(node, s);
@@ -1350,14 +1454,17 @@ function hollowScreen(root) {
     };
 
     function pantryHTML() {
-      const foodKeys = FOOD_KEYS.filter((key) => foodCount(key) > 0);
-      const snackKeys = SNACK_KEYS.filter((key) => snackCount(key) > 0);
+      const lovers = favouriteLovers();
+      const foodKeys = FOOD_KEYS.filter((key) => foodCount(key) > 0
+        && matchesText(FOODS[key].name, FOODS[key].desc));
+      const snackKeys = SNACK_KEYS.filter((key) => snackCount(key) > 0
+        && matchesText(SNACKS[key].name, SNACKS[key].desc));
       const rows = [
         ...foodKeys.map((key) => {
           const f = FOODS[key];
           return `<button class="food-card" data-stock-feed="${key}">
             <span class="food-emoji">${f.emoji}</span>
-            <span style="flex:1"><h4>${f.name}</h4><p>${f.desc}${dietTag(key)}${cuisineTag(key)}</p></span>
+            <span style="flex:1"><h4>${f.name}</h4><p>${f.desc}${dietTag(key)}${cuisineTag(key)}${loveTag(lovers, key)}</p></span>
             <span class="price snack-count">×${foodCount(key)}</span>
           </button>`;
         }),
@@ -1371,15 +1478,64 @@ function hollowScreen(root) {
         }),
       ];
       const total = foodTotal() + snackTotal();
-      return `<div class="section-title" style="margin-top:4px"><h2>Pantry</h2><span>${total} item${total === 1 ? '' : 's'}</span></div>
+      const showing = rows.length ? `${rows.length} of ${total}` : `${total}`;
+      return `<div class="section-title" style="margin-top:4px"><h2>Pantry</h2><span>${showing} item${total === 1 ? '' : 's'}</span></div>
         ${rows.length
           ? `<div class="list-gap">${rows.join('')}</div>`
-          : '<div class="tiny muted">The pantry is empty. Stock food from the market or earn snacks from check-ins.</div>'}`;
+          : `<div class="tiny muted">${query ? `Nothing in the pantry matches “${esc(query)}”.` : 'The pantry is empty. Stock food from the market or earn snacks from check-ins.'}</div>`}`;
+    }
+
+    /* The market opens on what the Hollow actually eats: every puffle's
+       favourite dish at the top, so finding it never means digging through the
+       categories. A dish two puffles share is one row naming both, and that row
+       feeds the hungriest of them. Secret species (the Hollow Guide, the Heart
+       Keeper) live in the roster but are not puffles, so their comfort table is
+       not a shopping list. */
+    function favouritesHTML() {
+      const hungerOf = (row) => Number(row.needs?.hunger) || 0;
+      const favourites = new Map();
+      roster()
+        .filter((row) => row.stage !== 'egg'
+          && !(typeof SECRET_SPECIES_META !== 'undefined' && SECRET_SPECIES_META[row.element]))
+        .forEach((row) => {
+          const food = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(row)?.food : null;
+          if (!food) return;
+          const entry = favourites.get(food.id) || { rows: [], feeder: row };
+          entry.rows.push(row);
+          if (hungerOf(row) < hungerOf(entry.feeder)) entry.feeder = row;
+          favourites.set(food.id, entry);
+        });
+      if (!favourites.size) return '';
+      const shown = [...favourites.entries()]
+        .filter(([key, { rows: lovers }]) => matchesText(FOODS[key].name, lovers.map(displayName).join(' ')))
+        /* Hungriest resident first: the top shortcut is the one the Hollow most
+           wants right now. */
+        .sort((a, b) => hungerOf(a[1].feeder) - hungerOf(b[1].feeder));
+      if (!shown.length) return '';
+      const cards = shown.map(([key, { rows: lovers, feeder }]) => {
+          const f = FOODS[key];
+          const stocked = foodCount(key);
+          const names = lovers.map(displayName);
+          const who = names.length > 2
+            ? `${names.slice(0, 2).join(', ')} +${names.length - 2}`
+            : names.join(' & ');
+          return `<button class="food-card" data-feed-favourite="${key}" data-feed-resident="${feeder.id}" ${!stocked && state.coins < f.price ? 'disabled style="opacity:.5"' : ''}>
+            <span class="food-emoji">${f.emoji}</span>
+            <span style="flex:1"><h4>${f.name}</h4><p>${who} · favourite${stocked ? ` · ×${stocked} in the pantry` : ''} · tap to feed ${displayName(feeder)}</p></span>
+            <span class="price">${stocked ? 'from pantry' : `${icon('coin')}${f.price}`}</span>
+          </button>`;
+      }).join('');
+      return `<div class="section-title"><h2>Favourites in the Hollow</h2><span>${shown.length} favourite${shown.length === 1 ? '' : 's'} · hungriest first</span></div>
+        <div class="list-gap" data-favourites>${cards}</div>
+        <div class="between" style="margin-top:8px"><span class="tiny muted">Bought only while coins last</span>
+        <button class="btn btn-sm btn-soft" type="button" data-stock-favourites>Stock missing favourites</button></div>`;
     }
 
     function marketHTML() {
       const groups = Object.entries(FOOD_CATEGORIES).map(([id, cat]) => {
-        const keys = FOOD_KEYS.filter((key) => !FOODS[key].giftOnly && FOODS[key].cat === id && (!FOODS[key].monthly || (state.foodUnlocks || []).includes(key)));
+        const keys = FOOD_KEYS.filter((key) => !FOODS[key].giftOnly && FOODS[key].cat === id
+          && (!FOODS[key].monthly || (state.foodUnlocks || []).includes(key))
+          && matchesText(FOODS[key].name, FOODS[key].desc));
         if (!keys.length) return '';
         const rows = keys.map((key) => {
           const f = FOODS[key];
@@ -1394,7 +1550,7 @@ function hollowScreen(root) {
         return `<div class="food-cat">${cat.icon} ${cat.name}</div><div class="list-gap">${rows}</div>`;
       }).join('');
       const lockedMonthly = MONTHLY_FOOD_KEYS.filter((k) => !(state.foodUnlocks || []).includes(k)).length;
-      return `<div class="section-title"><h2>Market</h2><span>stock your pantry</span></div>${groups}
+      return `${favouritesHTML()}<div class="section-title"><h2>Market</h2><span>${query ? 'matching dishes' : 'stock your pantry'}</span></div>${groups}
         ${lockedMonthly ? `<div class="tiny muted" style="margin-top:10px;line-height:1.5">${lockedMonthly} monthly food${lockedMonthly === 1 ? '' : 's'} still locked. Open the first Friday crate of the month on Today to unlock one each month.</div>` : ''}
         <div class="between" style="margin-top:12px"><span class="tiny muted">You have <b>${state.coins}</b> coins</span>
         <button class="btn btn-sm btn-soft" data-earn>Earn coins</button></div>`;
@@ -1403,11 +1559,25 @@ function hollowScreen(root) {
     const { close } = openSheet({
       title: `Feed ${displayName(s)}`,
       sub: `Food ${Math.round(s.needs.hunger)}/100 · Joy ${Math.round(s.needs.joy)}/100.${dietLine ? ` Diet: ${dietLine}` : ''}${cuisineLine ? ` · Cuisine: ${cuisineLine}` : ''}`,
-      body: '<div data-feed-body></div>',
+      body: `<label style="display:flex;gap:8px;align-items:center;margin:0 0 10px;padding:9px 12px;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid var(--line)">
+          <span aria-hidden="true">🔍</span>
+          <input type="search" data-feed-search placeholder="Search the pantry and market" autocomplete="off" style="flex:1;min-width:0;background:none;border:0;outline:none;color:var(--text);font-size:13px">
+        </label><div data-feed-body></div>`,
       onMount: (overlay) => {
         const body = overlay.querySelector('[data-feed-body]');
+        const search = overlay.querySelector('[data-feed-search]');
         const draw = () => {
           body.innerHTML = pantryHTML() + marketHTML();
+          body.querySelector('[data-stock-favourites]')?.addEventListener('click', () => {
+            const res = Actions.stockFavourites();
+            if (res.bought.length) {
+              Sfx.coin();
+              toast(`Stocked ${res.bought.length} favourite${res.bought.length === 1 ? '' : 's'} for ${res.spent} coins.${res.missed ? ` ${res.missed} still need${res.missed === 1 ? 's' : ''} more coins.` : ''}`, '🧺');
+              draw();
+            } else {
+              toast(res.missed ? 'Not enough coins left to stock a favourite.' : 'Every favourite is already stocked.', '🧺');
+            }
+          });
           body.querySelectorAll('[data-stock-feed]').forEach((btn) => {
             btn.addEventListener('click', () => {
               const res = Actions.feedStock(s.id, btn.dataset.stockFeed);
@@ -1418,6 +1588,38 @@ function hollowScreen(root) {
             btn.addEventListener('click', () => {
               const res = Actions.feedSnack(s.id, btn.dataset.snack);
               if (res.ok) feedSuccess(res);
+            });
+          });
+          body.querySelectorAll('[data-feed-favourite]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const target = findSprite(btn.dataset.feedResident);
+              const res = Actions.feedFavourite(btn.dataset.feedResident, btn.dataset.feedFavourite);
+              if (!res.ok) {
+                if (res.reason === 'coins') toast('Not enough coins for that.', '🪙');
+                else if (res.reason === 'recipe' && res.recipe) toast(`Finish one ${res.recipe.title} run to unlock ${FOODS[res.recipe.food].name}.`, '☕');
+                return;
+              }
+              /* Eating for the puffle whose sheet is open is the normal feed:
+                 the sheet closes and the stage shows the bite. Another
+                 resident's dish is served in place so the market stays open. */
+              if (target && target.id === s.id) {
+                feedSuccess(res);
+                return;
+              }
+              const item = res.food;
+              toast(`${displayName(target)} loved the ${item.name}${res.bought ? ' — bought and served' : ' from the pantry'}.`, item.emoji);
+              if (target) {
+                const node = actors.get(target.id);
+                if (node) {
+                  const r = node.getBoundingClientRect();
+                  burstAt(r.left + r.width / 2, r.top + r.height / 2, [item.emoji, '✨', '💛'], 6);
+                  node.classList.add('react-hop');
+                  setTimeout(() => node.classList.remove('react-hop'), 720);
+                }
+                emote(target.id, item.emoji);
+              }
+              paint();
+              draw();
             });
           });
           body.querySelectorAll('[data-buy-food]').forEach((btn) => {
@@ -1443,6 +1645,12 @@ function hollowScreen(root) {
             App.go('play');
           });
         };
+        /* The search sits outside the lists, so typing re-renders them without
+           stealing the caret. */
+        search?.addEventListener('input', () => {
+          query = search.value.trim().toLowerCase();
+          draw();
+        });
         draw();
       },
     });
@@ -1553,16 +1761,18 @@ function hollowScreen(root) {
     if (s.asleep) Actions.wake(s.id);
     const total = 5;
     const isCatch = mode === 'catch';
+    /* The sheet fetch is the puffle's own game, so it throws its own toy. */
+    const toy = typeof puffleFetchToy === 'function' ? puffleFetchToy(s) : { name: 'Ball', icon: '🎾' };
     let caught = 0;
     let finished = false;
     const { close } = openModal({
-      title: isCatch ? `Play catch with ${displayName(s)}` : `Throw ball with ${displayName(s)}`,
-      sub: isCatch ? 'Tap the ball as it comes back. Five clean catches.' : 'Tap the ball to send it flying. Five good throws.',
+      title: isCatch ? `Play catch with ${displayName(s)}` : `Throw the ${toy.name} with ${displayName(s)}`,
+      sub: isCatch ? `Tap the ${toy.name.toLowerCase()} as it comes back. Five clean catches.` : `Tap the ${toy.name.toLowerCase()} to send it flying. Five good throws.`,
       dismissible: true,
       body: `<div class="fetch-stage" data-fetch-stage>
           <div class="fetch-sun"></div>
           <div class="fetch-sprite">${spriteSVG(s, { expr: 'happy' })}</div>
-          <button class="fetch-ball" type="button" data-fetch-ball aria-label="Catch the ball">🎾</button>
+          <button class="fetch-ball" type="button" data-fetch-ball aria-label="Play with the ${esc(toy.name)}">${toy.icon}</button>
           <span class="fetch-spark a">✨</span><span class="fetch-spark b">✨</span>
         </div>
         <div class="bar joy" style="height:9px"><i data-fetch-bar style="width:0%"></i></div>
@@ -1577,7 +1787,7 @@ function hollowScreen(root) {
           caught += 1;
           bar.style.width = `${(caught / total) * 100}%`;
           hint.textContent = `${caught} / ${total} ${isCatch ? 'catches' : 'throws'}`;
-          burstAt(e.clientX, e.clientY, ['🎾', '✨', '💛'], 5);
+          burstAt(e.clientX, e.clientY, [toy.icon, '✨', '💛'], 5);
           Sfx.pop();
           ball.style.animationPlayState = 'paused';
           setTimeout(() => { if (!finished) ball.style.animationPlayState = 'running'; }, 180);
@@ -1590,11 +1800,11 @@ function hollowScreen(root) {
               return;
             }
             body.innerHTML = `<div class="gift-reward" style="text-align:center">
-              <div class="gr-emoji">${isCatch ? '🧤' : '🎾'}</div>
-              <h3>${isCatch ? 'Five clean catches!' : 'Five good throws!'}</h3>
+              <div class="gr-emoji">${isCatch ? '🧤' : toy.icon}</div>
+              <h3>${isCatch ? `Five clean catches of the ${toy.name.toLowerCase()}!` : `Five good throws with the ${toy.name.toLowerCase()}!`}</h3>
               <p class="muted small">${esc(displayName(s))} is delighted${res.careGift ? ' — and the Care Package is full!' : '.'}</p>
               <div class="row" style="justify-content:center;gap:6px;flex-wrap:wrap;margin-top:10px">
-                <span class="chip">🪙 +${res.coins}</span><span class="chip">⭐ +${res.xp} XP</span><span class="chip">💗 bond</span>
+                <span class="chip">🪙 +${res.coins}</span><span class="chip">⭐ +${res.xp} XP</span><span class="chip">💗 bond</span><span class="chip">${toy.icon} ${esc(toy.name)}${res.favouriteToy ? ' · favourite!' : ''}</span>
               </div>
             </div>
             <button class="btn btn-primary btn-block" data-fetch-done style="margin-top:12px">Lovely</button>`;
@@ -1643,6 +1853,7 @@ function hollowScreen(root) {
   const moveTimer = setInterval(() => { moveSprites(); paint(); }, 3000);
   const ambientTimer = setInterval(ambientInteraction, 9000);
   const whisperTimer = setInterval(ambientWhisper, 12000);
+  const voiceTimer = setInterval(speakNeeds, 20000);
   const sceneSig = () => state.theme.scene;
   let lastScene = sceneSig();
   const sceneTimer = setInterval(() => {
@@ -1671,6 +1882,7 @@ function hollowScreen(root) {
     clearInterval(moveTimer);
     clearInterval(ambientTimer);
     clearInterval(whisperTimer);
+    clearInterval(voiceTimer);
     clearInterval(sceneTimer);
     clearInterval(clockTimer);
   };
@@ -1812,16 +2024,52 @@ function hotelScreen(root) {
       <span class="hs-copy"><b>${esc(service.name)}</b><small>${esc(service.desc)}</small></span>
       <span class="hs-price">${icon('coin')}${service.price}</span>
     </button>`).join('');
-  const menu = (typeof HOTEL_CARE_KEYS !== 'undefined' ? HOTEL_CARE_KEYS : [])
-    .filter((key) => FOODS[key]).map((key) => {
-      const item = FOODS[key];
-      const kindLabel = item.hotelKind === 'meal' ? 'Meal' : item.hotelKind === 'drink' ? 'Drink' : 'Treat';
+  /* Room service spans every course the Hollow cooks: the hotel menu, cafe and
+     Club Penguin counters, kitchen and world dishes, specialist meals, snacks,
+     drinks and sweets. A stocked dish costs the tray fee; the rest are ordered
+     in at shelf price. */
+  const hotelCourses = typeof HOTEL_COURSES !== 'undefined' ? HOTEL_COURSES : [];
+  const shownCourse = hotelCourses.find((course) => course.key === hotelCourseView) || hotelCourses[0] || null;
+  const courseTabs = hotelCourses.map((course) =>
+    `<button class="hotel-course-tab ${course === shownCourse ? 'on' : ''}" type="button" data-hotel-course="${course.key}">${course.icon} ${esc(course.name)}</button>`).join('');
+  const coursePanel = (courseKey) => {
+    const keys = typeof hotelCourseKeys === 'function' ? hotelCourseKeys(courseKey) : [];
+    if (!keys.length) return '<div class="tiny muted">Nothing on this course tonight.</div>';
+    return keys.map((key) => {
+      const entry = typeof hotelMenuEntry === 'function' ? hotelMenuEntry(key) : null;
+      if (!entry) return '';
+      const price = typeof hotelServePrice === 'function' ? hotelServePrice(key) : entry.price;
+      const stocked = entry.kind === 'snack' ? snackCount(key) > 0 : foodCount(key) > 0;
+      const kindLabel = stocked ? 'From the pantry' : entry.kind === 'snack' ? 'Snack' : 'Kitchen';
       return `<button class="food-card hotel-food" type="button" data-hotel-order="${key}">
-        <span class="food-emoji">${item.emoji}</span>
-        <span style="flex:1"><h4>${esc(item.name)} <span class="hotel-kind">${kindLabel}</span></h4><p>${esc(item.desc)}</p></span>
-        <span class="price">${icon('coin')}${item.price}</span>
+        <span class="food-emoji">${entry.item.emoji}</span>
+        <span style="flex:1"><h4>${esc(entry.item.name)} <span class="hotel-kind">${kindLabel}</span></h4><p>${esc(entry.item.desc || '')}</p></span>
+        <span class="price">${icon('coin')}${price}</span>
       </button>`;
     }).join('');
+  };
+  const stayEntries = typeof hotelGuests === 'function' ? hotelGuests() : [];
+  const stayRows = stayEntries.map((entry) => {
+    const s = findSprite(entry.id);
+    if (!s) return '';
+    const stayMinutes = Math.max(1, Math.round((Date.now() - (Number(entry.since) || Date.now())) / 60000));
+    /* A stay runs until dawn, so the row says how long the room is theirs. */
+    const stayHours = typeof HOTEL_STAY_HOURS === 'number' ? HOTEL_STAY_HOURS : 8;
+    const hoursLeft = Math.max(0, stayHours - stayMinutes / 60);
+    const dawnIn = hoursLeft >= 1 ? `${Math.ceil(hoursLeft)}h` : `${Math.max(1, Math.round(hoursLeft * 60))}m`;
+    return `<div class="hotel-stay-row">
+      <span class="hotel-stay-art">${spriteSVG(s, { expr: 'happy' })}</span>
+      <span class="hotel-stay-copy">
+        <b>${esc(displayName(s))}</b>
+        <small>Room ${String(entry.room).padStart(2, '0')} · dawn in ${dawnIn} · needs met by the floor</small>
+        <span class="hotel-stay-needs">${hotelStat('Food', s.needs.hunger, 'hunger')}${hotelStat('Rest', s.needs.energy, 'energy')}${hotelStat('Joy', s.needs.joy, 'joy')}${hotelStat('Clean', s.needs.clean, 'clean')}</span>
+      </span>
+      <button class="btn btn-soft" type="button" data-hotel-checkout="${s.id}">Check out</button>
+    </div>`;
+  }).join('');
+  const roomsLeft = typeof HOTEL_ROOM_COUNT !== 'undefined' ? HOTEL_ROOM_COUNT - stayEntries.length : 0;
+  const guestStay = stayEntries.find((entry) => entry.id === guest.id) || null;
+  const stayPrice = typeof HOTEL_STAY_COINS !== 'undefined' ? HOTEL_STAY_COINS : 30;
 
   root.innerHTML = `
     <div class="hotel-page">
@@ -1834,9 +2082,9 @@ function hotelScreen(root) {
         <div class="hotel-bell" aria-hidden="true">🛎️</div>
         <div class="hotel-guest-art">${spriteSVG(guest, { expr: guest.asleep ? 'sleep' : 'happy' })}</div>
         <div class="hotel-guest-copy">
-          <span class="eyebrow">In residence</span>
+          <span class="eyebrow">${guestStay ? 'In residence' : 'At the desk'}</span>
           <h2>${esc(displayName(guest))}</h2>
-          <p class="tiny muted">Lv ${guest.level} · ${esc((ELEMENTS[guest.element] || {}).name || 'Sprite')} · Room ${String((guests.indexOf(guest) % 9) + 1).padStart(2, '0')}</p>
+          <p class="tiny muted">Lv ${guest.level} · ${esc((ELEMENTS[guest.element] || {}).name || 'Sprite')} · ${guestStay ? `Room ${String(guestStay.room).padStart(2, '0')}` : 'Lobby'}</p>
           <div class="hotel-stats">
             ${hotelStat('Hair', hyg.hair, 'hotel-hair')}
             ${hotelStat('Teeth', hyg.teeth, 'hotel-teeth')}
@@ -1845,6 +2093,11 @@ function hotelScreen(root) {
         </div>
       </section>
       <div class="hotel-guests" role="group" aria-label="Choose a hotel guest">${guests.slice(0, 18).map((s) => `<button class="hotel-guest-chip ${s.id === guest.id ? 'on' : ''}" type="button" data-hotel-guest="${s.id}">${esc(displayName(s))}</button>`).join('')}</div>
+      <div class="card hotel-stay-card">
+        <div class="between"><span class="eyebrow">🛏️ In residence</span><span class="chip">${stayEntries.length} of ${typeof HOTEL_ROOM_COUNT !== 'undefined' ? HOTEL_ROOM_COUNT : 6} rooms · ${roomsLeft} free</span></div>
+        ${stayRows || '<p class="tiny muted">No guests are checked in yet. A stay costs 30 coins, covers food, rest, joy and washing until dawn, and ends with a tip when the guest leaves.</p>'}
+        ${guestStay ? '' : `<button class="btn btn-primary btn-block" type="button" data-hotel-checkin style="margin-top:9px">Check ${esc(displayName(guest))} in · ${icon('coin')}${stayPrice}</button>`}
+      </div>
       <button class="hotel-spa-banner" type="button" data-hotel-spa>
         <span class="hsb-icon">✨🪮🪥</span>
         <span class="hsb-copy"><b>Brush &amp; Bliss</b><small>Play the salon mini-game to brush hair and teeth, earn a care bonus, and bring home a hotel treat, drink or meal.</small></span>
@@ -1875,8 +2128,14 @@ function hotelScreen(root) {
         <div class="bar clean" style="height:8px;margin-top:9px"><i style="width:${((tokens % 3) / 3) * 100}%"></i></div>
         <div class="tiny muted" style="margin-top:5px">${tokens} care moment${tokens === 1 ? '' : 's'} completed</div>
       </div>
-      <div class="section-title" id="hotel-menu" style="scroll-margin-top:12px"><h2>🍽️ Room Service</h2><span>hotel-only treats, drinks and meals</span></div>
-      <div class="list-gap">${menu || '<div class="tiny muted">The kitchen is still warming up.</div>'}</div>
+      <div class="section-title" id="hotel-menu" style="scroll-margin-top:12px"><h2>🍽️ Room Service</h2><span>every course the Hollow cooks</span></div>
+      <div class="hotel-course-tabs" role="group" aria-label="Room service courses">${courseTabs}</div>
+      <div class="list-gap" data-hotel-menu-list>${coursePanel(shownCourse ? shownCourse.key : 'hotel')}</div>
+      <button class="hotel-spa-banner" type="button" data-hotel-rush>
+        <span class="hsb-icon">🛎️🍽️</span>
+        <span class="hsb-copy"><b>Room Service Rush</b><small>Play the serving mini-game: read each ticket, carry the right dish from any course, and take the plates you served home to the pantry.</small></span>
+        <span class="hsb-go">Play →</span>
+      </button>
       <button class="btn btn-soft btn-block" type="button" data-hotel-back style="margin-top:12px">Back to the Hollow</button>
     </div>`;
 
@@ -1913,19 +2172,62 @@ function hotelScreen(root) {
     if (res.careGift) toast(`🏨 Hotel Care Bonus: +${res.careGift.coins} coins · +${res.careGift.xp} XP`, '🏨');
     App.refresh();
   }));
-  root.querySelectorAll('[data-hotel-order]').forEach((button) => button.addEventListener('click', () => {
-    const res = Actions.orderHotelFood(guest.id, button.dataset.hotelOrder);
+  /* The menu re-renders per course, so ordering is delegated from the list
+     container rather than bound to buttons that a tab click replaces. */
+  const menuList = root.querySelector('[data-hotel-menu-list]');
+  if (menuList) {
+    menuList.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-hotel-order]');
+      if (!button) return;
+      const res = Actions.orderHotelFood(guest.id, button.dataset.hotelOrder);
+      if (!res.ok) {
+        if (res.reason === 'coins') toast(`You need ${res.need || 0} more coins for that order.`, '🪙');
+        else if (res.reason === 'full') toast(`${displayName(guest)} is too full for room service.`, '😅');
+        else toast('The kitchen could not send that order.', '🍽️');
+        Sfx.error();
+        return;
+      }
+      Sfx.eat();
+      toast(`${displayName(guest)} enjoys ${res.food.emoji} ${res.food.name} in the room-service nook.`, res.food.emoji);
+      if (res.careGift) toast(`🏨 Hotel Care Bonus: +${res.careGift.coins} coins · +${res.careGift.xp} XP`, '🏨');
+      App.refresh();
+    });
+  }
+  root.querySelectorAll('[data-hotel-course]').forEach((button) => button.addEventListener('click', () => {
+    hotelCourseView = button.dataset.hotelCourse;
+    root.querySelectorAll('[data-hotel-course]').forEach((other) => other.classList.toggle('on', other === button));
+    if (menuList) menuList.innerHTML = coursePanel(button.dataset.hotelCourse);
+    Sfx.tap();
+  }));
+  root.querySelector('[data-hotel-checkin]')?.addEventListener('click', () => {
+    const res = Actions.checkInHotel(guest.id);
     if (!res.ok) {
-      if (res.reason === 'coins') toast(`You need ${res.need || 0} more coins for that order.`, '🪙');
-      else if (res.reason === 'full') toast(`${displayName(guest)} is too full for room service.`, '😅');
-      else toast('The kitchen could not send that order.', '🍽️');
+      if (res.reason === 'coins') toast(`A stay costs ${stayPrice} coins — you need ${res.need || 0} more.`, '🪙');
+      else if (res.reason === 'full') toast('Every room is taken. Check a guest out first.', '🛏️');
+      else if (res.reason === 'staying') toast(`${displayName(guest)} already has a room.`, '🛏️');
+      else toast('That guest cannot check in right now.', '🏨');
       Sfx.error();
       return;
     }
-    Sfx.eat();
-    toast(`${displayName(guest)} enjoys ${res.food.emoji} ${res.food.name} in the room-service nook.`, res.food.emoji);
-    if (res.careGift) toast(`🏨 Hotel Care Bonus: +${res.careGift.coins} coins · +${res.careGift.xp} XP`, '🏨');
+    Sfx.win();
+    toast(`Room ${String(res.room).padStart(2, '0')} is ready for ${displayName(guest)}.`, '🛏️');
+    if (res.meal && FOODS[res.meal]) toast(`🏨 Complimentary ${FOODS[res.meal].name} sent up.`, FOODS[res.meal].emoji);
+    App.refresh();
+  });
+  root.querySelectorAll('[data-hotel-checkout]').forEach((button) => button.addEventListener('click', () => {
+    const res = Actions.checkOutHotel(button.dataset.hotelCheckout);
+    if (!res.ok) {
+      toast('That guest is not checked in.', '🛏️');
+      Sfx.error();
+      return;
+    }
+    Sfx.win();
+    toast(`Checked out of room ${String(res.room).padStart(2, '0')} after ${res.minutes} min — rested, fed and gleaming.`, '🏨');
     App.refresh();
   }));
+  root.querySelector('[data-hotel-rush]')?.addEventListener('click', () => {
+    Sfx.click();
+    if (typeof openHotelServiceGame === 'function') openHotelServiceGame();
+  });
   return null;
 }

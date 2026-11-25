@@ -39,6 +39,9 @@ const PUFFLE_EVOLUTION_FAMILIES = {
   beast: { body: '#C9975E', wing: '#F0D7B0', eye: '#FFD166', deep: '#5C3A1E', habitats: ['grove', 'savanna', 'night'], likes: 'Juicy Drumstick', price: 95, gene: { name: 'Wild Instinct', icon: '🐾', desc: 'Pets build +18% bond and games pay +2 coins.', effect: { petBond: 1.18, gameCoins: 2 } } },
   verdant: { body: '#6FBF5A', wing: '#C8F5A8', eye: '#FFD166', deep: '#1F5C2B', habitats: ['grove', 'mycelium', 'savanna'], likes: 'Moon Berry', price: 85, gene: { name: 'Deep Roots', icon: '🌱', desc: 'Energy fades 14% slower and XP gains +8%.', effect: { energyDecay: 0.86, xp: 1.08 } } },
   aether: { body: '#9AD7FF', wing: '#F0FBFF', eye: '#FFB3F0', deep: '#3A4A8C', habitats: ['starlit', 'dream', 'crystal'], likes: 'Star Pop', price: 140, gene: { name: 'Riftstep', icon: '🌌', desc: 'Gifts arrive 20% sooner and night games pay +3 coins.', effect: { giftSpeed: 1.2, nightCoins: 3 } } },
+  /* Club Penguin's own family. Its palette is the classic blue puffle, and the
+     line below walks the twelve classic colours instead of the elemental ladder. */
+  classic: { body: '#4A9FF5', wing: '#A9D6FF', eye: '#1E5FA8', deep: '#1E5FA8', habitats: ['grove', 'tide', 'aurora'], likes: 'Cloud Feast', price: 105, gene: { name: 'Classic Cheer', icon: '🐧', desc: 'Bond grows 20% faster and gifts arrive 12% sooner.', effect: { petBond: 1.2, giftSpeed: 1.12 } } },
 };
 
 /* [stage 1..5 names, family] */
@@ -71,15 +74,15 @@ const PUFFLE_EVOLUTION_LINES = [
   { family: 'shadow', stages: ['Phantom', 'Dark Spirit', 'Void Walker', 'Void King', 'Void Sovereign Shadow'], rarity: [] },
   { family: 'cosmic', stages: ['Galaxy', 'Nebula', 'Starforge Guardian', 'Celestial Hollow', 'Cosmic Sprite Prime'], rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'] },
   { family: 'cosmic', stages: ['Comet', 'Constellation Spirit', 'Cosmic Warden', 'Starfall Sovereign', 'Starfall Eternal Warden'], rarity: [] },
-  { family: 'crystal', stages: ['Crystal', 'Sapphire Guardian', 'Prism Spirit', 'Infinity Crystal'], rarity: ['rare', 'epic', 'legendary', 'mythic'] },
+  { family: 'crystal', stages: ['Crystal', 'Sapphire Guardian', 'Prism Spirit', 'Infinity Crystal', 'Eternal Crystal Sovereign'], rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'] },
   { family: 'crystal', stages: ['Ruby', 'Crystal Emperor', 'Diamond Sovereign', 'Eternal Crystal God', 'Diamond Eternal Facet'], rarity: [] },
-  { family: 'music', stages: ['Melody', 'Symphony', 'Harmony Guardian', 'Harmony Prime'], rarity: ['common', 'rare', 'epic', 'mythic'] },
+  { family: 'music', stages: ['Melody', 'Symphony', 'Harmony Guardian', 'Harmony Prime', 'Harmony Eternal'], rarity: ['common', 'rare', 'epic', 'mythic', 'secret'] },
   { family: 'music', stages: ['DJ', 'Rhythm Master', 'Festival Sovereign', 'Eternal Sound Emperor', 'Soundwave Eternal'], rarity: [] },
-  { family: 'time', stages: ['Hourglass', 'Chrono', 'Timekeeper Guardian', 'Infinity'], rarity: ['rare', 'epic', 'legendary', 'mythic'] },
+  { family: 'time', stages: ['Hourglass', 'Chrono', 'Timekeeper Guardian', 'Infinity', 'Infinity Beyond Time'], rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'] },
   { family: 'time', stages: ['Clockwork', 'Temporal Spirit', 'Timeline Sovereign', 'Master of Eternity', 'Eternity Unwritten'], rarity: [] },
-  { family: 'spirit', stages: ['Spirit Guardian', 'Astral Wanderer', 'Soulfire Protector', 'Elder Sprite Ascendant'], rarity: ['rare', 'epic', 'legendary', 'mythic'] },
+  { family: 'spirit', stages: ['Spirit Guardian', 'Astral Wanderer', 'Soulfire Protector', 'Elder Sprite Ascendant', 'Soul Eternal Guardian'], rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'] },
   { family: 'spirit', stages: ['Dreamwalker', 'Astral Dream Guardian', 'Celestial Spirit', 'Dream Realm Sovereign', 'Dream Eternal Warden'], rarity: [] },
-  { family: 'mushroom', stages: ['Mushroom', 'Glowcap', 'Ancient Fungi Guardian', 'Mycelium Emperor'], rarity: ['common', 'uncommon', 'epic', 'legendary'] },
+  { family: 'mushroom', stages: ['Mushroom', 'Glowcap', 'Ancient Fungi Guardian', 'Mycelium Emperor', 'Mycelium Eternal Sovereign'], rarity: ['common', 'uncommon', 'epic', 'legendary', 'mythic'] },
   { family: 'mushroom', stages: ['Fairy Spore', 'Lumina Mushroom Spirit', 'Enchanted Grove Keeper', 'Eternal Spore Titan', 'Spore Eternal Grove'], rarity: [] },
   { family: 'squishy', stages: ['Squishy', 'Squishy Sprite', 'Jelly Guardian', 'Squishmere', 'Squishiverse Sovereign'], rarity: ['common', 'uncommon', 'rare', 'epic', 'legendary'] },
   { family: 'squishy', stages: ['Bubblegum Squish', 'Bubblegum Sprite', 'Bubblegum Guardian', 'Bubblegum Titan', 'Bubblegum Eternal'], rarity: ['uncommon', 'rare', 'epic', 'legendary', 'mythic'] },
@@ -89,9 +92,9 @@ const PUFFLE_EVOLUTION_LINES = [
   { family: 'crystal', stages: ['Geode Pup', 'Geode Sprite', 'Geode Guardian', 'Geode Titan', 'Geode Sovereign'], rarity: ['uncommon', 'rare', 'epic', 'legendary', 'mythic'] },
   { family: 'nature', stages: ['Terra Seed', 'Terra Sprout', 'Terra Guardian', 'Terra Titan', 'Terra Worldheart'], rarity: ['common', 'uncommon', 'rare', 'epic', 'legendary'] },
   { family: 'fire', stages: ['Solar Ember', 'Solar Sprite', 'Solar Guardian', 'Solar Titan', 'Solar Sovereign'], rarity: ['uncommon', 'rare', 'epic', 'legendary', 'mythic'] },
-  { family: 'dragon', stages: ['Dragonling', 'Crystal Dragon', 'Celestial Dragon', 'Prism Dragon Emperor'], rarity: ['rare', 'epic', 'legendary', 'mythic'] },
+  { family: 'dragon', stages: ['Dragonling', 'Crystal Dragon', 'Celestial Dragon', 'Prism Dragon Emperor', 'Prism Dragon Eternal'], rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'] },
   { family: 'dragon', stages: ['Void Dragon', 'Star Dragon', 'Cosmic Dragon Sovereign', 'Eternal Dragon God', 'Dragon Eternal Void'], rarity: [] },
-  { family: 'rainbow', stages: ['Rainbow', 'Aurora', 'Rainbow Eternity', 'Infinite Spectrum Monarch'], rarity: ['legendary', 'mythic', 'secret', 'ultra_secret'] },
+  { family: 'rainbow', stages: ['Rainbow', 'Aurora', 'Rainbow Eternity', 'Infinite Spectrum Monarch', 'Spectrum Eternal Monarch'], rarity: ['legendary', 'mythic', 'secret', 'ultra_secret', 'ultra_secret'] },
   { family: 'rainbow', stages: ['Prismatic', 'Crystal Aurora Spirit', 'Celestial Prism Guardian', 'Infinite Spectrum Monarch', 'Spectrum Eternal Prism'], rarity: [] },
   { family: 'secret', stages: ['Creator Puffle', 'Sprite Hollow Prime', 'Ascended Prime', 'Cosmic Prime', 'Universal Prime'], rarity: ['secret', 'secret', 'ultra_secret', 'ultra_secret', 'ultra_secret'] },
   { family: 'secret', stages: ['Sprite Hollow Prime', 'Ascended Prime', 'Cosmic Prime', 'Universal Prime', 'Omniprime'], rarity: [] },
@@ -127,6 +130,33 @@ const PUFFLE_EVOLUTION_LINES = [
   vaultEvolutionLine('crystal', ['Vault Shard', 'Vault Geode', 'Vault Prism Warden', 'Vault Colossus', 'Vault Eternal Facet']),
   vaultEvolutionLine('ice', ['Vault Frost', 'Vault Rime', 'Vault Glacier Warden', 'Vault Aurora Colossus', 'Vault Eternal Winter']),
   vaultEvolutionLine('shadow', ['Vault Gloam', 'Vault Umbra', 'Vault Night Warden', 'Vault Void Colossus', 'Vault Eternal Night']),
+  /* Club Penguin puffles have their own line: five classic colours, so growing
+     up changes the colour a puffle wears. `key` points at the breed's existing
+     species, so the family keeps one hatchable root instead of a new one. */
+  /* The Sprite Hollow elemental families. Each one is rooted at the species
+     already in the family roster (key), so growing up renames the puffle's
+     form instead of hatching a second creature. Five forms each, matching the
+     twelve life stages through puffleEvolutionStageIndex. */
+  { key: 'sp_fire', family: 'fire', rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'], stages: ['Baby Ember Puffle', 'Teen Blaze Puffle', 'Blaze Warden Puffle', 'Inferno Herald Puffle', 'Legendary Inferno Puffle'] },
+  { key: 'sp_water', family: 'water', rarity: ['uncommon', 'rare', 'epic', 'legendary', 'mythic'], stages: ['Baby Splash Puffle', 'Teen Tide Puffle', 'Tide Warden Puffle', 'Tsunami Herald Puffle', 'Legendary Tsunami Puffle'] },
+  { key: 'sp_nature', family: 'nature', rarity: ['uncommon', 'rare', 'epic', 'legendary', 'mythic'], stages: ['Baby Sprout Puffle', 'Teen Grove Puffle', 'Grove Warden Puffle', 'Worldtree Herald Puffle', 'Legendary Worldtree Puffle'] },
+  { key: 'sp_lightning', family: 'electric', rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'], stages: ['Baby Spark Puffle', 'Teen Volt Puffle', 'Volt Warden Puffle', 'Thunderstorm Herald Puffle', 'Legendary Thunderstorm Puffle'] },
+  { key: 'sp_ice', family: 'ice', rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'], stages: ['Baby Snowflake Puffle', 'Teen Glacier Puffle', 'Glacier Warden Puffle', 'Aurora Herald Puffle', 'Legendary Aurora Puffle'] },
+  { key: 'sp_air', family: 'wind', rarity: ['common', 'uncommon', 'rare', 'epic', 'legendary'], stages: ['Baby Breeze Puffle', 'Teen Gale Puffle', 'Gale Warden Puffle', 'Tempest Herald Puffle', 'Legendary Tempest Puffle'] },
+  { key: 'sp_earth', family: 'earth', rarity: ['common', 'uncommon', 'rare', 'epic', 'legendary'], stages: ['Baby Pebble Puffle', 'Teen Boulder Puffle', 'Boulder Warden Puffle', 'Titan Herald Puffle', 'Legendary Titan Puffle'] },
+  { key: 'sp_light', family: 'light', rarity: ['uncommon', 'rare', 'epic', 'legendary', 'mythic'], stages: ['Baby Dawn Puffle', 'Teen Radiance Puffle', 'Radiance Warden Puffle', 'Solaris Herald Puffle', 'Legendary Solaris Puffle'] },
+  { key: 'sp_shadow', family: 'shadow', rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'], stages: ['Baby Dusky Puffle', 'Teen Eclipse Puffle', 'Eclipse Warden Puffle', 'Umbra Herald Puffle', 'Legendary Umbra Puffle'] },
+  { key: 'sp_crystal', family: 'crystal', rarity: ['rare', 'epic', 'legendary', 'mythic', 'secret'], stages: ['Baby Prism Puffle', 'Teen Gemflare Puffle', 'Gemflare Warden Puffle', 'Celestia Herald Puffle', 'Legendary Celestia Puffle'] },
+  { key: 'sp_plasma', family: 'electric', rarity: ['epic', 'legendary', 'mythic', 'secret', 'ultra_secret'], stages: ['Plasma Puffle', 'Arcspark Puffle', 'Neon Warden Puffle', 'Solar Overload Puffle', 'Eternal Plasma Puffle'] },
+  { key: 'sp_frostwave', family: 'ice', rarity: ['epic', 'legendary', 'mythic', 'secret', 'ultra_secret'], stages: ['Frostwave Puffle', 'Glaciermelt Puffle', 'Tidefrost Warden Puffle', 'Arctic Tsunami Puffle', 'Eternal Frostwave Puffle'] },
+  { key: 'sp_bloomlight', family: 'nature', rarity: ['epic', 'legendary', 'mythic', 'secret', 'ultra_secret'], stages: ['Bloomlight Puffle', 'Petalglow Puffle', 'Sunbloom Warden Puffle', 'Paradise Warden Puffle', 'Eternal Bloom Puffle'] },
+  { key: 'sp_voidcrystal', family: 'crystal', rarity: ['legendary', 'mythic', 'secret', 'ultra_secret', 'ultra_secret'], stages: ['Void Crystal Puffle', 'Riftshard Puffle', 'Null Prism Warden Puffle', 'Void Collapse Puffle', 'Eternal Rift Puffle'] },
+  { key: 'sp_titanroot', family: 'earth', rarity: ['legendary', 'mythic', 'secret', 'ultra_secret', 'ultra_secret'], stages: ['Titanroot Puffle', 'Rootbound Puffle', 'Colossus Warden Puffle', 'Worldtree Colossus Puffle', 'Eternal Root Puffle'] },
+  { key: 'sp_abyssal', family: 'water', rarity: ['mythic', 'secret', 'ultra_secret', 'ultra_secret', 'ultra_secret'], stages: ['Abyssal Tide Puffle', 'Trencher Puffle', 'Deepgaze Warden Puffle', 'Abyssal Singularity Puffle', 'Eternal Trench Puffle'] },
+  { key: 'sp_celestialprism', family: 'crystal', rarity: ['mythic', 'secret', 'ultra_secret', 'ultra_secret', 'ultra_secret'], stages: ['Celestial Prism Puffle', 'Shardwing Puffle', 'Starprism Warden Puffle', 'Cosmic Prism Storm Puffle', 'Eternal Spectrum Puffle'] },
+  { key: 'sp_lifeheart', family: 'nature', rarity: ['mythic', 'secret', 'ultra_secret', 'ultra_secret', 'ultra_secret'], stages: ['Lifeheart Puffle', 'Heartbloom Puffle', 'Genesis Warden Puffle', 'Genesis Bloom Puffle', 'Eternal Heart Puffle'] },
+  { key: 'sp_omnitype', family: 'secret', rarity: ['ultra_secret', 'ultra_secret', 'creator', 'creator', 'creator'], stages: ['Omnitype Sprite Puffle', 'Auroracore Puffle', 'Elemental Chorus Puffle', 'Genesis Ascension Puffle', 'Origin Eternal Puffle'] },
+  { key: 'cp_puffle', family: 'classic', colors: ['cp_color_blue', 'cp_color_green', 'cp_color_purple', 'cp_color_rainbow', 'cp_color_gold'], stages: ['Blue Puffle', 'Green Puffle', 'Purple Puffle', 'Rainbow Puffle', 'Gold Puffle'], rarity: ['common', 'uncommon', 'rare', 'epic', 'legendary'] },
 ];
 
 window.PUFFLE_EVOLUTION_CHAINS = {};
@@ -160,7 +190,7 @@ function puffleEvolutionKey(name) {
     const fifthName = stages[stages.length - 1];
     const family = PUFFLE_EVOLUTION_FAMILIES[familyKey] || PUFFLE_EVOLUTION_FAMILIES.nature;
     const lookup = String(first).trim().toLowerCase();
-    let key = byName[lookup] || byName[lookup.replace(/\s+puffle$/, '')] || null;
+    let key = entry.key || byName[lookup] || byName[lookup.replace(/\s+puffle$/, '')] || null;
 
     /* A chain's first form has to be hatchable, so an unknown root is added. */
     if (!key) {
@@ -209,7 +239,7 @@ function puffleEvolutionKey(name) {
       }
     }
 
-    window.PUFFLE_EVOLUTION_CHAINS[key] = { key, family: familyKey, stages: stages.slice(), rarity: Array.isArray(rarity) && rarity.length ? rarity : null };
+    window.PUFFLE_EVOLUTION_CHAINS[key] = { key, family: familyKey, stages: stages.slice(), colors: Array.isArray(entry.colors) ? entry.colors.slice() : null, rarity: Array.isArray(rarity) && rarity.length ? rarity : null };
   });
 
   if (table && typeof window.lumiPuffleSortKeys === 'function') window.LUMI_PUFFLE_VARIANT_KEYS = window.lumiPuffleSortKeys();
@@ -217,6 +247,31 @@ function puffleEvolutionKey(name) {
 
 window.puffleEvolutionLine = function puffleEvolutionLine(elementKey) {
   return window.PUFFLE_EVOLUTION_CHAINS[elementKey] || null;
+};
+
+/* The name of the form a puffle currently wears. A line's five names cover the
+   twelve life stages, so growing up renames the puffle without changing its
+   species: stage 1 is the hatchling name, stage 5 the ascension name. */
+window.puffleFormName = function puffleFormName(sprite) {
+  const isKey = typeof sprite === 'string';
+  const key = isKey ? sprite : (sprite && sprite.element);
+  const stage = isKey ? 'baby' : ((sprite && sprite.stage) || 'baby');
+  const line = window.puffleEvolutionLine(key);
+  if (!line || !Array.isArray(line.stages) || !line.stages.length) return null;
+  const form = typeof window.puffleEvolutionStageIndex === 'function'
+    ? window.puffleEvolutionStageIndex(stage)
+    : 0;
+  return line.stages[Math.min(form, line.stages.length - 1)] || null;
+};
+
+/* The colourway a line stage wears, when the line walks colours instead of
+   elements. Club Penguin's line uses this to repaint a puffle as it grows. */
+window.puffleEvolutionColour = function puffleEvolutionColour(elementKey, stage) {
+  const line = window.PUFFLE_EVOLUTION_CHAINS[elementKey];
+  if (!line || !Array.isArray(line.colors) || !line.colors.length) return null;
+  /* The stage-to-form ladder lives once, in puffleEvolutionStageIndex below. */
+  const index = Math.min(window.puffleEvolutionStageIndex(stage), line.colors.length - 1);
+  return line.colors[index] || line.colors[0];
 };
 
 /* Which of the five named forms a life stage belongs to. The twelve age tiers

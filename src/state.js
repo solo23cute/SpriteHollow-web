@@ -2,6 +2,18 @@
 
 const SAVE_KEY = 'sprite-hollow.save.v2';
 const MAX_LEVEL = 10000;
+/* The Puffle Hotel floor. Declared up here because hydrateSave() runs at module
+   load and repairs a saved floor before any hotel helper has been defined. */
+const HOTEL_ROOM_COUNT = 6;
+const HOTEL_STAY_COINS = 30;
+/* A stay is one night, not an open-ended spa pass. The floor serves the room
+   until dawn, eight in-game hours after check-in, and then the guest leaves on
+   their own with a tip. In-game hours track wall-clock hours (the save's days
+   do too), so dawn arrives the same way whether the keeper is watching or the
+   save is reopened the next morning. */
+const HOTEL_STAY_HOURS = 8;
+const HOTEL_STAY_MS = HOTEL_STAY_HOURS * 60 * 60 * 1000;
+const HOTEL_TIP_SHARE = 0.6;
 const TRAVEL_COINS = 10;
 const SEASON_CHARGE_GOAL = 3;
 /* Phase 0 economy values live in data-first-flight.js so the booted-frame
@@ -271,6 +283,8 @@ function freshState() {
     quiz: { date: null, readyAt: 0, doneDate: null },
     waveGames: {},
     favoriteGames: [],
+    /* One pinned species per band, used by the windowed tier bands. */
+    tierPins: {},
     arcade: { coins: 0, bonusClaims: 0, monthKey: null, monthCoins: 0, monthClaims: [] },
     checkin: {
       last: null, streak: 0,
@@ -304,11 +318,14 @@ function freshState() {
     geneDesigns: [],
     vaultDoors: [],
     guardiansBeaten: {},
+    /* Hollow Eclipse enemies are purified, not beaten: this is their own credit,
+       so a wisp never counts as a win over its element's guardian. */
+    enemiesPurified: {},
     gift: null,
     care: { tokens: 0, gifts: 0 },
     /* Puffle Hotel care moments fill their own counter, so spa visits earn
        hotel treats and meals without changing the Care Bear package track. */
-    hotel: { careTokens: 0, careGifts: 0, lastStay: null },
+    hotel: { careTokens: 0, careGifts: 0, lastStay: null, guests: [] },
     /* The Daily Wheel: today's free spin and paid allowance, plus lifetime
        winnings. Reset hands over a new wheel; the coins stay banked. */
     wheel: { day: null, free: false, paid: 0, won: 0, lifetime: 0 },
@@ -318,13 +335,16 @@ function freshState() {
       merges: 0, hatches: 0, earned: 0, spent: 0, bestStreak: 0,
       checkins: 0, twins: 0, specials: 0, evolves: 0, gifts: 0, wild: 0, tucks: 0, shinies: 0, candyMorphs: 0,
       walks: 0, walkDistance: 0, bestWalk: 0, walkGifts: 0, sports: 0, sportGifts: 0,
-      arcadeCoins: 0, arcadeGifts: 0, arcadeMonthGifts: 0, careGifts: 0, quests: 0, duels: 0, travels: 0,
+      arcadeCoins: 0, arcadeGifts: 0, arcadeMonthGifts: 0, careGifts: 0, quests: 0, duels: 0, purified: 0, travels: 0,
       rubs: 0, throws: 0, catches: 0, tasksClaimed: 0, rebirths: 0,
-      hotelCareGifts: 0, hairBrushes: 0, teethBrushes: 0, mouthwashes: 0, grooms: 0,
+      hotelCareGifts: 0, hotelStays: 0, hotelCheckOuts: 0, hotelDawnCheckOuts: 0,
+      hairBrushes: 0, teethBrushes: 0, mouthwashes: 0, grooms: 0,
       dailyEggs: 0, holidayGifts: 0, weekendGifts: 0, seasonEggs: 0,
       temps: 0, medicines: 0, doctorVisits: 0, colds: 0, cured: 0,
+      /* voice key -> first time that voice spoke, for the wiki's voice guide. */
+      voiceHeard: {},
     },
-    seen: { intro: false, tour: false },
+    seen: { intro: false, tour: false, worldheartFinale: false },
     /* The induction tour's last open step, kept even after the sheet closes so
        Studio can resume it. completeTour and Skip reset it to the first step. */
     tourStep: 0,
@@ -381,7 +401,7 @@ function normalizeSprite(raw) {
   const elementKey = ELEMENTS[s.element] ? s.element : 'bloom';
   const isMasterCheat = typeof MASTER_CHEAT_SPECIES !== 'undefined' && elementKey === MASTER_CHEAT_SPECIES;
   const level = isMasterCheat ? MAX_LEVEL : clamp(Number(s.level) || 1, 1, MAX_LEVEL);
-  return {
+  const sprite = {
     id: s.id || uid('sp'),
     name: cleanSpriteName(s.name) || null,
     element: elementKey,
@@ -425,7 +445,14 @@ function normalizeSprite(raw) {
       : null,
     /* The picked puffle style survives a reload; an unknown key is dropped so
        the species' own elemental style shows instead. */
-    puffleVariant: typeof s.puffleVariant === 'string' && typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS && window.LUMI_PUFFLE_VARIANTS[s.puffleVariant] ? s.puffleVariant : null,
+    /* Classic colours live in the palette table; a Puffle Creature's canon coat is
+       resolved by its own species table, so both survive a save. The check reads
+       the saved key alone: `form` is still the raw id here, and a legacy
+       `pc_dinosaur` save is only mapped to `pc_trex` further down this literal. */
+    puffleVariant: typeof s.puffleVariant === 'string' && (
+      (typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS && window.LUMI_PUFFLE_VARIANTS[s.puffleVariant])
+      || (typeof cpCreatureStylePalette === 'function' && cpCreatureStylePalette(s.puffleVariant))
+    ) ? s.puffleVariant : null,
     shiny: !!s.shiny,
     shinyRolled: !!s.shinyRolled,
     size: SIZES[s.size] ? s.size : 'standard',
@@ -441,7 +468,7 @@ function normalizeSprite(raw) {
     }, {}),
     sugar: Math.min(2, Math.max(0, Number(s.sugar) || 0)),
     rarityBoost: Math.max(0, Math.min(RARITY_BOOST_MAX, Math.floor(Number(s.rarityBoost) || 0))),
-    form: EVOLUTION_FORMS[s.form] ? s.form : null,
+    form: EVOLUTION_FORMS[s.form] ? s.form : (typeof LEGACY_EVOLUTION_FORMS !== 'undefined' ? LEGACY_EVOLUTION_FORMS[s.form] : null) || null,
     /* A picked ability branch outlives reloads; a malformed pick is dropped so
        the sprite simply offers the choice again. */
     abilityPath: s.abilityPath && typeof s.abilityPath === 'object' && typeof s.abilityPath.branch === 'string'
@@ -473,6 +500,17 @@ function normalizeSprite(raw) {
       : null,
     lastPet: Number(s.lastPet) || 0,
     lastChatReward: Number(s.lastChatReward) || 0,
+    /* When this puffle last spoke, when it last gave a gift, the quest total it
+       had heard about, and the topic it was last asked about, so chat can tell a
+       returning friend from someone who has been away and pick the conversation
+       back up. A retired `voice.gifts` count is dropped here. */
+    voice: {
+      at: Number(s.voice && s.voice.at) || 0,
+      giftAt: Number(s.voice && s.voice.giftAt) || 0,
+      quests: Number(s.voice && s.voice.quests) || 0,
+      topic: s.voice && typeof s.voice.topic === 'string' ? s.voice.topic.slice(0, 16) : null,
+      topicAt: Number(s.voice && s.voice.topicAt) || 0,
+    },
     lastBath: Number(s.lastBath) || 0,
     hygiene: {
       hair: clamp(Number(s.hygiene?.hair ?? 72)),
@@ -496,6 +534,9 @@ function normalizeSprite(raw) {
     homeCoins: Math.max(0, Number(s.homeCoins) || 0),
     sharedHouse: typeof s.sharedHouse === 'string' && s.sharedHouse ? s.sharedHouse : null,
   };
+  /* A Club Penguin Puffle wears the colour its own evolution line has reached. */
+  if (typeof syncCpPuffleEvolutionColour === 'function') syncCpPuffleEvolutionColour(sprite);
+  return sprite;
 }
 
 /* A missing live key is only a first run when there is no other copy on this
@@ -756,7 +797,26 @@ function hydrateSave(parsed) {
           last: Number(badge.last) || 0,
         }))
         .slice(0, EVENT_PRESET_KEYS.length),
+      /* A kept vigil is a day stamp, so an old or hand-edited save cannot claim
+         today's vigil without a run today. */
+      vigils: Object.fromEntries(
+        Object.entries(parsed.world?.vigils && typeof parsed.world.vigils === 'object' ? parsed.world.vigils : {})
+          .filter(([key, row]) => EVENT_PRESETS[key] && row && typeof row === 'object')
+          .map(([key, row]) => [key, {
+            day: /^\d{4}-\d{2}-\d{2}$/.test(String(row.day || '')) ? String(row.day) : '',
+            best: Math.max(0, Math.min(9999, Number(row.best) || 0)),
+            runs: Math.max(0, Math.min(9999, Number(row.runs) || 0)),
+            last: Number(row.last) || 0,
+          }])
+      ),
     };
+    /* A pin is only a species id; bandPinFor decides at draw time whether it
+       still belongs to that band. */
+    merged.tierPins = {};
+    Object.entries(parsed.tierPins && typeof parsed.tierPins === 'object' ? parsed.tierPins : {}).forEach(([tierKey, speciesKey]) => {
+      if (!TIER_EGG_META[tierKey] || typeof speciesKey !== 'string' || !speciesKey) return;
+      merged.tierPins[tierKey] = speciesKey;
+    });
     merged.homes = {};
     Object.entries(parsed.homes && typeof parsed.homes === 'object' ? parsed.homes : {}).forEach(([spriteId, sceneKey]) => {
       if (SCENES[sceneKey]) merged.homes[spriteId] = sceneKey;
@@ -807,6 +867,15 @@ function hydrateSave(parsed) {
     Object.entries(parsed.guardiansBeaten && typeof parsed.guardiansBeaten === 'object' ? parsed.guardiansBeaten : {}).forEach(([id, count]) => {
       if (!ELEMENTS[id]) return;
       merged.guardiansBeaten[id] = Math.max(0, Math.floor(Number(count) || 0));
+    });
+    /* Only real Hollow Eclipse ids survive, so a renamed enemy cannot leave a
+       phantom row in the purification record. */
+    merged.enemiesPurified = {};
+    Object.entries(parsed.enemiesPurified && typeof parsed.enemiesPurified === 'object' ? parsed.enemiesPurified : {}).forEach(([id, count]) => {
+      const known = typeof SPRITE_HOLLOW_VOICES !== 'undefined' && Array.isArray(SPRITE_HOLLOW_VOICES)
+        && SPRITE_HOLLOW_VOICES.some((entry) => entry.enemy && entry.id === id);
+      if (!known) return;
+      merged.enemiesPurified[id] = Math.max(0, Math.floor(Number(count) || 0));
     });
     merged.roomTheme = typeof HOME_ROOM_THEME_KEYS !== 'undefined' && HOME_ROOM_THEME_KEYS.includes(parsed.roomTheme) ? parsed.roomTheme : 'honey';
     /* Looks only exist for houses that still do: drop keys left by older splits. */
@@ -918,6 +987,16 @@ function hydrateSave(parsed) {
       careTokens: Math.max(0, Number(savedHotel.careTokens) || 0),
       careGifts: Math.max(0, Number(savedHotel.careGifts) || 0),
       lastStay: typeof savedHotel.lastStay === 'string' ? savedHotel.lastStay : null,
+      /* Only a floor's worth of stays can survive, so the work is capped before
+         the rooms are repaired below. */
+      guests: (Array.isArray(savedHotel.guests) ? savedHotel.guests : [])
+        .filter((entry) => entry && typeof entry.id === 'string')
+        .slice(0, HOTEL_ROOM_COUNT * 4)
+        .map((entry) => ({
+          id: entry.id,
+          since: Number(entry.since) || 0,
+          room: Math.floor(Number(entry.room) || 0),
+        })),
     };
     merged.journal = (Array.isArray(parsed.journal) ? parsed.journal : [])
       .filter((e) => e && e.text)
@@ -932,6 +1011,10 @@ function hydrateSave(parsed) {
         cycles: Math.max(1, Number(e.cycles) || 1),
       }));
     merged.sprites = Array.isArray(parsed.sprites) ? parsed.sprites.map(normalizeSprite) : [];
+    /* A saved floor can name a room twice, a room that is not on it (older
+       builds wrote 0 when the hotel was full), or a guest whose sprite is
+       gone. Repair it now that both the stays and the sprites are known. */
+    merged.hotel.guests = normalizeHotelStays(merged.hotel.guests, merged.sprites);
     /* Finish ownership is permanent, and older saves did not store it. Seed it
        from every hatched sprite so existing collections keep their shells. */
     merged.finishUnlocks = Array.from(new Set([
@@ -952,6 +1035,10 @@ function hydrateSave(parsed) {
     merged.sprites.forEach((sprite) => {
       if (sprite.outfit && !outfitIds.has(sprite.outfit)) sprite.outfit = null;
       if (sprite.puffleOutfit && !outfitIds.has(sprite.puffleOutfit)) sprite.puffleOutfit = null;
+      /* Legacy creatures in classic colours take the species coat of that colour. */
+      const legacyCoat = typeof cpCreatureCoatForClassic === 'function'
+        ? cpCreatureCoatForClassic(sprite.form, sprite.puffleVariant) : null;
+      if (legacyCoat) sprite.puffleVariant = legacyCoat;
     });
     merged.activeId = merged.sprites.some((s) => s.id === merged.activeId && s.stage !== 'egg' && !s.retired)
       ? merged.activeId
@@ -1355,6 +1442,126 @@ function grantHotelCareItemRaw(kind = 'any') {
   addFoodRaw(foodKey, 1);
   return foodKey;
 }
+
+/* ---------------- hotel stays ---------------- */
+
+/* A save can carry a room twice, a room outside the floor, or a guest whose
+   sprite is gone. Every real guest keeps a room the save got right; the rest
+   take the lowest free room, so the lobby never shows two Room 03s or a room
+   that does not exist. */
+function normalizeHotelStays(rows, sprites) {
+  const entries = Array.isArray(rows) ? rows : [];
+  const wanted = new Set(entries.map((entry) => (entry && typeof entry.id === 'string' ? entry.id : null)).filter(Boolean));
+  const byId = new Map();
+  (Array.isArray(sprites) ? sprites : []).forEach((sprite) => {
+    if (sprite && wanted.has(sprite.id)) byId.set(sprite.id, sprite);
+  });
+  const seen = new Set();
+  const taken = new Set();
+  const kept = [];
+  entries.forEach((entry) => {
+    if (!entry || typeof entry.id !== 'string' || seen.has(entry.id)) return;
+    const sprite = byId.get(entry.id);
+    if (!sprite || sprite.stage === 'egg' || sprite.retired) return;
+    seen.add(entry.id);
+    const room = Math.floor(Number(entry.room) || 0);
+    const row = { ...entry, id: entry.id, since: Number(entry.since) || 0, room: 0 };
+    if (room >= 1 && room <= HOTEL_ROOM_COUNT && !taken.has(room)) {
+      taken.add(room);
+      row.room = room;
+    }
+    kept.push(row);
+  });
+  kept.forEach((row) => {
+    if (row.room) return;
+    for (let room = 1; room <= HOTEL_ROOM_COUNT; room += 1) {
+      if (taken.has(room)) continue;
+      taken.add(room);
+      row.room = room;
+      return;
+    }
+  });
+  return kept.filter((row) => row.room >= 1).slice(0, HOTEL_ROOM_COUNT);
+}
+
+/* A stay is a room assignment, not a spa visit: the guest is checked in until
+   the keeper checks them out, and the simulation feeds, rests and washes them
+   while the badge is up. The floor is capped so the lobby stays believable. */
+function hotelGuests() {
+  if (!state.hotel || typeof state.hotel !== 'object') state.hotel = { careTokens: 0, careGifts: 0, lastStay: null, guests: [] };
+  if (!Array.isArray(state.hotel.guests)) state.hotel.guests = [];
+  const seen = new Set();
+  state.hotel.guests = state.hotel.guests.filter((entry) => {
+    if (!entry || typeof entry.id !== 'string' || seen.has(entry.id)) return false;
+    const s = findSprite(entry.id);
+    if (!s || s.stage === 'egg' || s.retired) return false;
+    /* Older builds stamped no check-in time. Give them a fresh night instead of
+       reading a missing stamp as a stay that ended long ago. */
+    if (!(Number(entry.since) > 0)) entry.since = Date.now();
+    seen.add(entry.id);
+    return true;
+  });
+  return state.hotel.guests;
+}
+
+function isHotelGuest(sprite) {
+  if (!sprite || !sprite.id) return false;
+  return hotelGuests().some((entry) => entry.id === sprite.id);
+}
+
+/* How far into the night a stay is, and what it owes at the door. A tip is a
+   share of the stay price, prorated by the hours actually spent in the room, so
+   an early check-out still tips a little and a full night tips the most. */
+function hotelStayHours(entry) {
+  const since = Number(entry && entry.since) || 0;
+  if (!since) return 0;
+  return Math.max(0, (Date.now() - since) / 3600000);
+}
+function hotelStayDue(entry) {
+  const since = Number(entry && entry.since) || 0;
+  return !!since && Date.now() - since >= HOTEL_STAY_MS;
+}
+function hotelStayTip(hours) {
+  const stayed = Math.max(0, Math.min(HOTEL_STAY_HOURS, Number(hours) || 0));
+  return Math.max(1, Math.round(HOTEL_STAY_COINS * HOTEL_TIP_SHARE * stayed / HOTEL_STAY_HOURS));
+}
+
+/* One exit path for the desk button and for dawn: the room frees, the guest is
+   handed back rested, and the stay pays its tip. */
+function finishHotelStay(entry, { dawn = false } = {}) {
+  if (!entry) return { ok: false, reason: 'not-staying' };
+  const s = findSprite(entry.id);
+  state.hotel.guests = hotelGuests().filter((row) => row.id !== entry.id);
+  if (!s) return { ok: false, reason: 'missing' };
+  s.needs.hunger = 100;
+  s.needs.energy = 100;
+  s.needs.joy = 100;
+  s.needs.clean = 100;
+  const hyg = hygieneOf(s);
+  hyg.hair = 100;
+  hyg.teeth = 100;
+  hyg.breath = 100;
+  addBondRaw(s, 3);
+  addXpRaw(s, 10);
+  const minutes = Math.max(1, Math.round((Date.now() - (Number(entry.since) || Date.now())) / 60000));
+  const tip = hotelStayTip(minutes / 60);
+  addCoinsRaw(tip);
+  const room = String(entry.room).padStart(2, '0');
+  state.stats.hotelCheckOuts = (Number(state.stats.hotelCheckOuts) || 0) + 1;
+  if (dawn) state.stats.hotelDawnCheckOuts = (Number(state.stats.hotelDawnCheckOuts) || 0) + 1;
+  commit('hotelCheckOut', { spriteId: s.id, room: entry.room, minutes, tip, dawn });
+  toast(dawn
+    ? `🌅 Dawn checkout — ${displayName(s)} leaves room ${room} with a tip of ${tip} coins.`
+    : `🏨 ${displayName(s)} checks out of room ${room} — rested, fed and gleaming. Tip of ${tip} coins.`, dawn ? '🌅' : '🏨');
+  return { ok: true, room: entry.room, minutes, tip, dawn };
+}
+
+function hotelFreeRoom() {
+  const taken = new Set(hotelGuests().map((entry) => entry.room));
+  for (let room = 1; room <= HOTEL_ROOM_COUNT; room += 1) if (!taken.has(room)) return room;
+  return 0;
+}
+
 function eggs() {
   return state.sprites.filter((s) => s.stage === 'egg');
 }
@@ -1369,8 +1576,74 @@ function displayName(s) {
   }
   return s.name || 'Sprite';
 }
+/* A creature's coat is part of its name, not only its portrait: the sheet,
+   chat, studio search and evolution results all read typeName, so a Green
+   T-Rex should say so everywhere. Null for everything that is not a creature. */
+function cpCreatureLookName(s) {
+  if (!s || typeof cpCreatureStylePalette !== 'function' || typeof cpCreatureStyleKey !== 'function') return '';
+  const key = cpCreatureStyleKey(s.form, s.puffleVariant);
+  const look = key ? cpCreatureStylePalette(key) : null;
+  if (look && look.name) return look.name;
+  /* A creature keeps its species in its name even when the curated coat is not
+     what it wears: a pink Dog Puffle is not a plain Pink Puffle, and a creature
+     carrying no style at all still has to read as its species. */
+  const form = s.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[s.form] : null;
+  const creature = form && form.creature && typeof CP_PUFFLE_CREATURES !== 'undefined' ? CP_PUFFLE_CREATURES[form.creature] : null;
+  if (!creature) return '';
+  const variant = s.puffleVariant && typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS
+    ? window.LUMI_PUFFLE_VARIANTS[s.puffleVariant] : null;
+  const colour = variant && variant.name
+    ? String(variant.name).replace(/^Classic /, '').replace(/ Puffle$/, '').trim()
+    : '';
+  return colour ? `${colour} ${creature.label}` : creature.label;
+}
+/* Every canon coat a creature has been dressed in. Coats are the one part of a
+   species a player collects by choice, so the list is what the coat card counts
+   instead of a static roster nobody can finish. */
+function recordCreatureCoat(s, bag) {
+  if (!s || typeof cpCreatureStyleKey !== 'function') return false;
+  const key = cpCreatureStyleKey(s.form, s.puffleVariant);
+  if (!key) return false;
+  const target = bag || (typeof state !== 'undefined' ? state : null);
+  if (!target) return false;
+  if (!target.stats || typeof target.stats !== 'object') target.stats = {};
+  if (!Array.isArray(target.stats.coats)) target.stats.coats = [];
+  if (target.stats.coats.includes(key)) return false;
+  target.stats.coats.push(key);
+  return true;
+}
+/* Older saves dress creatures in classic puffle colours (cp_color_purple and
+   friends). Where the species carries that colour as a canon coat, the coat is
+   the same look with a name and a palette the roster knows, so the load maps it
+   rather than leaving the creature in a state no coat chip can describe. */
+function cpCreatureCoatForClassic(formId, variantKey) {
+  if (typeof cpCreatureStyleKey !== 'function' || typeof cpCreatureCoats !== 'function') return null;
+  const form = formId && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[formId] : null;
+  const creature = form && form.creature;
+  if (!creature || !variantKey) return null;
+  if (cpCreatureStyleKey(formId, variantKey)) return null;
+  const match = /^cp_color_([a-z_]+)$/.exec(String(variantKey));
+  const table = typeof window !== 'undefined' ? window.LUMI_PUFFLE_VARIANTS : null;
+  const colour = match
+    ? match[1]
+    : (table && table[variantKey] && (table[variantKey].color || table[variantKey].colour)) || '';
+  if (!colour) return null;
+  const coat = cpCreatureCoats(creature).find((entry) => entry.color === colour);
+  return coat ? `pc_${creature}_${coat.key}` : null;
+}
+/* The twelve classic colour forms are species too: a Pink Puffle that reads
+   "Bloom" everywhere is a recolour with no name of its own. */
+function cpPuffleFormName(s) {
+  const form = s?.form && typeof EVOLUTION_FORMS !== 'undefined' ? EVOLUTION_FORMS[s.form] : null;
+  const type = form?.puffle && typeof CP_PUFFLE_TYPES !== 'undefined' ? CP_PUFFLE_TYPES[form.puffle] : null;
+  return type?.label || '';
+}
 function typeName(s) {
   if (!s) return 'Unknown';
+  const creature = cpCreatureLookName(s);
+  if (creature) return creature;
+  const colour = cpPuffleFormName(s);
+  if (colour) return colour;
   return s.hybrid || (ELEMENTS[s.element] || ELEMENTS.bloom).name;
 }
 function spriteRarityKey(s) {
@@ -1395,15 +1668,20 @@ function stageForLevel(level) {
   if (level >= 18) return 'youngadult';
   if (level >= 10) return 'sprite';
   if (level >= 5) return 'juvenile';
+  if (level >= 3) return 'child';
+  if (level >= 2) return 'toddler';
   return 'baby';
 }
 function xpNeeded(level) {
   return 50 + level * 18;
 }
-const STAGE_ORDER = ['baby', 'juvenile', 'sprite', 'youngadult', 'midadult', 'highadult', 'elder', 'ancient', 'sensei', 'apex', 'omni', 'celestial'];
-const STAGE_LABELS = { baby: 'Baby', juvenile: 'Juvenile', sprite: 'Teen', youngadult: 'Young Adult', midadult: 'Mid-Adult', highadult: 'High Adult', elder: 'Elderly', ancient: 'Ancient', sensei: 'Sensei', apex: 'Apex Cosmic', omni: 'Omni Immortal', celestial: 'Celestial Mythic' };
-const STAGE_LEVEL = { baby: 1, juvenile: 5, sprite: 10, youngadult: 18, midadult: 25, highadult: 35, elder: 100, ancient: 500, sensei: 1000, apex: 2500, omni: 5000, celestial: 10000 };
-const GROWTH_MILESTONES = [5, 10, 18, 25, 35, 100, 250, 500, 1000, 2500, 5000, 10000];
+/* The early years run baby, toddler, child, then Juvenile and Teen. The levels
+   below Juvenile keep their shipped values, so a save that already grew up
+   does not change stage when toddler and child are inserted ahead of it. */
+const STAGE_ORDER = ['baby', 'toddler', 'child', 'juvenile', 'sprite', 'youngadult', 'midadult', 'highadult', 'elder', 'ancient', 'sensei', 'apex', 'omni', 'celestial'];
+const STAGE_LABELS = { baby: 'Baby', toddler: 'Toddler', child: 'Child', juvenile: 'Juvenile', sprite: 'Teen', youngadult: 'Young Adult', midadult: 'Mid-Adult', highadult: 'High Adult', elder: 'Elderly', ancient: 'Ancient', sensei: 'Sensei', apex: 'Apex Cosmic', omni: 'Omni Immortal', celestial: 'Celestial Mythic' };
+const STAGE_LEVEL = { baby: 1, toddler: 2, child: 3, juvenile: 5, sprite: 10, youngadult: 18, midadult: 25, highadult: 35, elder: 100, ancient: 500, sensei: 1000, apex: 2500, omni: 5000, celestial: 10000 };
+const GROWTH_MILESTONES = [2, 3, 5, 10, 18, 25, 35, 100, 250, 500, 1000, 2500, 5000, 10000];
 function stageEvolutionInfo(s) {
   if (!s || s.stage === 'egg') return { egg: true, current: 'egg', next: null, nextLabel: 'Egg', required: 1, levelsLeft: 0, ready: false, final: false, progress: 0 };
   const index = STAGE_ORDER.indexOf(s.stage);
@@ -1574,14 +1852,20 @@ function formName(s) {
   if (form.id === 'titan') return TITAN_NAMES[s.element] || form.label;
   return `${(ELEMENTS[s.element] || ELEMENTS.bloom).name} ${form.label}`;
 }
+/* The two buckets every effect bag has to land in. A key in neither is copied
+   through untouched and quietly does nothing, so the gate asserts the data only
+   uses these — a typo should fail a test, not ship. */
+const EFFECT_COIN_KEYS = ['gameCoins', 'petCoins', 'chatCoins', 'nightCoins', 'dayCoins', 'checkinCoins', 'taskCoins'];
+const EFFECT_MULTIPLIER_KEYS = ['xp', 'petBond', 'giftSpeed', 'decay', 'joyDecay', 'hungerDecay', 'energyDecay', 'cleanDecay', 'snackXp'];
+
 function spriteEffects(s) {
   if (!s) return {};
   const merged = {};
   const add = (effect = {}) => {
     Object.entries(effect).forEach(([key, value]) => {
-      if (['gameCoins', 'petCoins', 'chatCoins', 'nightCoins', 'dayCoins', 'checkinCoins', 'taskCoins'].includes(key)) {
+      if (EFFECT_COIN_KEYS.includes(key)) {
         merged[key] = (merged[key] || 0) + value;
-      } else if (['xp', 'petBond', 'giftSpeed', 'decay', 'joyDecay', 'hungerDecay', 'energyDecay', 'cleanDecay', 'snackXp'].includes(key)) {
+      } else if (EFFECT_MULTIPLIER_KEYS.includes(key)) {
         merged[key] = (merged[key] || 1) * value;
       } else {
         merged[key] = value;
@@ -1590,6 +1874,13 @@ function spriteEffects(s) {
   };
   add(GENE_POWERS[s.element]?.effect);
   add(typeof abilityEffectsFor === 'function' ? abilityEffectsFor(s) : {});
+  /* The colour a Club Penguin puffle wears is its gameplay kit too: its canon
+     ability and discipline each carry numbers this merge reads directly. */
+  const cpProfile = typeof cpPuffleProfileForSprite === 'function' ? cpPuffleProfileForSprite(s) : null;
+  if (cpProfile) {
+    add(cpProfile.type.ability?.effect);
+    add(cpProfile.type.skill?.effect);
+  }
   add(HABITS[s.breed]?.effect);
   add(FINISHES[s.variant]?.effect);
   add(specialCombo(s)?.power.effect);
@@ -1657,10 +1948,11 @@ function catchFoodSickness(s, food) {
   return illness;
 }
 
+/* One source of truth: the dish the sheet names is the dish that pays, and the
+   resolver already prefers the form, then the breed, then the family's likes. */
 function isFavoriteFood(s, foodId) {
-  const traits = typeof BREED_TRAITS !== 'undefined' ? BREED_TRAITS[s?.breed] : null;
-  const formFavorite = s?.form ? EVOLUTION_FORMS[s.form]?.favorite : null;
-  return !!((traits && traits.favorite === foodId) || formFavorite === foodId);
+  const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+  return !!(comforts && comforts.food.id === foodId);
 }
 function dietGainRaw(s, foodId, bonus = 0) {
   const diet = FOOD_DIET[foodId];
@@ -2015,6 +2307,15 @@ function favoriteGames() {
     .filter((kind) => typeof GAME_INFO === 'undefined' || GAME_INFO[kind]);
 }
 
+/* A pin is the species the player asked to see in a windowed band. It is read
+   at draw time and dropped the moment it stops being a member of that band, so
+   a stale save or a renamed species cannot pin something that is not on sale. */
+function bandPinFor(tierKey) {
+  const key = tierKey && state.tierPins ? state.tierPins[tierKey] : null;
+  if (!key || typeof tierEggBandPool !== 'function') return null;
+  return tierEggBandPool(tierKey).includes(key) ? key : null;
+}
+
 function isFavoriteGame(kind) {
   return favoriteGames().includes(kind);
 }
@@ -2111,7 +2412,14 @@ function refundCoinsRaw(n) {
 function addBondRaw(s, amount) {
   const mod = BREEDS[s.breed]?.bondMod || 1;
   const outfit = typeof fashionSeasonMod === 'function' ? fashionSeasonMod('bond', s) : 1;
+  const before = typeof relationshipTierFor === 'function' ? relationshipTierFor(s.bond) : null;
   s.bond = clamp(s.bond + amount * mod * weeklyEventBondMult() * outfit);
+  /* A rung reached is worth a line: the chat tiers otherwise only show up on
+     the collection sheet, never at the moment they are earned. */
+  const after = typeof relationshipTierFor === 'function' ? relationshipTierFor(s.bond) : null;
+  if (before && after && after.key !== before.key && after.min > before.min && typeof toast === 'function') {
+    toast(`${displayName(s)} now sees you as ${after.name}.`, '💞');
+  }
   if (s.bond >= 100) unlockSecret('heartkeeper');
 }
 /* A Starpath Feast is deliberately stage-based rather than a flat XP item. */
@@ -2386,6 +2694,14 @@ function makeSprite(opts = {}) {
   const element = opts.element || (window.wildSpeciesRoll ? window.wildSpeciesRoll() : pick(WILD_SPECIES));
   const forcedFinish = ELEMENTS[element]?.forcedVariant;
   const variant = FINISHES[forcedFinish] ? forcedFinish : FINISHES[opts.variant] ? opts.variant : null;
+  const breed = opts.breed || defaultBreedFor(element);
+  /* A Club Penguin puffle no longer arrives painted blue. Its colour is rolled
+     when the egg is laid or the puffle is caught, so the twelve colour kits are
+     something a player meets. The ten Penguin Puffle breeds keep their own
+     colour, because that colour is the breed. */
+  const rolledPuffleStyle = !opts.puffleVariant && breed === 'cp_puffle' && typeof cpPuffleRollStyle === 'function'
+    ? cpPuffleRollStyle()
+    : null;
   return {
     id: opts.id || uid('sp'),
     name: opts.name || null,
@@ -2393,10 +2709,10 @@ function makeSprite(opts = {}) {
     element,
     /* A species that names a puffle style wears it from birth, so every
        elemental type keeps its own painted eyes. */
-    puffleVariant: opts.puffleVariant || (ELEMENTS[element] && ELEMENTS[element].puffleStyle) || null,
+    puffleVariant: opts.puffleVariant || rolledPuffleStyle || (ELEMENTS[element] && ELEMENTS[element].puffleStyle) || null,
     hybrid: opts.hybrid || null,
     hybridParents: opts.hybridParents || null,
-    breed: opts.breed || defaultBreedFor(element),
+    breed,
     palette: opts.palette || 'native',
     custom: opts.custom || null,
     head: opts.head || 'breed',
@@ -2415,7 +2731,7 @@ function makeSprite(opts = {}) {
     cuisine: opts.cuisine || {},
     sugar: 0,
     rarityBoost: Math.max(0, Math.min(RARITY_BOOST_MAX, Math.floor(Number(opts.rarityBoost) || 0))),
-    form: EVOLUTION_FORMS[opts.form] ? opts.form : null,
+    form: EVOLUTION_FORMS[opts.form] ? opts.form : (typeof LEGACY_EVOLUTION_FORMS !== 'undefined' ? LEGACY_EVOLUTION_FORMS[opts.form] : null) || null,
     special: COMBOS.some((c) => c.id === opts.special) ? opts.special : null,
     evolvedAt: opts.evolvedAt || 0,
     stage: opts.stage || 'baby',
@@ -2533,7 +2849,8 @@ function rollEgg(tierId, opts = {}) {
   const palette = mutation
     ? mutation.palette
     : chance(0.32)
-      ? pick(['aurora', 'candy', 'matcha', 'deepsea', 'sunset', 'midnight'])
+      ? pick(['aurora', 'candy', 'matcha', 'deepsea', 'sunset', 'midnight',
+        'godlight', 'nebularose', 'emberglass', 'tidefrost', 'mossveil', 'crownrose'])
       : 'native';
   const element = opts.element || (window.wildSpeciesRoll ? window.wildSpeciesRoll() : pick(WILD_SPECIES));
   const egg = makeSprite({
@@ -2566,7 +2883,7 @@ function rollEgg(tierId, opts = {}) {
 
 const TRAIL_STAGE_ORDER = STAGE_ORDER;
 const TRAIL_STAGE_LABELS = STAGE_LABELS;
-const TRAIL_STAGE_LEVEL = { juvenile: 5, sprite: 10, youngadult: 18, midadult: 25, highadult: 35, elder: 100, ancient: 500, sensei: 1000 };
+const TRAIL_STAGE_LEVEL = { toddler: 2, child: 3, juvenile: 5, sprite: 10, youngadult: 18, midadult: 25, highadult: 35, elder: 100, ancient: 500, sensei: 1000 };
 
 /* Every finished trail resolves one visible reward: a type-tier rise, a stage
    evolution, or a generous coin bonus. Higher trails roll the rare outcomes more often. */
@@ -2583,7 +2900,13 @@ function rollTrailBonus(s, info, payout) {
   const roll = Math.random();
   if (canEvolve && roll < evolveChance) {
     const fromStage = s.stage;
-    const toStage = TRAIL_STAGE_ORDER[stageIndex + 1];
+    /* The trail advances one age, but never below the age the sprite's level has
+       already earned: a level-40 baby that takes a trail stage-up lands on High
+       Adult, instead of dropping to toddler and walking the whole ladder back. */
+    const earnedStage = typeof stageForLevel === 'function' ? stageForLevel(s.level) : fromStage;
+    const earnedIndex = STAGE_ORDER.indexOf(earnedStage);
+    const toIndex = Math.min(TRAIL_STAGE_ORDER.length - 1, Math.max(stageIndex + 1, earnedIndex));
+    const toStage = TRAIL_STAGE_ORDER[toIndex];
     s.stage = toStage;
     s.level = Math.max(s.level, TRAIL_STAGE_LEVEL[toStage] || s.level);
     if (typeof announceStageEvolution === 'function') announceStageEvolution(s, fromStage, toStage);
@@ -2650,7 +2973,9 @@ function hatchEggRaw(s) {
   addXpRaw(s, 20 + pendingXp);
   bump('hatches');
   state.stats.hatches += 1;
-  return { ok: true, sprite: s, newShine: !wasShiny && !!s.shiny };
+  /* The first thing a hatchling says, in its own role voice. */
+  const firstWords = typeof window.puffleVoiceLine === 'function' ? window.puffleVoiceLine(s, 'hatch') : null;
+  return { ok: true, sprite: s, newShine: !wasShiny && !!s.shiny, firstWords };
 }
 
 /* ---------------- actions ---------------- */
@@ -2920,6 +3245,59 @@ const Actions = {
     return { ok: true, food, diet, cuisine, candy, stageBoost, loved, illness };
   },
 
+  /* Stock the whole Hollow in one go: every favourite dish the pantry is out
+     of, hungriest puffle first, bought only while the wallet allows. Secret
+     species are not puffles, so their dish is not part of the list. */
+  stockFavourites() {
+    const hungerOf = (row) => Number(row.needs?.hunger) || 0;
+    const byFood = new Map();
+    state.sprites
+      .filter((s) => s.stage !== 'egg' && !s.retired
+        && !(typeof SECRET_SPECIES_META !== 'undefined' && SECRET_SPECIES_META[s.element]))
+      .forEach((s) => {
+        const food = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s)?.food : null;
+        if (!food) return;
+        const entry = byFood.get(food.id) || { id: food.id, hunger: hungerOf(s) };
+        entry.hunger = Math.min(entry.hunger, hungerOf(s));
+        byFood.set(food.id, entry);
+      });
+    const wanted = [...byFood.values()]
+      .filter((entry) => foodCount(entry.id) === 0)
+      .sort((a, b) => a.hunger - b.hunger);
+    const bought = [];
+    let spent = 0;
+    wanted.forEach((entry) => {
+      const food = FOODS[entry.id];
+      if (!food || state.coins < food.price) return;
+      const res = this.buyFoodStock(entry.id);
+      if (!res.ok) return;
+      bought.push(entry.id);
+      spent += food.price;
+    });
+    return { ok: bought.length > 0, bought, spent, missed: wanted.length - bought.length };
+  },
+
+  /* The market's favourites rows are one tap: stock the dish if the pantry has
+     none, then put it in front of the puffle who loves it. Nothing is bought
+     for a guest who cannot eat, and a stocked dish never charges twice. */
+  feedFavourite(id, foodId) {
+    const s = findSprite(id);
+    const food = FOODS[foodId];
+    if (!s || s.stage === 'egg' || s.retired || !food) return { ok: false, reason: 'missing' };
+    if (!food.stageBoost && s.needs.hunger >= 97 && (food.hunger || 0) > 0) {
+      toast(`${displayName(s)} is too full for that.`, '😅');
+      return { ok: false, reason: 'full' };
+    }
+    const stocked = foodCount(foodId) > 0;
+    if (!stocked) {
+      const bought = this.buyFoodStock(foodId);
+      if (!bought.ok) return bought;
+    }
+    const fed = this.feedStock(id, foodId);
+    if (!fed.ok) return fed;
+    return { ...fed, bought: !stocked, sprite: s };
+  },
+
   feedSnack(id, snackId) {
     const s = findSprite(id);
     const snack = SNACKS[snackId];
@@ -3106,20 +3484,106 @@ const Actions = {
     return { ok: true, service, coins: service.price, hygiene: { ...hyg }, careGift };
   },
 
+  /* Room service takes anything the kitchen can send up, not only the hotel's
+     own menu. A stocked dish costs the tray fee; an unstocked one is bought in
+     at shelf price first, and a refused feed refunds both. */
   orderHotelFood(id, foodKey) {
     const s = findSprite(id);
-    const food = FOODS[foodKey];
-    if (!s || s.stage === 'egg' || !food || food.cat !== 'hotel') return { ok: false, reason: 'missing' };
-    if (state.coins < food.price) return { ok: false, reason: 'coins', need: food.price - state.coins };
-    if (food.hunger > 0 && s.needs.hunger >= 97) return { ok: false, reason: 'full' };
+    const entry = typeof hotelMenuEntry === 'function' ? hotelMenuEntry(foodKey) : null;
+    if (!s || s.stage === 'egg' || !entry) return { ok: false, reason: 'missing' };
+    const price = hotelServePrice(foodKey);
+    if (!Number.isFinite(price) || price <= 0) return { ok: false, reason: 'missing' };
+    const item = entry.item;
+    if (state.coins < price) return { ok: false, reason: 'coins', need: price - state.coins };
+    if (item.hunger > 0 && s.needs.hunger >= 97) return { ok: false, reason: 'full' };
     if (s.asleep) { s.asleep = false; s.sleepUntil = 0; }
-    addCoinsRaw(-food.price);
-    addFoodRaw(foodKey, 1);
-    const fed = this.feedStock(id, foodKey);
-    if (!fed?.ok) return { ok: false, reason: fed?.reason || 'feed', refund: food.price };
+    const stocked = entry.kind === 'snack' ? snackCount(foodKey) > 0 : foodCount(foodKey) > 0;
+    addCoinsRaw(-price);
+    if (!stocked) {
+      if (entry.kind === 'snack') addSnackRaw(foodKey, 1);
+      else addFoodRaw(foodKey, 1);
+    }
+    const fed = entry.kind === 'snack' ? this.feedSnack(id, foodKey) : this.feedStock(id, foodKey);
+    if (!fed?.ok) {
+      addCoinsRaw(price);
+      if (!stocked) {
+        if (entry.kind === 'snack') addSnackRaw(foodKey, -1);
+        else addFoodRaw(foodKey, -1);
+      }
+      return { ok: false, reason: fed?.reason || 'feed', refund: price };
+    }
     const careGift = grantHotelCareBonusRaw(s);
-    commit('hotelOrder', { spriteId: id, foodKey, careGift: !!careGift });
-    return { ok: true, food, fed, careGift };
+    commit('hotelOrder', { spriteId: id, foodKey, kind: entry.kind, course: entry.course, price, careGift: !!careGift });
+    return { ok: true, food: item, entry, entryKey: foodKey, price, fromPantry: stocked, fed, careGift };
+  },
+
+  checkInHotel(id) {
+    const s = findSprite(id);
+    if (!s || s.stage === 'egg' || s.retired) return { ok: false, reason: 'missing' };
+    if (isHotelGuest(s)) return { ok: false, reason: 'staying' };
+    const room = hotelFreeRoom();
+    if (!room) return { ok: false, reason: 'full' };
+    if (state.coins < HOTEL_STAY_COINS) return { ok: false, reason: 'coins', need: HOTEL_STAY_COINS - state.coins };
+    addCoinsRaw(-HOTEL_STAY_COINS);
+    s.asleep = false;
+    s.sleepUntil = 0;
+    s.needs.hunger = 100;
+    s.needs.energy = 100;
+    s.needs.joy = 100;
+    s.needs.clean = 100;
+    const hyg = hygieneOf(s);
+    hyg.hair = 100;
+    hyg.teeth = 100;
+    hyg.breath = 100;
+    addBondRaw(s, 4);
+    addXpRaw(s, 12);
+    hotelGuests().push({ id: s.id, since: Date.now(), room });
+    state.hotel.lastStay = new Date().toISOString();
+    const meal = grantHotelCareItemRaw('meal');
+    state.stats.hotelStays = (Number(state.stats.hotelStays) || 0) + 1;
+    commit('hotelCheckIn', { spriteId: id, room, meal });
+    toast(`🏨 ${displayName(s)} checks into room ${String(room).padStart(2, '0')} until dawn. Every need seen to.`, '🏨');
+    return { ok: true, room, meal, coins: HOTEL_STAY_COINS };
+  },
+
+  checkOutHotel(id) {
+    const s = findSprite(id);
+    if (!s) return { ok: false, reason: 'missing' };
+    const entry = hotelGuests().find((row) => row.id === id);
+    if (!entry) return { ok: false, reason: 'not-staying' };
+    /* A stay never moves the guest: check-in leaves atHome alone, so check-out
+       must too. Restoring the value captured at check-in would undo a home move
+       the keeper made while the room was theirs. */
+    return finishHotelStay(entry);
+  },
+
+  /* The hotel service mini-game pays the run in coins, XP and bond, and the
+     dishes actually carried to the tables come home as pantry stock. */
+  finishHotelService({ score = 0, served = 0, perfect = 0, dishes = [] } = {}) {
+    const s = activeSprite();
+    if (!s || s.stage === 'egg') return { ok: false, reason: 'sprite' };
+    const points = Math.max(0, Math.floor(Number(score) || 0));
+    const plates = Math.max(0, Math.floor(Number(served) || 0));
+    const keys = [...new Set(Array.isArray(dishes) ? dishes : [])]
+      .filter((key) => (typeof FOODS !== 'undefined' && FOODS[key]) || (typeof SNACKS !== 'undefined' && SNACKS[key]))
+      .slice(0, 4);
+    const coins = Math.min(200, 24 + points * 3 + plates * 2);
+    const xp = 22 + Math.min(96, points * 3);
+    const bond = 5 + Math.min(8, Math.floor(plates / 2));
+    keys.forEach((key) => {
+      if (FOODS[key]) addFoodRaw(key, 1);
+      else addSnackRaw(key, 1);
+    });
+    addCoinsRaw(coins);
+    addXpRaw(s, xp);
+    addBondRaw(s, bond);
+    state.stats.games = (Number(state.stats.games) || 0) + 1;
+    state.stats.hotelPlatesServed = (Number(state.stats.hotelPlatesServed) || 0) + plates;
+    bump('games');
+    const careGift = grantHotelCareBonusRaw(s);
+    Sfx.win();
+    commit('hotelServiceGame', { spriteId: s.id, score: points, plates, foodKeys: keys, careGift: !!careGift });
+    return { ok: true, coins, xp, bond, foodKeys: keys, plates, careGift };
   },
 
   finishGroomGame({ score = 0, hair = 0, teeth = 0, perfect = 0 } = {}) {
@@ -3191,7 +3655,7 @@ const Actions = {
     return { ok: true, coins };
   },
 
-  playCatch(id, mode = 'throw', catches = 5) {
+  playCatch(id, mode = 'throw', catches = 5, opts = {}) {
     const s = findSprite(id);
     if (!s || s.stage === 'egg') return { ok: false, reason: 'missing' };
     if (s.asleep) {
@@ -3200,12 +3664,18 @@ const Actions = {
     }
     const n = clamp(Math.round(Number(catches) || 5), 1, 8);
     const fx = spriteEffects(s);
+    /* Fetch throws the puffle's own toy. A caller can pass a different one (a
+       plain ball), and only the puffle's favourite pays the extra Joy and bond. */
+    const ownToy = typeof puffleFetchToy === 'function' ? puffleFetchToy(s) : { name: 'Ball', icon: '🎾' };
+    const toy = opts.toy && typeof opts.toy === 'object' ? opts.toy : ownToy;
+    const favouriteToy = !!toy && toy.name === ownToy.name;
     const coins = 8 + n * 4 + (fx.gameCoins || 0);
     const xp = 7 + n * 3;
-    s.needs.joy = clamp(s.needs.joy + 14);
+    const joy = 14 + (favouriteToy ? 6 : 0);
+    s.needs.joy = clamp(s.needs.joy + joy);
     s.needs.energy = clamp(s.needs.energy - 4);
     s.needs.hunger = clamp(s.needs.hunger - 2);
-    addBondRaw(s, 3 + n * (fx.petBond || 1));
+    addBondRaw(s, 3 + n * (fx.petBond || 1) + (favouriteToy ? 2 : 0));
     addXpRaw(s, xp);
     addCoinsRaw(coins);
     bump('games');
@@ -3214,8 +3684,46 @@ const Actions = {
     else state.stats.throws = (Number(state.stats.throws) || 0) + 1;
     const careGift = grantCarePackageRaw(s);
     Sfx.win();
-    commit('fetch', { spriteId: id, mode, catches: n, coins, careGift: !!careGift });
-    return { ok: true, coins, xp, catches: n, careGift };
+    commit('fetch', { spriteId: id, mode, catches: n, coins, joy, toy: toy.name, favouriteToy, careGift: !!careGift });
+    return { ok: true, coins, xp, joy, catches: n, toy: { name: toy.name, icon: toy.icon }, favouriteToy, careGift };
+  },
+
+  /* A puffle's favourite toy and game are hashed comforts, so they used to be
+     labels on the sheet and nothing more. Using one is a small piece of care:
+     it pays extra Joy and bond for that puffle, and a favourite game also pays
+     a few coins and XP. One use a minute per puffle and kind, so the sheet
+     button is a top-up rather than a coin press. */
+  playFavourite(id, kind = 'toy') {
+    const s = findSprite(id);
+    if (!s || s.stage === 'egg') return { ok: false, reason: 'missing' };
+    const isGame = kind === 'game';
+    const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+    const item = comforts && (isGame ? comforts.game : comforts.toy);
+    if (!item) return { ok: false, reason: 'comforts' };
+    if (s.asleep) {
+      s.asleep = false;
+      s.sleepUntil = 0;
+    }
+    const stampKey = isGame ? 'lastFavGame' : 'lastFavToy';
+    const wait = 60000 - (Date.now() - (Number(s[stampKey]) || 0));
+    if (wait > 0) return { ok: false, reason: 'cooldown', wait, item };
+    s[stampKey] = Date.now();
+    const fx = spriteEffects(s);
+    const joy = isGame ? 10 : 8;
+    const xp = isGame ? 6 : 3;
+    const bond = (isGame ? 4 : 3) * (fx.petBond || 1);
+    s.needs.joy = clamp(s.needs.joy + joy);
+    addBondRaw(s, bond);
+    let coins = 0;
+    if (isGame) {
+      coins = 2 + (fx.gameCoins || 0);
+      addCoinsRaw(coins);
+      state.stats.games = (Number(state.stats.games) || 0) + 1;
+    }
+    addXpRaw(s, xp);
+    Sfx.pop();
+    commit('favourite-play', { spriteId: id, kind, item: item.name, joy, coins });
+    return { ok: true, kind, item, joy, bond: Math.round(bond), coins, xp };
   },
 
   tuckIn(id, opts = {}) {
@@ -3288,10 +3796,15 @@ const Actions = {
        the challenge's own game; the reward copy and the result preview say so. */
     const payout = Math.round(reward.payout * (liveEvent ? liveEvent.coinBoost : 1));
     const boostedXp = Math.round(Math.max(120, (Number(xp) || 25) * 4) * (liveEvent ? liveEvent.xpBoost : 1));
+    /* The puffle's favourite game is a comfort, and each comfort game names the
+       minigame it shows up in. Finishing that one is worth a little extra Joy
+       and bond for that puffle; the sheet action stays the bigger use. */
+    const favourites = s && typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+    const favouriteGame = !!(favourites && favourites.game && favourites.game.game === game);
     if (s) {
-      s.needs.joy = clamp(s.needs.joy + joy + 8);
+      s.needs.joy = clamp(s.needs.joy + joy + 8 + (favouriteGame ? 4 : 0));
       s.needs.energy = clamp(s.needs.energy - 2);
-      addBondRaw(s, 10 + (liveEvent ? liveEvent.bondBonus : 0));
+      addBondRaw(s, 10 + (liveEvent ? liveEvent.bondBonus : 0) + (favouriteGame ? 2 : 0));
       awardXpWithPartner(s, boostedXp);
     }
     addCoinsRaw(payout);
@@ -3369,9 +3882,11 @@ const Actions = {
       arcade = { coins: payout, lifetime: a.coins, monthCoins: a.monthCoins, nextBonusAt: arcadeNextBonusAt(a) };
     }
     bump('games');
-    commit('game', { game, score, rarityBonus: reward.rarityBonus, arcade, careGift: !!careGift, feasts: 1, foods: pantryFoods, recipeFoods, snacks, bestBonus });
+    commit('game', { game, score, rarityBonus: reward.rarityBonus, arcade, careGift: !!careGift, feasts: 1, foods: pantryFoods, recipeFoods, snacks, bestBonus, favouriteGame });
     return {
       sprite: s,
+      favouriteGame,
+      favouriteGameName: favouriteGame ? favourites.game.name : '',
       coins: payout,
       rarityBonus: reward.rarityBonus,
       effectCoins: reward.effectCoins,
@@ -3688,6 +4203,74 @@ const Actions = {
     return { ok: true, egg, price: tier.price };
   },
 
+  /* A windowed band can only sell 32 species a day, so the one you want could be
+     weeks away. Pinning takes one of those slots for it. The window keeps its
+     length, so the ceiling on a named species does not move. A pin is a place in
+     the shop, not a weighting: the draw is still uniform over the window's
+     unowned species, so buyBandNamed is what actually buys the pet. */
+  pinBandSpecies(tierKey, speciesKey) {
+    const pool = typeof tierEggBandPool === 'function' ? tierEggBandPool(tierKey) : [];
+    if (!pool.length) return { ok: false, reason: 'empty' };
+    const windowed = typeof tierEggFeaturedPool === 'function'
+      && tierEggFeaturedPool(tierKey, new Date(), null).length < pool.length;
+    if (!windowed) return { ok: false, reason: 'not-windowed' };
+    if (!speciesKey || !pool.includes(speciesKey)) return { ok: false, reason: 'missing' };
+    if (bandPinFor(tierKey) === speciesKey) return { ok: true, already: true, tier: tierKey, species: speciesKey };
+    state.tierPins = { ...(state.tierPins || {}), [tierKey]: speciesKey };
+    commit('tierPins', { tier: tierKey, species: speciesKey });
+    return { ok: true, tier: tierKey, species: speciesKey };
+  },
+
+  unpinBandSpecies(tierKey) {
+    const pins = { ...(state.tierPins || {}) };
+    if (!pins[tierKey]) return { ok: true, already: true };
+    delete pins[tierKey];
+    state.tierPins = pins;
+    commit('tierPins', { tier: tierKey, species: null });
+    return { ok: true, tier: tierKey };
+  },
+
+  /* Pinning keeps a species on sale; it does not make the roll land on it. From
+     an unowned window the pinned species is one of 32 drawn without replacement,
+     so rolling for it costs 16.5 eggs on average, and one egg once it is the
+     last one missing. Buying it outright costs the same — price x (left + 1) / 2
+     — with no variance and none of the other species. The pin is still required,
+     so this can never sell a species the band does not own. */
+  buyBandNamed(tierKey) {
+    const meta = typeof TIER_EGG_META !== 'undefined' ? TIER_EGG_META[tierKey] : null;
+    const species = meta && typeof bandPinFor === 'function' ? bandPinFor(tierKey) : null;
+    if (!species) return { ok: false, reason: meta ? 'no-pin' : 'missing' };
+    /* Duplicates are what the band egg sells, at one egg each; a named purchase
+       of something already owned would undercut that roll, so it is refused. */
+    if (state.sprites.some((sprite) => sprite.element === species)) {
+      return { ok: false, reason: 'owned' };
+    }
+    const price = typeof tierBandNamedPrice === 'function' ? tierBandNamedPrice(tierKey) : 0;
+    if (state.coins < price) {
+      toast('Not enough coins for that species.', '🪙');
+      Sfx.error();
+      return { ok: false, reason: 'coins', price };
+    }
+    addCoinsRaw(-price);
+    /* The pin is a member of its own band, so it already owns the band's rank;
+       no rarity boost is needed to hatch it at that rank. */
+    const egg = rollEgg('wild', {
+      element: species,
+      eggLabel: meta.name,
+      mutation: meta.mutation,
+      gen: meta.gen,
+    });
+    state.sprites.push(egg);
+    commit('buyEgg', { spriteId: egg.id, tier: tierKey });
+    return { ok: true, egg, tier: tierKey, price };
+  },
+
+  /* A band egg draws only from species that own that rank. Drawing from every
+     species at or below the band made one specific Ultra a 1-in-4,000 roll:
+     1,550 coins per egg against a pool of thousands is 6.2M coins for the pet
+     you actually wanted. Same-rank pools make a rank findable, and a band no
+     species owns is simply not sold.
+  */
   buyTierEgg(tierKey) {
     const meta = typeof TIER_EGG_META !== 'undefined' ? TIER_EGG_META[tierKey] : null;
     const target = typeof RARITY_TIER_ORDER !== 'undefined' ? RARITY_TIER_ORDER.indexOf(tierKey) : -1;
@@ -3697,10 +4280,19 @@ const Actions = {
       Sfx.error();
       return { ok: false, reason: 'coins' };
     }
-    const roster = typeof TYPE_EGG_SPECIES !== 'undefined' ? TYPE_EGG_SPECIES : WILD_SPECIES;
-    const pool = roster.filter((key) => ELEMENTS[key] && RARITY_TIER_ORDER.indexOf(typeEggRarity(key)) <= target);
-    if (!pool.length) return { ok: false, reason: 'empty' };
-    const element = pick(pool);
+    const band = typeof tierEggBandPool === 'function' ? tierEggBandPool(tierKey) : [];
+    if (!band.length) {
+      toast('No species owns that rank yet.', '🥚');
+      return { ok: false, reason: 'empty' };
+    }
+    /* The band is a collection, so the egg fills it: a species the player
+       does not own yet is drawn first and duplicates only start once the
+       band is complete. Without this the last Ultra is 1-in-4 but the last
+       Secret is 1-in-3,763 no matter how many you already have. */
+    const pool = typeof tierEggFeaturedPool === 'function' ? tierEggFeaturedPool(tierKey) : band;
+    const owned = new Set(state.sprites.map((sprite) => sprite.element).filter(Boolean));
+    const fresh = pool.filter((key) => !owned.has(key));
+    const element = pick(fresh.length ? fresh : pool);
     const boost = Math.max(0, target - RARITY_TIER_ORDER.indexOf(typeEggRarity(element)));
     addCoinsRaw(-meta.price);
     const egg = rollEgg('wild', {
@@ -4300,6 +4892,11 @@ const Actions = {
       addCoinsRaw(coins);
       reward = { kind: 'coins', icon: '🪙', title: 'A little coin gift', text: `+${coins} coins` };
     }
+    /* Only the puffle who actually gave the gift may mention it in chat. The
+       stamp lives on that sprite's voice state so it survives a reload; the
+       normalizer fills the other voice fields on save. */
+    if (!s.voice || typeof s.voice !== 'object') s.voice = {};
+    s.voice.giftAt = Date.now();
     state.stats.gifts = (state.stats.gifts || 0) + 1;
     if (state.stats.gifts >= 20) unlockSecret('giftkeeper');
     state.gift = null;
@@ -4321,6 +4918,11 @@ const Actions = {
       return { ok: false, reason: 'diet' };
     }
     s.form = form.id;
+    /* A creature meets its coat as it evolves: one of its species' canon
+       colourways, the species' own coat included. */
+    if (form.creature && typeof cpCreatureColourwayRoll === 'function') {
+      s.puffleVariant = cpCreatureColourwayRoll(form.creature);
+    }
     s.size = form.size;
     s.evolvedAt = Date.now();
     s.bond = clamp(s.bond + 8);
@@ -4350,9 +4952,14 @@ const Actions = {
     if (!s) return;
     /* Puffle colour variant, from the exact palette table. */
     if (patch.puffleVariant !== undefined) {
-      const key = String(patch.puffleVariant || 'common');
+      const key = String(patch.puffleVariant || '');
       const known = typeof window !== 'undefined' && window.LUMI_PUFFLE_VARIANTS && window.LUMI_PUFFLE_VARIANTS[key];
-      s.puffleVariant = known ? key : 'common';
+      const creature = s.form && typeof EVOLUTION_FORMS !== 'undefined' && EVOLUTION_FORMS[s.form] ? EVOLUTION_FORMS[s.form].creature : null;
+      const creatureKey = creature && typeof cpCreatureStyleKey === 'function' ? cpCreatureStyleKey(s.form, key) : null;
+      if (creatureKey) s.puffleVariant = creatureKey;
+      else if (creature) s.puffleVariant = `pc_${creature}`;
+      else s.puffleVariant = known ? key : 'common';
+      recordCreatureCoat(s);
     }
     /* Wardrobe slot for the baked Lumi garment (0-2). */
     if (patch.garment !== undefined) {
@@ -4459,8 +5066,10 @@ const Actions = {
     if (look.puffleVariant !== undefined) {
       const key = String(look.puffleVariant || '');
       const table = typeof window !== 'undefined' ? window.LUMI_PUFFLE_VARIANTS : null;
-      if (!table || !table[key]) return { ok: false, reason: 'style' };
-      next.puffleVariant = key;
+      /* Creature coats live outside the Sprite Puffle style table. */
+      const creatureKey = typeof cpCreatureStyleKey === 'function' ? cpCreatureStyleKey(sprite.form, key) : null;
+      if (!creatureKey && (!table || !table[key])) return { ok: false, reason: 'style' };
+      next.puffleVariant = creatureKey || key;
     }
     if (look.accessory !== undefined) {
       const key = String(look.accessory || 'none');
@@ -4479,6 +5088,7 @@ const Actions = {
       next.variant = key || null;
     }
     Object.assign(sprite, next);
+    recordCreatureCoat(sprite);
     commit('puffleLook', { spriteId: id, ...next });
     return { ok: true, sprite, look: { ...next } };
   },
@@ -5133,6 +5743,27 @@ const Actions = {
     return { ok: true, coins: door.coins || 0, secret: sprite ? sprite.name : null, spriteId: sprite ? sprite.id : null };
   },
 
+  /* A Hollow Eclipse bout is its own credit path: bond, joy and XP, a per-enemy
+     purification count, and nothing on the guardian record or the Season Charge. */
+  purifyEnemy(enemyId) {
+    const enemy = typeof SPRITE_HOLLOW_VOICES !== 'undefined' && Array.isArray(SPRITE_HOLLOW_VOICES)
+      ? SPRITE_HOLLOW_VOICES.find((entry) => entry.enemy && entry.id === enemyId) || null
+      : null;
+    if (!enemy) return { ok: false, reason: 'enemy' };
+    const s = typeof activeSprite === 'function' ? activeSprite() : null;
+    if (s) {
+      s.needs.joy = clamp(s.needs.joy + 12);
+      addBondRaw(s, 3);
+      addXpRaw(s, 8);
+    }
+    state.enemiesPurified = { ...(state.enemiesPurified || {}) };
+    const total = (Number(state.enemiesPurified[enemyId]) || 0) + 1;
+    state.enemiesPurified[enemyId] = total;
+    state.stats.purified = (Number(state.stats.purified) || 0) + 1;
+    commit('purify', { enemy: enemyId, total });
+    return { ok: true, bond: 3, joy: 12, xp: 8, total, enemy };
+  },
+
   guardianWin(sceneKey, guardianKey) {
     if (typeof ELEMENTS === 'undefined' || !ELEMENTS[guardianKey]) return { ok: false, reason: 'guardian' };
     const s = typeof activeSprite === 'function' ? activeSprite() : null;
@@ -5301,12 +5932,24 @@ const Actions = {
     }
     const nextStep = info.index + 1;
     const finished = nextStep >= def.steps.length;
+    /* A finished region leaves a relic with the family that walked it, on top of
+       the quest's own coins and XP. */
+    let relic = null;
+    if (finished && target && typeof window.puffleRelicFor === 'function') {
+      const entry = window.puffleRelicFor(target);
+      if (entry) {
+        const relicCoins = Math.max(0, Math.floor(Number(entry.coins) || 0));
+        if (relicCoins) addCoinsRaw(relicCoins);
+        addBondRaw(target, Math.max(0, Number(entry.bond) || 0));
+        relic = { item: entry.item, line: entry.line, coins: relicCoins, sprite: displayName(target) };
+      }
+    }
     state.biomeQuests = { ...(state.biomeQuests || {}) };
     state.biomeQuests[sceneKey] = { step: finished ? def.steps.length : nextStep, progress: 0, done: finished, beaten: finalStep ? true : !!q.beaten };
     if (finished) state.stats.quests = (Number(state.stats.quests) || 0) + 1;
     const eventEggs = finished && typeof addSeasonChargeRaw === 'function' ? addSeasonChargeRaw(1) : [];
     commit('biomeQuest', { scene: sceneKey, finished, coins, eventEggs: eventEggs.length });
-    return { ok: true, coins, bonus, xp: reward.xp || 0, finished, title: def.title, eventEggs, season: seasonChargeInfo() };
+    return { ok: true, coins, bonus, xp: reward.xp || 0, finished, title: def.title, eventEggs, relic, season: seasonChargeInfo() };
   },
 
   bondHouse(houseId) {
@@ -5368,6 +6011,46 @@ const Actions = {
     state.world = { ...(state.world || {}), eventPreset: null };
     commit('world', { eventPreset: null });
     return { ok: true };
+  },
+
+  /* Keeping a vigil is the playable half of an event preset: a run that reaches
+     the target files the badge for the day. It pays no coins of its own — the
+     run already pays like any mini game — so the result card never promises
+     money the wallet does not also gain. */
+  recordVigil(key, score) {
+    const preset = key && typeof EVENT_PRESETS !== 'undefined' ? EVENT_PRESETS[key] : null;
+    const target = typeof EVENT_VIGIL !== 'undefined' ? Number(EVENT_VIGIL.target) || 1 : 1;
+    if (!preset) return { ok: false, reason: 'missing', target };
+    /* The vigil belongs to the sky that is up right now, not to a key a caller
+       names, so a stale button cannot file a badge for a preset that ended. */
+    if (state.world?.eventPreset !== preset.key) return { ok: false, reason: 'no-event', target };
+    if (!(Number(score) >= target)) return { ok: false, reason: 'short', score: Math.max(0, Number(score) || 0), target };
+    const day = dayKey();
+    const vigils = { ...(state.world?.vigils || {}) };
+    const previous = vigils[preset.key] || null;
+    const best = Math.max(Number(previous?.best) || 0, Number(score) || 0);
+    if (previous && previous.day === day) {
+      vigils[preset.key] = { ...previous, best, runs: (Number(previous.runs) || 1) + 1 };
+      state.world = { ...(state.world || {}), vigils };
+      commit('world', { vigils });
+      return { ok: true, already: true, best, target, day };
+    }
+    /* The badge is the keepsake, so a kept vigil counts on the shelf exactly the
+       way applying the preset does. */
+    const now = Date.now();
+    const badges = Array.isArray(state.world?.badges) ? state.world.badges.map((badge) => ({ ...badge })) : [];
+    const existing = badges.find((badge) => badge && badge.key === preset.key);
+    if (existing) {
+      existing.count = (Number(existing.count) || 1) + 1;
+      existing.last = now;
+      if (!existing.first) existing.first = now;
+    } else {
+      badges.push({ key: preset.key, count: 1, first: now, last: now });
+    }
+    vigils[preset.key] = { day, best, runs: (Number(previous?.runs) || 0) + 1, last: now };
+    state.world = { ...(state.world || {}), vigils, badges };
+    commit('world', { vigils, badges });
+    return { ok: true, kept: true, day, best, target, badge: badges.find((badge) => badge.key === preset.key) };
   },
 
   setSeason(key) {
@@ -5538,6 +6221,11 @@ const Actions = {
     /* Lock the old Hollow's saves before reloading: pagehide/beforeunload would
        otherwise write it back over the fresh save and undo the reset. */
     if (typeof lockSaves === 'function') lockSaves();
+    /* Release the active slot before the fresh save boots. The old Hollow stays
+       in that slot, and without the pointer the new Hollow's first autosave
+       cannot mirror over it; the new Hollow adopts a free slot on its next
+       save instead of consuming the one it just left. */
+    if (typeof releaseActiveSlot === 'function') releaseActiveSlot();
     const banked = Math.max(0, Math.floor(Number(state.coins) || 0));
     if (typeof CoinBank !== 'undefined') CoinBank.keep(banked);
     const fresh = freshState();
@@ -5632,9 +6320,31 @@ function tick(force = false) {
   let changed = false;
   let woke = [];
   const healed = [];
+  /* Dawn checkout runs before the floor serves anyone: a stay that has run its
+     eight hours ends here, so an abandoned room cannot keep a guest topped up
+     at 100 forever. */
+  if (typeof hotelGuests === 'function' && typeof finishHotelStay === 'function') {
+    hotelGuests().filter((entry) => hotelStayDue(entry)).forEach((entry) => finishHotelStay(entry, { dawn: true }));
+  }
+  /* One stay lookup for the whole tick; isHotelGuest() rebuilds the guest list. */
+  const stayingIds = new Set(typeof hotelGuests === 'function' ? hotelGuests().map((entry) => entry.id) : []);
   state.sprites.forEach((s) => {
     if (s.stage === 'egg' || s.retired) return;
     const hyg = hygieneOf(s);
+    /* A checked-in guest is being looked after on site: the hotel feeds, rests,
+       washes and entertains them instead of letting the bars drain. */
+    if (stayingIds.has(s.id)) {
+      s.needs.hunger = clamp(s.needs.hunger + 1.6 * min);
+      s.needs.energy = clamp(s.needs.energy + 1.4 * min);
+      s.needs.joy = clamp(s.needs.joy + 1.1 * min);
+      s.needs.clean = clamp(s.needs.clean + 0.9 * min);
+      hyg.hair = clamp(hyg.hair + 0.14 * min);
+      hyg.teeth = clamp(hyg.teeth + 0.1 * min);
+      hyg.breath = clamp(hyg.breath + 0.12 * min);
+      s.bond = clamp(s.bond + 0.05 * min);
+      changed = true;
+      return;
+    }
     if (s.atHome) {
       /* A sprite sent home grazes, relaxes, recovers every need, sleeps long,
          and tucks a few coins away while the keeper is busy. */

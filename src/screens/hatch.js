@@ -16,6 +16,8 @@ function openHatchFlow(spriteId, opts = {}) {
   const { overlay, close } = buildOverlay(`<div class="modal"></div>`, { center: true, dismissible: false, key: 'hatch-flow' });
   const modal = overlay.querySelector('.modal');
   let finished = false;
+  /* The hatchling's first line in its own voice, shown on the hatch card. */
+  let firstWordsShown = '';
   let mythicRevealed = false;
 
   function render() {
@@ -217,6 +219,7 @@ function openHatchFlow(spriteId, opts = {}) {
     if (!res.ok) return;
     finished = true;
     sprite = res.sprite;
+    firstWordsShown = res.firstWords || '';
     const completeHatch = () => {
       renderHatched();
       /* The hatch celebration runs for exactly as long as the manifest's
@@ -257,6 +260,10 @@ function openHatchFlow(spriteId, opts = {}) {
       <div class="hatch-stage">
         <div class="hatched">${spriteSVG(s, { expr: 'happy' })}</div>
       </div>
+      ${firstWordsShown ? `<div class="card" data-first-words style="padding:10px;margin-top:10px;text-align:center;border-color:rgba(255,209,102,.35);background:rgba(255,209,102,.06)">
+        <b>First words</b>
+        <p class="tiny" style="margin:4px 0 0;font-style:italic">“${esc(firstWordsShown)}”</p>
+      </div>` : ''}
       <div class="row" style="justify-content:center;flex-wrap:wrap;gap:5px">
         <span class="chip">${BREEDS[s.breed]?.name || 'Puff'} breed</span>
         <span class="chip gender-chip" style="color:${genderOf(s).color}">${genderOf(s).symbol} ${esc(genderOf(s).name)}</span>

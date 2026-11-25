@@ -63,7 +63,7 @@ const TOUR_STEPS = [
       `A ${LEGEND_TOTAL}-character crossover legends pack adds curated families from FNAF, Mario, Spore, Tom and Jerry, Looney Tunes, Zelda, The Walking Dead, horror, and video games.`,
       `A ${NETFLIX_TOTAL}-character Netflix animation wing now sits under TV Legends: 10 Netflix Anime shows and 10 Netflix Toons shows with three characters each, show filters, and owned progress. A ${TV_FAMILY_TOTAL}-character TV family now spans both rosters.`,
       `A ${CATALOG_TOTAL}-sprite catalog adds PBS Kids, Monster Jam, Nickelodeon, Nick Jr., Nicktoons, Discovery, animated movies, comics, Disney Jr., Disney XD, and every video-game genre.`,
-      'The Types Codex now shows the full 12-tier ladder: nine base ranks plus the trail-only Celestial, Divine, and Eternal apex ranks.',
+      `The Types Codex shows the full ${RARITY_TIER_ORDER.length}-tier ladder: ${RARITY_TIER_ORDER.length - RARITY_APEX_KEYS.length} base ranks plus the ${RARITY_APEX_PHRASE} apex ranks.`,
       'Open the Bond Codex from Types or the Wiki to read all six bond ranks and the complete evolution path.',
       'Eighteen world type variants and the Shortcut pathfinder are in the Wiki, each with a live species file.',
     ],

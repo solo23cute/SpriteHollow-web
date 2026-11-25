@@ -18,7 +18,13 @@ function chatGreeting(s) {
     sassy: 'There you are. I was starting to judge the wall.',
   };
   let extra = '';
-  if (s.needs.hunger < 30) extra = ' Also, tiny confession: I’m starving.';
+  if (s.needs.hunger < 30) {
+    /* Name the snack the puffle actually wants, not just that it is hungry. */
+    const comforts = typeof puffleComfortsFor === 'function' ? puffleComfortsFor(s) : null;
+    extra = comforts
+      ? ` Also, tiny confession: I’m starving. A ${comforts.food.name.toLowerCase()} would fix that.`
+      : ' Also, tiny confession: I’m starving.';
+  }
   else if (s.needs.joy < 30) extra = ' Also, I could really use some fun.';
   else if (s.needs.clean < 30) extra = ' Also, don’t look too closely at me.';
   return `${timeGreet} I’m ${name}, your ${typeName(s)}. ${intros[s.personality] || intros.sunny}${extra}`;

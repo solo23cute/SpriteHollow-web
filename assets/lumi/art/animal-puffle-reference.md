@@ -2,8 +2,11 @@
 
 The Animal Puffle Encyclopedia contains **43 families across eight rarity tiers**.
 Every family is a three-stage line: baby, sprite, and guardian. The guardian
-portrait is the family's reference portrait, cut from the shipped Lumi kit art
-and framed by that family's own silhouette profile.
+portrait is the family's reference portrait, drawn on the same round puffle body
+the live game renders, tinted to the family's hue and framed by that family's
+own animal shape. Feature shapes are authored in the silhouette's 64-unit space
+and mapped onto the body, so the outline and the painted portrait cannot drift
+apart.
 
 ## Eight-tier guardian contact sheet
 
@@ -19,10 +22,10 @@ all 15 Mythic, Secret, and Ultra Secret families at baby, sprite, and guardian.
 ![Animal Puffle guardian silhouettes](animal-puffle-tier-silhouettes.png)
 
 Every guardian uses the shared round puffball base. Identity comes from the
-painted fringe plus the ears, crest, wings, tail, halo, and face markings around
-that base. The silhouette render above removes the kit art so the outline can be
-compared directly, and the high-rarity comparison repeats that outline behind
-the baby, sprite, and guardian kits.
+painted fringe plus the ears, crest, wings, tail, halo, and other appendages
+around that base. The silhouette render above removes the painted body so the
+outline can be compared directly, and the high-rarity comparison repeats that
+outline behind the baby, sprite, and guardian portraits.
 
 | Tier | Families |
 | --- | ---: |
@@ -57,9 +60,9 @@ The same-kit high-rarity pairs are separated by body and appendage, not hue:
 | Cosmic Kitsune / Eternal Wolf | Nine-tail fan and fox ears versus star-crested wolf tufts and a curled tail. |
 | Prism Chimera / Crown Griffin | Dragon-winged antlered chimera versus crown-crested griffin with a tufted lion tail. |
 
-The six cosmic families that share the glow kit also carry family-specific face
-markings: Star Cat, Cosmic Kitsune, Void Lynx, Heartlight Bunny, Eternal Wolf,
-and Sprite Prime.
+The six cosmic families are told apart by shape alone, since the portraits share
+one painted face: Star Cat, Cosmic Kitsune, Void Lynx, Heartlight Bunny, Eternal
+Wolf, and Sprite Prime each carry their own ears, crest and tail.
 
 ## Rebuilding the sheets
 
@@ -70,7 +73,7 @@ Serve the repository root locally and open:
 http://127.0.0.1:8137/tools/animal-puffle-tier-contact.html
 ```
 
-Append `?sil` to hide the kit art and render the silhouette pass. Both sheets
+Append `?sil` to hide the painted portraits and render the silhouette pass. Both sheets
 read the same `ANIMAL_PUFFLE_FAMILIES`, `ANIMAL_PUFFLE_SILHOUETTES`,
 `apGuardianPortrait()`, and `apStagePortrait()` data used by the in-game
 encyclopedia.
